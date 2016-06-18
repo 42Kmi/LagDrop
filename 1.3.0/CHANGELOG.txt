@@ -1,0 +1,42 @@
+***** 42Kmi LagDrop *****
+
+Inspired by the frustration of online lag, 42Kmi LagDrop is a suite of router scripts to
+experience lag-free gameplay in online console games utilizing peer-to-peer matchmaking. 
+
+
+
+Changes
+Version 1.3.0
+-User-defined periodic clearing of LagDrop iptables entries
+
+Version 1.2.1
+-Minor changes for stability
+
+Version 1.2.0
+-Prevent pinging of checked IPs
+-Increased frequency of IP checks
+
+Version 1.1.1
+-Minor IP block fix
+
+Version 1.1.0
+- Fixed redundant IP blocks.
+
+Version 1.0.0
+- Fixed issue causing router crash
+- Added conditional filter of additional IP address by user via extraip.txt
+- Included Xbox One version
+
+Version 0.9.0
+Minor fix in getting IP addresses
+Fixed lagrop.startup
+
+Version 0.8.0:
+- Semantic versioning begining with this release.
+- Change log
+- lagdrop.sh renamed to lagdrop_wiiu.sh, and script is adjusted to reflect those changes
+- lagdrop_3DS.sh renamed to lagdrop_3ds.sh, and script is adjusted to reflect those changes
+- Different scripts combined into one suite
+- Includes lagdrop.startup script to launch different versions consecutively
+- Fixed loop control
+- Scripts are now directory agnostic, can be run from any directory where lagdrop script is located.
