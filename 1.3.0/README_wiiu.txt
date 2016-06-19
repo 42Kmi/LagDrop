@@ -1,5 +1,9 @@
 42Kmi LagDrop
 
+How it works
+________________
+Games such as Super Smash Bros for Wii U utilizes peer-to-peer matchmaking, meaning that opponents connect directly to each other for matches and do not rely on some far away server. This script scans for peer IP addresses connected to your Wii U and pings them with the details specified in options.txt file. Any IP address that returns an average ping time higher than your specified limit is blocked from your Wii U. Ping times above your limit are anticipated to be laggy, so why not prevent potential lag?
+
 How to use
 ________________
 Required:
@@ -35,8 +39,3 @@ extraip.txt file
 User can create this regex-formatted to filter additional IP addresses from LagDrop. All entries MUST be on the same line and separated by the pipe (|) with periods escaped with backslash \
 Eg: ^192\.168\. will filter all addresses begining with 192.168 from being checked against LagDrop.
 ^192\.1(([0-3]{1}))0\. will filter addresses begining with 192.100, 192.110, 192.120, and 192.130
-
-
-How it works
-________________
-Games such as Super Smash Bros for Wii U utilizes peer-to-peer matchmaking, meaning that opponents connect directly to each other for matches and do not rely on some far away server. This script scans for peer IP addresses connected to your Wii U and pings them with the details specified in options.txt file. Any IP address that returns an average ping time higher than your specified limit is blocked from your Wii U. Ping times above your limit are anticipated to be laggy, so why not prevent potential lag?
