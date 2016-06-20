@@ -1,0 +1,86 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>42Kmi LagDrop by 42Kmi</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/github-light.css">
+    <meta name="viewport" content="width=device-width">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>42Kmi LagDrop</h1>
+        <p>Avoid lag and laggy matches in peer-to-peer matchmaking online games, such as Super Smash Bros. for Wii U. For routers running DD-WRT or other similar firmwares.</p>
+
+        <p class="view"><a href="https://github.com/42Kmi/42Kmi-LagDrop">View the Project on GitHub <small>42Kmi/42Kmi-LagDrop</small></a></p>
+
+
+        <ul>
+          <li><a href="https://github.com/42Kmi/42Kmi-LagDrop/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/42Kmi/42Kmi-LagDrop/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/42Kmi/42Kmi-LagDrop">View On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+        <h1>
+<a id="42kmi-lagdrop" class="anchor" href="#42kmi-lagdrop" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>42Kmi LagDrop</h1>
+
+<p>Avoid laggy matches in peer-to-peer matchmaking online games, such as Super Smash Bros. for Wii U.</p>
+
+<p>How it works</p>
+
+<hr>
+
+<p>Games such as Super Smash Bros for Wii U utilizes peer-to-peer matchmaking, meaning that opponents connect directly to each other for matches and do not rely on some far away server. This script scans for peer IP addresses connected to your Wii U and pings them with the details specified in options.txt file. Any IP address that returns an average ping time higher than your specified limit is blocked from your Wii U. Ping times above your limit are anticipated to be laggy, so why not prevent potential lag?</p>
+
+<p>How to use</p>
+
+<hr>
+
+<p>Required:
+·Router with DD-WRT or other aftermarket firmware capable of running scripts.
+·SCP client to upload script and edit options file (e.g., WinSCP)</p>
+
+<p>Optional:
+· USB 2.0 LAN adapter for wired Wii U 
+· SSH command-line interface (e.g., Putty) </p>
+
+<p>This guide uses DD-WRT as reference and assumes that you are familiar with DD-WRT or similar firmware. Do the equivalent of whatever custom firmware is on your router.</p>
+
+<p><strong><em>This is not intended or expected to harm your router, however, 42Kmi bears no responsibility for any damages that may occur.</em></strong> </p>
+
+<ol>
+<li>Go to the DD-WRT web interface. Go “Services” and find “Static Leases.” Click Add.</li>
+<li>Set Wii U to static IP address on Router, include “WiiU” (or your console identifier [wiiu, xboxone, 3ds, etc.]) in the assigned hostname. Scroll to bottom of page and click “Apply Settings.” </li>
+<li>Place lagdrop.sh in jffs folder</li>
+<li>In DD-WRT, go to Administration &gt; Commands, and run  the appropriate Lagdrop for your system, eg: “sh /jffs/lagdrop_wii.sh” (or run “/jffs/lagdrop.sh” from SSH command-line interface). Initial files and directories will be created. Wii U static IP will be populated into options.txt file (this will be first listed static IP address with WiiU in the hostname).</li>
+<li>In SCP client, navigate to /jffs/42Kmi and open and configure the options.txt file</li>
+<li>Play Smash Bros for Wii U online and enjoy! Be Glorious!</li>
+</ol>
+
+<p>Options.txt file: 4 parameters
+WiiU: your Wii U’s static IP. This is filled by default after setting a static IP for your Wii U. You can change this to the Wii U static IP of your choice.
+Limit: This is the maximum millisecond ping time allowed before blocking the peer. Lower number (0-1) is strict and should the best connections, typically within your region. Default is 3.
+Count: This is the number of packets to send to peer. Default is 5. This also controls the interval between script runs, (2 * COUNT_VALUE), in seconds.
+Size: This is the size of the packet in bytes. This is really a test of the peer’s bandwidth. Default is 1024</p>
+
+<p>extraip.txt file
+User can create this regex-formatted to filter additional IP addresses from LagDrop. All entries MUST be on the same line and separated by the pipe (|) with periods escaped with backslash \
+Eg: ^192.168. will filter all addresses begining with 192.168 from being checked against LagDrop.
+^192.1(([0-3]{1}))0. will filter addresses begining with 192.100, 192.110, 192.120, and 192.130</p>
+      </section>
+      <footer>
+        <p>This project is maintained by <a href="https://github.com/42Kmi">42Kmi</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+      </footer>
+    </div>
+    <script src="javascripts/scale.fix.js"></script>
+    
+  </body>
+</html>
