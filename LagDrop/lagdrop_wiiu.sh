@@ -1,6 +1,6 @@
 #!/bin/sh
 ##### 42Kmi LagDrop, Written by 42Kmi. Property of 42Kmi, LLC. #####
-##### Ver 1.3.0
+##### Ver 1.3.1
 ######################################################################################################
 #               .////////////   -+osyyys+-   `////////////////////-                      `//////////`#
 #              /Ny++++++++hM+/hNho/----:+hNo hN++++++oMMm++++++mMy`                      hMhhhhhhdMh #
@@ -55,7 +55,7 @@ PEERIP=$(while read -r i; do echo "${i%}"; done < /proc/net/ip_conntrack | grep 
 fi
 RESOLVE=$(nslookup $PEERIP | grep -Fq "Address 1: $PEERIP" | sed -E "s/^.*$PEERIP\ //g")
 mdev=$(ping -q -c "${COUNT}" -W 1 -s "${SIZE}" "${PEERIP}" | grep -F "round-trip" | sed -E 's/^.*([0-9]{1,9}\.[0-9]{3}\/){2}//g' | sed -E "s/\..*ms//g"; &> /dev/null) ### Get mdev from ping
-BLOCK=$({ if [ "${mdev}" -gt "${LIMIT}" ]; then if { iptables -L | grep -Fq "$PEERIP" ;} || { iptables -L | grep -q `echo "$PEERIP" | sed -E 's/\./-/g'`; } || { iptables -L | grep -Fq "RESOLVE" ;}; then :; else { eval "iptables -A INPUT -p all -s $CONSOLE -d $PEERIP -j REJECT" && eval "iptables -A INPUT -p all -s $PEERIP -d $CONSOLE -j REJECT" && eval "iptables -A OUTPUT -p all -s $CONSOLE -d $PEERIP -j REJECT" && eval "iptables -A OUTPUT -p all -s $PEERIP -d $CONSOLE -j REJECT"; } fi; else { eval "iptables -A INPUT -p all -s $CONSOLE -d $PEERIP -j ACCEPT" && eval "iptables -A INPUT -p all -s $PEERIP -d $CONSOLE -j ACCEPT" && eval "iptables -A OUTPUT -p all -s $CONSOLE -d $PEERIP -j ACCEPT" && eval "iptables -A OUTPUT -p all -s $PEERIP -d $CONSOLE -j ACCEPT"; } fi; }&) 
+BLOCK=$({ if [ "${mdev}" -gt "${LIMIT}" ]; then if { iptables -L | grep -Fq "$PEERIP" ;} || { iptables -L | grep -q `echo "$PEERIP" | sed -E 's/\./-/g'`; } || { iptables -L | grep -Fq "RESOLVE" ;}; then :; else { eval "iptables -A INPUT -p all -s $CONSOLE -d $PEERIP -j DROP" && eval "iptables -A INPUT -p all -s $PEERIP -d $CONSOLE -j DROP" && eval "iptables -A OUTPUT -p all -s $CONSOLE -d $PEERIP -j DROP" && eval "iptables -A OUTPUT -p all -s $PEERIP -d $CONSOLE -j DROP"; } fi; else { eval "iptables -A INPUT -p all -s $CONSOLE -d $PEERIP -j ACCEPT" && eval "iptables -A INPUT -p all -s $PEERIP -d $CONSOLE -j ACCEPT" && eval "iptables -A OUTPUT -p all -s $CONSOLE -d $PEERIP -j ACCEPT" && eval "iptables -A OUTPUT -p all -s $PEERIP -d $CONSOLE -j ACCEPT"; } fi; }&) 
 KILLOLD=$(kill -9 `ps -w | grep -F "$SCRIPTNAME" | grep -v $$` &> /dev/null)
 LOOP=$(exec "$0" && $KILLOLD && kill $$)
 
@@ -80,7 +80,7 @@ rm -f ${LOCKFILE}
 } &
 
 ### Clear iptables ###
-{ { while sleep "$CLEARINTERVAL"; do { { eval "echo $(iptables -L --line-numbers | grep -i "$CONSOLENAME" | grep "ACCEPT" | grep -oE "(([0-9]{1,9})).*ACCEPT" | grep -oE "(([0-9]{1,9}))" | sort -u | sed -E 's/^/iptables -D INPUT /g' | sed -E 's/$/\n/g')"; } ; { eval "echo $(iptables -L --line-numbers | grep -i "$CONSOLENAME" | grep "ACCEPT" | grep -oE "(([0-9]{1,9})).*ACCEPT" | grep -oE "(([0-9]{1,9}))" | sort -u | sed -E 's/^/iptables -D OUTPUT /g' | sed -E 's/$/\n/g')"; } ; { eval "echo $(iptables -L --line-numbers | grep -i "$CONSOLENAME" | grep "REJECT" | grep -oE "(([0-9]{1,9})).*REJECT" | grep -oE "(([0-9]{1,9}))" | sort -u | sed -E 's/^/iptables -D INPUT /g' | sed -E 's/$/\n/g')"; } ; { eval "echo $(iptables -L --line-numbers | grep -i "$CONSOLENAME" | grep "REJECT" | grep -oE "(([0-9]{1,9})).*REJECT" | grep -oE "(([0-9]{1,9}))" | sort -u | sed -E 's/^/iptables -D OUTPUT /g' | sed -E 's/$/\n/g')"; }; }; done; } &> /dev/null; } &
+{ { while sleep "$CLEARINTERVAL"; do { { eval "echo $(iptables -L --line-numbers | grep -i "$CONSOLENAME" | grep "ACCEPT" | grep -oE "(([0-9]{1,9})).*ACCEPT" | grep -oE "(([0-9]{1,9}))" | sort -u | sed -E 's/^/iptables -D INPUT /g' | sed -E 's/$/\n/g')"; } ; { eval "echo $(iptables -L --line-numbers | grep -i "$CONSOLENAME" | grep "ACCEPT" | grep -oE "(([0-9]{1,9})).*ACCEPT" | grep -oE "(([0-9]{1,9}))" | sort -u | sed -E 's/^/iptables -D OUTPUT /g' | sed -E 's/$/\n/g')"; } ; { eval "echo $(iptables -L --line-numbers | grep -i "$CONSOLENAME" | grep "DROP" | grep -oE "(([0-9]{1,9})).*DROP" | grep -oE "(([0-9]{1,9}))" | sort -u | sed -E 's/^/iptables -D INPUT /g' | sed -E 's/$/\n/g')"; } ; { eval "echo $(iptables -L --line-numbers | grep -i "$CONSOLENAME" | grep "DROP" | grep -oE "(([0-9]{1,9})).*DROP" | grep -oE "(([0-9]{1,9}))" | sort -u | sed -E 's/^/iptables -D OUTPUT /g' | sed -E 's/$/\n/g')"; }; }; done; } &> /dev/null; } &
 ### Clear iptables ###
 
 {
