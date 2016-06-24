@@ -1,6 +1,6 @@
 #!/bin/sh
 ##### 42Kmi LagDrop, Written by 42Kmi. Property of 42Kmi, LLC. #####
-##### Ver 1.3.1
+##### Ver 1.4.0
 ######################################################################################################
 #               .////////////   -+osyyys+-   `////////////////////-                      `//////////`#
 #              /Ny++++++++hM+/hNho/----:+hNo hN++++++oMMm++++++mMy`                      hMhhhhhhdMh #
@@ -55,7 +55,7 @@ PEERIP=$(while read -r i; do echo "${i%}"; done < /proc/net/ip_conntrack | grep 
 fi
 RESOLVE=$(nslookup $PEERIP | grep -Fq "Address 1: $PEERIP" | sed -E "s/^.*$PEERIP\ //g")
 mdev=$(ping -q -c "${COUNT}" -W 1 -s "${SIZE}" "${PEERIP}" | grep -F "round-trip" | sed -E 's/^.*([0-9]{1,9}\.[0-9]{3}\/){2}//g' | sed -E "s/\..*ms//g"; &> /dev/null) ### Get mdev from ping
-BLOCK=$({ if [ "${mdev}" -gt "${LIMIT}" ]; then if { iptables -L | grep -Fq "$PEERIP" ;} || { iptables -L | grep -q `echo "$PEERIP" | sed -E 's/\./-/g'`; } || { iptables -L | grep -Fq "RESOLVE" ;}; then :; else { eval "iptables -A INPUT -p all -s $CONSOLE -d $PEERIP -j DROP" && eval "iptables -A INPUT -p all -s $PEERIP -d $CONSOLE -j DROP" && eval "iptables -A OUTPUT -p all -s $CONSOLE -d $PEERIP -j DROP" && eval "iptables -A OUTPUT -p all -s $PEERIP -d $CONSOLE -j DROP"; } fi; else { eval "iptables -A INPUT -p all -s $CONSOLE -d $PEERIP -j ACCEPT" && eval "iptables -A INPUT -p all -s $PEERIP -d $CONSOLE -j ACCEPT" && eval "iptables -A OUTPUT -p all -s $CONSOLE -d $PEERIP -j ACCEPT" && eval "iptables -A OUTPUT -p all -s $PEERIP -d $CONSOLE -j ACCEPT"; } fi; }&) 
+BLOCK=$({ if [ "${mdev}" -gt "${LIMIT}" ]; then if { iptables -L | grep -Fq "$PEERIP" ;} || { iptables -L | grep -q `echo "$PEERIP" | sed -E 's/\./-/g'`; } || { iptables -L | grep -Fq "$RESOLVE" ;} || { iptables -nL|sort -u|grep -Fq "$PEERIP"|sed 's/$PEERIP//g'|sed -E 's/^.*--//g'|grep -Eo "(([0-9]{0,3})\.?){4}"|sort -u|grep -Fq "$RESOLVE" ; }; then :; else { eval "iptables -A INPUT -p all -s $CONSOLE -d $PEERIP -j DROP" && eval "iptables -A INPUT -p all -s $PEERIP -d $CONSOLE -j DROP" && eval "iptables -A OUTPUT -p all -s $CONSOLE -d $PEERIP -j DROP" && eval "iptables -A OUTPUT -p all -s $PEERIP -d $CONSOLE -j DROP"; } fi; else { eval "iptables -A INPUT -p all -s $CONSOLE -d $PEERIP -j ACCEPT" && eval "iptables -A INPUT -p all -s $PEERIP -d $CONSOLE -j ACCEPT" && eval "iptables -A OUTPUT -p all -s $CONSOLE -d $PEERIP -j ACCEPT" && eval "iptables -A OUTPUT -p all -s $PEERIP -d $CONSOLE -j ACCEPT"; } fi; }&) 
 KILLOLD=$(kill -9 `ps -w | grep -F "$SCRIPTNAME" | grep -v $$` &> /dev/null)
 LOOP=$(exec "$0" && $KILLOLD && kill $$)
 
@@ -89,7 +89,7 @@ $KILLOLD
 { while ping -q -c 1 -W 1 "${CONSOLE}" | grep -q -F -w "100% packet loss"; do :; done ;} &> /dev/null; wait
 #while sleep 60; do 
 while sleep :; do 
- if { iptables -L | grep -Fq "$PEERIP" ;} || { iptables -L | grep -q `echo "$PEERIP" | sed -E 's/\./-/g'`; } || { iptables -L | grep -Fq "RESOLVE" ;}; then :; else ${BLOCK}; sleep $((2 * COUNT)); wait &> /dev/null; fi
+ if { iptables -L | grep -Fq "$PEERIP" ;} || { iptables -L | grep -q `echo "$PEERIP" | sed -E 's/\./-/g'`; } || { iptables -L | grep -Fq "$RESOLVE" ;}; then :; else ${BLOCK}; sleep $((2 * COUNT)); wait &> /dev/null; fi
 done
 fi
 
