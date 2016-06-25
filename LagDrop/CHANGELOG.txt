@@ -6,6 +6,9 @@ experience lag-free gameplay in online console games utilizing peer-to-peer matc
 
 
 Changes
+Version 1.4.1
+-Reverted DROP to REJECT
+
 Version 1.4.0
 -Minor fixes...
 
