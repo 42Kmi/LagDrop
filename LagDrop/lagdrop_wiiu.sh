@@ -51,7 +51,7 @@ if [ ! -f $DIR/42Kmi/extraip.txt ] ; then
 PEERIP=$(while read -r i; do echo "${i%}"; done < /proc/net/ip_conntrack | grep "${CONSOLE}" | grep -E -o '(([0-9]{1,3}\.?){4})' | grep -o '^.*\..*$' | grep -v "${CONSOLE}" | grep -v "${ROUTER}" | grep -E -v "^192\.168\.(([0-9]{1,3}\.?){2})" | grep -E -v "^$ROUTERSHORT" | grep -E -v "^$WANSHORT" | egrep -E -v "$FILTERIP" | awk '!a[$0]++' | sed -n 1p ) ### Get Wii U Peer's IP
 else
 EXTRAIP=$(while read -r i; do echo "${i%}"; done < /$DIR/42Kmi/extraip.txt | sed -n 1p ) ### Additional IPs to filter out. Make extraip.txt in 42Kmi folder, add IPs there. See README
-PEERIP=$(while read -r i; do echo "${i%}"; done < /proc/net/ip_conntrack | grep "${CONSOLE}" | grep -E -o '(([0-9]{1,3}\.?){4})' | grep -o '^.*\..*$' | grep -v "${CONSOLE}" | grep -v "${ROUTER}" | grep -E -v "^192\.168\.(([0-9]{1,3}\.?){2})" | grep -E -v "^$ROUTERSHORT" | grep -E -v "^$WANSHORT" | egrep -E -v "$FILTERIP" | egrep -E -v "$FILTERIP" | awk '!a[$0]++' | sed -n 1p ) ### Get Wii U Peer's IP
+PEERIP=$(while read -r i; do echo "${i%}"; done < /proc/net/ip_conntrack | grep "${CONSOLE}" | grep -E -o '(([0-9]{1,3}\.?){4})' | grep -o '^.*\..*$' | grep -v "${CONSOLE}" | grep -v "${ROUTER}" | grep -E -v "^192\.168\.(([0-9]{1,3}\.?){2})" | grep -E -v "^$ROUTERSHORT" | grep -E -v "^$WANSHORT" | egrep -E -v "$FILTERIP" | egrep -E -v "$EXTRAIP" | awk '!a[$0]++' | sed -n 1p ) ### Get Wii U Peer's IP
 fi
 RESOLVE=$(nslookup $PEERIP | grep -Fq "Address 1: $PEERIP" | sed -E "s/^.*$PEERIP\ //g")
 mdev=$(ping -q -c "${COUNT}" -W 1 -s "${SIZE}" "${PEERIP}" | grep -F "round-trip" | sed -E 's/^.*([0-9]{1,9}\.[0-9]{3}\/){2}//g' | sed -E "s/\..*ms//g"; &> /dev/null) ### Get mdev from ping
@@ -89,7 +89,7 @@ $KILLOLD
 { while ping -q -c 1 -W 1 "${CONSOLE}" | grep -q -F -w "100% packet loss"; do :; done ;} &> /dev/null; wait
 #while sleep 60; do 
 while sleep :; do 
- if { iptables -L | grep -Fq "$PEERIP" ;} || { iptables -L | grep -q `echo "$PEERIP" | sed -E 's/\./-/g'`; } || { iptables -L | grep -Fq "$RESOLVE" ;}; then :; else ${BLOCK}; sleep $((2 * COUNT)); wait &> /dev/null; fi
+ if { iptables -L | grep -Fq "$PEERIP" ;} || { iptables -L | grep -q `echo "$PEERIP" | sed -E 's/\./-/g'`; } || { iptables -L | grep -Fq "$RESOLVE" || { iptables -nL|sort -u|grep -Fq "$PEERIP"|sed 's/$PEERIP//g'|sed -E 's/^.*--//g'|grep -Eo "(([0-9]{0,3})\.?){4}"|sort -u|grep -Fq "$PEERIP" ; };}; then :; else ${BLOCK}; sleep $((2 * $COUNT)); wait &> /dev/null; fi
 done
 fi
 
