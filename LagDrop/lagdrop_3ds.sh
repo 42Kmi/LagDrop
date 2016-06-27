@@ -34,7 +34,7 @@ CONSOLENAME=3ds
 SCRIPTNAME=$(echo "${0##*/}")
 kill -9 `ps -w | grep -v $$ | grep -F "$SCRIPTNAME"` &> /dev/null
 DIR=$(echo $0 | sed -E "s/\/$SCRIPTNAME//g")
-GETSTATIC=$(echo `nvram get static_leases | grep -E -i -o "$CONSOLENAME.*=([0-9]{1,3}.?){4}" | sed -E 's/=? .*//g' | grep -E -o "([0-9]{1,3}.?){4}"| sed -E 's/\=$//g'`)
+GETSTATIC=$(echo `nvram get static_leases | grep -E -i -o "$CONSOLENAME.*=([0-9]{1,3}\.?){4}" | sed -E 's/=? .*//g' | grep -E -o "([0-9]{1,3}\.?){4}"| sed -E 's/\=$//g'`)
 if [ ! -f $DIR/42Kmi ] ; then mkdir -p $DIR/42Kmi ; fi
 if [ ! -f $DIR/42Kmi/options_$CONSOLENAME.txt ] ; then echo -e "$CONSOLENAME=$GETSTATIC\nLIMIT=3\nCOUNT=5\nSIZE=4\nCLEARINTERVAL=300\n;" > $DIR/42Kmi/options_$CONSOLENAME.txt; fi ### Makes options file if it doesn't exist
 ##### Make Files #####
