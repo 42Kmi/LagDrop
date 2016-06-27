@@ -6,6 +6,11 @@ experience lag-free gameplay in online console games utilizing peer-to-peer matc
 
 
 Changes
+Version 1.5.0
+-Fixed redundancy issue. More efficient iptables rules handling.
+-Prevent peer IP pinging if peer IP is already in iptables
+-LagDrop now sets rules to its own chain to prevent interference with user's other existing iptable rules
+
 Version 1.4.1
 -Reverted DROP to REJECT
 
