@@ -6,6 +6,9 @@ experience lag-free gameplay in online console games utilizing peer-to-peer matc
 
 
 Changes
+Version 1.6.0
+-More efficient. Only new peer IPs are checked.
+
 Version 1.5.0
 -Fixed redundancy issue. More efficient iptables rules handling.
 -Prevent peer IP pinging if peer IP is already in iptables

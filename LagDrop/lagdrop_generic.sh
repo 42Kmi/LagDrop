@@ -1,6 +1,6 @@
 #!/bin/sh
 ##### 42Kmi LagDrop, Written by 42Kmi. Property of 42Kmi, LLC. #####
-##### Ver 1.5.0
+##### Ver 1.6.0
 ######################################################################################################
 #               .////////////   -+osyyys+-   `////////////////////-                      `//////////`#
 #              /Ny++++++++hM+/hNho/----:+hNo hN++++++oMMm++++++mMy`                      hMhhhhhhdMh #
@@ -47,12 +47,12 @@ ROUTER=$(nvram get lan_ipaddr | grep -E -o '(([0-9]{1,3}\.?){4})')
 ROUTERSHORT=$(nvram get lan_ipaddr | grep -E -o '(([0-9]{1,3}\.?){2})' | sed -n 1p)
 WANSHORT=$(nvram get wan_ipaddr | grep -E -o '(([0-9]{1,3}\.?){2})' | sed -n 1p)
 FILTERIP=$(echo "FORMATED_IPs_HERE")
-
+IGNORE=$({ if { { iptables -nL LDACCEPT && iptables -nL LDREJECT; } | grep -Eoq "([0-9]{1,3}\.?){4}"; } then echo $({ iptables -nL LDACCEPT && iptables -nL LDREJECT; } | grep -Eo "([0-9]{1,3}\.?){4}" | awk '!a[$0]++' | sed -E 's/^/\^/g' | sed 's/\./\\\./g')|sed -E 's/ /\|/g'; else echo "${ROUTER}"; fi; })
 if [ ! -f $DIR/42Kmi/extraip.txt ] ; then
-PEERIP=$(while read -r i; do echo "${i%}"; done < /proc/net/ip_conntrack | grep "${CONSOLE}" | grep -E -o '(([0-9]{1,3}\.?){4})' | grep -o '^.*\..*$' | grep -v "${CONSOLE}" | grep -v "${ROUTER}" | grep -E -v "^192\.168\.(([0-9]{1,3}\.?){2})" | grep -E -v "^$ROUTERSHORT" | grep -E -v "^$WANSHORT" | egrep -E -v "$FILTERIP" | awk '!a[$0]++' | sed -n 1p ) ### Get Wii U Peer's IP
+PEERIP=$(while read -r i; do echo "${i%}"; done < /proc/net/ip_conntrack | grep "${CONSOLE}" | grep -E -o '(([0-9]{1,3}\.?){4})' | grep -o '^.*\..*$' | grep -v "${CONSOLE}" | grep -v "${ROUTER}" |grep -Ev "${IGNORE}"| grep -E -v "^192\.168\.(([0-9]{1,3}\.?){2})" | grep -E -v "^$ROUTERSHORT" | grep -E -v "^$WANSHORT" | egrep -E -v "$FILTERIP" | awk '!a[$0]++' | sed -n 1p ) ### Get Wii U Peer's IP
 else
 EXTRAIP=$(while read -r i; do echo "${i%}"; done < /$DIR/42Kmi/extraip.txt | sed -n 1p ) ### Additional IPs to filter out. Make extraip.txt in 42Kmi folder, add IPs there. See README
-PEERIP=$(while read -r i; do echo "${i%}"; done < /proc/net/ip_conntrack | grep "${CONSOLE}" | grep -E -o '(([0-9]{1,3}\.?){4})' | grep -o '^.*\..*$' | grep -v "${CONSOLE}" | grep -v "${ROUTER}" | grep -E -v "^192\.168\.(([0-9]{1,3}\.?){2})" | grep -E -v "^$ROUTERSHORT" | grep -E -v "^$WANSHORT" | egrep -E -v "$FILTERIP" | egrep -E -v "$EXTRAIP" | awk '!a[$0]++' | sed -n 1p ) ### Get Wii U Peer's IP
+PEERIP=$(while read -r i; do echo "${i%}"; done < /proc/net/ip_conntrack | grep "${CONSOLE}" | grep -E -o '(([0-9]{1,3}\.?){4})' | grep -o '^.*\..*$' | grep -v "${CONSOLE}" | grep -v "${ROUTER}" |grep -Ev "${IGNORE}"| grep -E -v "^192\.168\.(([0-9]{1,3}\.?){2})" | grep -E -v "^$ROUTERSHORT" | grep -E -v "^$WANSHORT" | egrep -E -v "$FILTERIP" | egrep -E -v "$EXTRAIP" | awk '!a[$0]++' | sed -n 1p ) ### Get Wii U Peer's IP
 fi
 mdev=$({ if { iptables -nL| grep -Foq "$PEERIP"; }; then :; else ping -q -c "${COUNT}" -W 1 -s "${SIZE}" "${PEERIP}" | grep -F "round-trip" | sed -E 's/^.*([0-9]{1,9}\.[0-9]{3}\/){2}//g' | sed -E "s/\..*ms//g"; &> /dev/null; fi; } &) ### Get mdev from ping
 BLOCK=$({ if { iptables -nL| grep -Foq "$PEERIP"; }; then :; else { if [ "${mdev}" -gt "${LIMIT}" ]; then { eval "iptables -A LDREJECT -p all -s $PEERIP -d $CONSOLE -j REJECT"; }; else { eval "iptables -A LDACCEPT -p all -s $PEERIP -d $CONSOLE -j ACCEPT"; } fi; } fi; } &)
