@@ -47,7 +47,7 @@ ROUTER=$(nvram get lan_ipaddr | grep -E -o '(([0-9]{1,3}\.?){4})')
 ROUTERSHORT=$(nvram get lan_ipaddr | grep -E -o '(([0-9]{1,3}\.?){2})' | sed -n 1p)
 WANSHORT=$(nvram get wan_ipaddr | grep -E -o '(([0-9]{1,3}\.?){2})' | sed -n 1p)
 FILTERIP=$(echo "FORMATED_IPs_HERE")
-IGNORE=$({ if { { iptables -nL LDACCEPT && iptables -nL LDREJECT; } | grep -Eoq "([0-9]{1,3}\.?){4}"; } then echo $({ iptables -nL LDACCEPT && iptables -nL LDREJECT; } | grep -Eo "([0-9]{1,3}\.?){4}" | awk '!a[$0]++' | sed -E 's/^/\^/g' | sed 's/\./\\\./g')|sed -E 's/ /\|/g'; else echo "${ROUTER}"; fi; })
+IGNORE=$({ if { { iptables -nL LDACCEPT && iptables -nL LDREJECT; } | grep -Eoq "([0-9]{1,3}\.?){4}"; } then echo $({ iptables -nL LDACCEPT && iptables -nL LDREJECT; } | grep -Eo "([0-9]{1,3}\.?){4}" | awk '!a[$0]++' |grep -v "${CONSOLE}"| sed -E 's/^/\^/g' | sed 's/\./\\\./g')|sed -E 's/ /\|/g'; else echo "${ROUTER}"; fi; })
 if [ ! -f $DIR/42Kmi/extraip.txt ] ; then
 PEERIP=$(while read -r i; do echo "${i%}"; done < /proc/net/ip_conntrack | grep "${CONSOLE}" | grep -E -o '(([0-9]{1,3}\.?){4})' | grep -o '^.*\..*$' | grep -v "${CONSOLE}" | grep -v "${ROUTER}" |grep -Ev "${IGNORE}"| grep -E -v "^192\.168\.(([0-9]{1,3}\.?){2})" | grep -E -v "^$ROUTERSHORT" | grep -E -v "^$WANSHORT" | egrep -E -v "$FILTERIP" | awk '!a[$0]++' | sed -n 1p ) ### Get Wii U Peer's IP
 else
