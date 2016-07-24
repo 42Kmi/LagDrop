@@ -6,6 +6,9 @@ experience lag-free gameplay in online console games utilizing peer-to-peer matc
 
 
 Changes
+Version 1.6.1
+- Adjusted WAN and LAN filters
+
 Version 1.6.0
 -More efficient. Only new peer IPs are checked.
 
