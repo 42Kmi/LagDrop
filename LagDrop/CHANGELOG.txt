@@ -6,6 +6,10 @@ experience lag-free gameplay in online console games utilizing peer-to-peer matc
 
 
 Changes
+Version 1.6.2
+- Adjusted WAN and LAN filters to escape "." for regex
+- Removed some unecessary spaces from command options. 16 bytes smaller!
+
 Version 1.6.1
 - Adjusted WAN and LAN filters
 
