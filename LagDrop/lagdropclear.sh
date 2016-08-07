@@ -1,11 +1,8 @@
 #!/bin/sh
-#SCRIPTNAME=$(echo "${0##*/}")
-#DIR=$(echo $0 | sed -E "s/\/$SCRIPTNAME//g")
-#CONSOLENAME=wiiu
-#CLEARINTERVAL=$(while read -r i; do echo "${i%}"; done < /$DIR/42Kmi/options_$CONSOLENAME.txt | sed -n 5p | sed -E 's/^.*=//g') ### Clear time in seconds. 
-CLEARINTERVAL=300
+##### LagDrop iptables clear script. Clears LagDrop related iptables at the given interval. In Minutes.#####
 
-{
-#while $DIR/lagdrop_$CONSOLENAME.sh; do { while sleep ${CLEARINTERVAL}; do { iptables -F LDREJECT; iptables -F LDACCEPT;}; done; } done
-if { iptables -L| grep -Eoq "(LDREJECT|LDACCEPT).*anywhere"; }; then while sleep ${CLEARINTERVAL}; do { iptables -F LDREJECT && iptables -F LDACCEPT; } done; fi
-} &
+#CLEARINTERVAL=60
+##### Add this to cron to run at some interval. Execute this script to clear the LagDrop chains from iptables
+
+#if { iptables -L| grep -Eoq "(LDREJECT|LDACCEPT).*anywhere"; }; then while sleep ( $((60 * ${CLEARINTERVAL})); do { iptables -F LDREJECT && iptables -F LDACCEPT && iptables -F LDREJECTOUT; } done; fi
+iptables -F LDREJECT && iptables -F LDACCEPT && iptables -F LDREJECTOUT

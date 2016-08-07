@@ -6,6 +6,13 @@ experience lag-free gameplay in online console games utilizing peer-to-peer matc
 
 
 Changes
+Version 1.7.0
+- Changed lag metric from Ping mdev to Ping avg
+- Changes to default settings.
+- Removed clear interval from lagdrop.sh
+- Added mode selection! Determine who to block by different tests. 1 for Ping, 2 for TraceRoute, 3 for Ping or TraceRoute, 4 for Ping and TraceRoute
+- Added editable parameters for TraceRoute tests: Max TTL, Probes, Trace Limit
+
 Version 1.6.2
 - Adjusted WAN and LAN filters to escape "." for regex
 - Removed some unecessary spaces from command options. 16 bytes smaller!
