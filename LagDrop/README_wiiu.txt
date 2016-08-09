@@ -1,4 +1,5 @@
 42Kmi LagDrop
+Avoid laggy matches in peer-to-peer matchmaking online games, such as Super Smash Bros. for Wii U.
 
 How it works
 ________________

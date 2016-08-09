@@ -6,6 +6,9 @@ experience lag-free gameplay in online console games utilizing peer-to-peer matc
 
 
 Changes
+Version 1.7.1
+-Corrected an error in TraceRoute average calculation that divided summed times by one less than the number of recorded times.
+
 Version 1.7.0
 - Changed lag metric from Ping mdev to Ping avg
 - Changes to default settings.
