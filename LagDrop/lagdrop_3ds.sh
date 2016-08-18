@@ -1,6 +1,6 @@
 #!/bin/sh
 ##### 42Kmi LagDrop, Written by 42Kmi. Property of 42Kmi, LLC. #####
-##### Ver 1.7.1
+##### Ver 1.7.2
 ######################################################################################################
 #               .////////////   -+osyyys+-   `////////////////////-                      `//////////`#
 #              /Ny++++++++hM+/hNho/----:+hNo hN++++++oMMm++++++mMy`                      hMhhhhhhdMh #
@@ -36,8 +36,11 @@ kill -9 `ps -w | grep -v $$ | grep -F "$SCRIPTNAME"` &> /dev/null
 DIR=$(echo $0 | sed -E "s/\/$SCRIPTNAME//g")
 GETSTATIC=$(echo `nvram get static_leases | grep -Ei -o "$CONSOLENAME.*=([0-9]{1,3}\.?){4}" | sed -E 's/=? .*//g' | grep -Eo "([0-9]{1,3}\.?){4}"| sed -E 's/\=$//g'`)
 if [ ! -f $DIR/42Kmi ] ; then mkdir -p $DIR/42Kmi ; fi
-if [ ! -f $DIR/42Kmi/options_$CONSOLENAME.txt ] ; then echo -e "$CONSOLENAME=$GETSTATIC\nPINGLIMIT=90\nCOUNT=5\nSIZE=54\nMODE=1\nMAXTTL=10\nPROBES=5\nTRACELIMIT=20\n;" > $DIR/42Kmi/options_$CONSOLENAME.txt; fi ### Makes options file if it doesn't exist
+if [ ! -f $DIR/42Kmi/options_$CONSOLENAME.txt ] ; then echo -e "$CONSOLENAME=$GETSTATIC\nPINGLIMIT=90\nCOUNT=5\nSIZE=54\nMODE=1\nMAXTTL=10\nPROBES=5\nTRACELIMIT=20\nSWITCH=1\n;" > $DIR/42Kmi/options_$CONSOLENAME.txt; fi ### Makes options file if it doesn't exist
 ##### Make Files #####
+SWITCH=$(while read -r i; do echo "${i%}"; done < /$DIR/42Kmi/options_$CONSOLENAME.txt | sed -n 9p | sed -E 's/^.*=//g') ### Enable (1)/Disable(0) LagDrop
+if [ "${SWITCH}" = 0 ]; then :;
+else
 CONSOLE=$(while read -r i; do echo "${i%}"; done < /$DIR/42Kmi/options_$CONSOLENAME.txt | sed -n 1p | sed -E 's/^.*=//g') ### Your Wii U's IP address. Change this in the $CONSOLENAMEip.txt file
 LIMIT=$(while read -r i; do echo "${i%}"; done < /$DIR/42Kmi/options_$CONSOLENAME.txt | sed -n 2p | sed -E 's/^.*=//g') ### Your max average millisecond limit. Peers pinging higher than this value are blocked. Default is 3.
 COUNT=$(while read -r i; do echo "${i%}"; done < /$DIR/42Kmi/options_$CONSOLENAME.txt | sed -n 3p | sed -E 's/^.*=//g') ### How many packets to send. Default is 5
@@ -138,6 +141,7 @@ fi
 $KILLOLD
 $LOOP
 } &> /dev/null
+fi
 ##### Ban SLOW Peers #####
 ##### 42Kmi International Competitive Gaming #####
 ##### Visit 42Kmi.com #####

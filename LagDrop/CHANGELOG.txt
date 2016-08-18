@@ -6,6 +6,9 @@ experience lag-free gameplay in online console games utilizing peer-to-peer matc
 
 
 Changes
+Version 1.7.2
+- Added master switch to allow easy toggling of LagDrop. 1 to enable, 2 to disable. Default is 1. Set in the options.txt file
+
 Version 1.7.1
 -Corrected an error in TraceRoute average calculation that divided summed times by one less than the number of recorded times.
 
