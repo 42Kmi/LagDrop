@@ -1,4 +1,4 @@
-# 42Kmi LagDrop
+#42Kmi LagDrop
 Avoid laggy matches in peer-to-peer matchmaking online games, such as Super Smash Bros. for Wii U.
 
 How it works
@@ -31,26 +31,19 @@ This guide uses DD-WRT as reference and assumes that you are familiar with DD-WR
 6. Play Smash Bros for Wii U online and enjoy! Be Glorious!
 
 Options.txt file: 4 parameters
-
-WiiU: your Wii U’s static IP. This is filled by default after setting a static IP for your Wii U. You can change this to the Wii U static IP of your choice.
-
-PingLimit: This is the maximum millisecond ping time allowed before blocking the peer. Default is 90.
-
-Count: This is the number of packets to send to peer. Default is 5. This also controls the interval between script runs, (2 * COUNT_VALUE), in seconds.
-
-Size: This is the size of the packet in bytes. This is really a test of the peer’s bandwidth. Default is 1024
-
-Mode: Determine who to block by different tests. 1 for Ping, 2 for TraceRoute, 3 for Ping or TraceRoute, 4 for Ping and TraceRoute. Default is 1.
-
-Max TTL: Maximum TTL for the TraceRoute test. Default is 10
-
-Probes: Number of times each node is checked during TraceRoute. Default is 5
-
-TraceLimit: The limit of the TraeRoute time average. Values higher than this are blocked. Default is 20
+1. WiiU [console name]: your Wii U’s static IP. This is filled by default after setting a static IP for your Wii U. You can change this to the Wii U static IP of your choice.
+2. PingLimit: This is the maximum millisecond ping time allowed before blocking the peer. Default is 90.
+3. Count: This is the number of packets to send to peer. Default is 5. This also controls the interval between script runs, (2 * COUNT_VALUE), in seconds.
+4. Size: This is the size of the packet in bytes. This is really a test of the peer’s bandwidth. Default is 1024
+5. Mode: Determine who to block by different tests. 1 for Ping, 2 for TraceRoute, 3 for Ping or TraceRoute, 4 for Ping and TraceRoute. Default is 1.
+6. Max TTL: Maximum TTL for the TraceRoute test. Default is 10
+7. Probes: Number of times each node is checked during TraceRoute. Default is 5
+8. TraceLimit: The limit of the TraeRoute time average. Values higher than this are blocked. Default is 20
+9. ACTION: Action select. Choose to REJECT (0 or REJECT) or DROP (1 or DROP) peers Default is REJECT.
+10. SWITCH: The master switch to enable (1 or ON) or disable (0 OFF) LagDrop. Default is ON.
 
 extraip.txt file
-
-User can create this regex-formatted to filter additional IP addresses from LagDrop. All entries MUST be on the same line and separated by the pipe (|) with periods escaped with backslash \
-
-Eg: ^192\.168\. will filter all addresses begining with 192.168 from being checked against LagDrop.
-^192\.1(([0-3]{1}))0\. will filter addresses begining with 192.100, 192.110, 192.120, and 192.130
+	User can create this regex-formatted to filter additional IP addresses from LagDrop. All entries MUST be on the same line and separated by the pipe (|) with periods escaped with backslash \
+	
+	Eg: ^192\.168\. will filter all addresses begining with 192.168 from being checked against LagDrop.
+	^192\.1(([0-3]{1}))0\. will filter addresses begining with 192.100, 192.110, 192.120, and 192.130
