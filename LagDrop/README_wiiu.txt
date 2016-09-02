@@ -33,7 +33,7 @@ This guide uses DD-WRT as reference and assumes that you are familiar with DD-WR
 Options.txt file: 4 parameters
 1. WiiU [console name]: your Wii U’s static IP. This is filled by default after setting a static IP for your Wii U. You can change this to the Wii U static IP of your choice.
 2. PingLimit: This is the maximum millisecond ping time allowed before blocking the peer. Default is 90.
-3. Count: This is the number of packets to send to peer. Default is 5. This also controls the interval between script runs, (2 * COUNT_VALUE), in seconds.
+3. Count: This is the number of packets to send to peer. Default is 5.
 4. Size: This is the size of the packet in bytes. This is really a test of the peer’s bandwidth. Default is 1024
 5. Mode: Determine who to block by different tests. 1 for Ping, 2 for TraceRoute, 3 for Ping or TraceRoute, 4 for Ping and TraceRoute. Default is 1.
 6. Max TTL: Maximum TTL for the TraceRoute test. Default is 10

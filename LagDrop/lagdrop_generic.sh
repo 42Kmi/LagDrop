@@ -1,6 +1,6 @@
 #!/bin/sh
 ##### 42Kmi LagDrop, Written by 42Kmi. Property of 42Kmi, LLC. #####
-##### Ver 1.7.3
+##### Ver 1.7.4
 ######################################################################################################
 #               .////////////   -+osyyys+-   `////////////////////-                      `//////////`#
 #              /Ny++++++++hM+/hNho/----:+hNo hN++++++oMMm++++++mMy`                      hMhhhhhhdMh #
@@ -50,7 +50,7 @@ ROUTER=$(nvram get lan_ipaddr | grep -Eo '(([0-9]{1,3}\.?){4})')
 ROUTERSHORT=$(nvram get lan_ipaddr | grep -Eo '(([0-9]{1,3}\.?){3})' | sed -E 's/\./\\./g' | sed -n 1p)
 WANSHORT=$(nvram get wan_ipaddr | grep -Eo '(([0-9]{1,3}\.?){4})' | sed -E 's/\./\\./g' | sed -n 1p)
 FILTERIP=$(echo "FORMATED_IPs_HERE")
-IGNORE=$({ if { { iptables -nL LDACCEPT && iptables -nL LDREJECT; } | grep -Eoq "([0-9]{1,3}\.?){4}"; } then echo "$({ iptables -nL LDACCEPT && iptables -nL LDREJECT; } | grep -Eo "([0-9]{1,3}\.?){4}" | awk '!a[$0]++' |grep -v "${CONSOLE}"| sed -E 's/^/\^/g' | sed 's/\./\\\./g')"|sed -E 's/ /\|/g'; else echo "${ROUTER}"; fi; })
+IGNORE=$(echo $({ if { { iptables -nL LDACCEPT && iptables -nL LDREJECT; } | grep -Eoq "([0-9]{1,3}\.?){4}"; } then echo "$({ iptables -nL LDACCEPT && iptables -nL LDREJECT; } | grep -Eo "([0-9]{1,3}\.?){4}" | awk '!a[$0]++' |grep -v "${CONSOLE}"| sed -E 's/^/\^/g' | sed 's/\./\\\./g')"|sed -E 's/$/\|/g'; else echo "${ROUTER}"; fi; })|sed -E 's/\|$//g'|sed -E 's/\ //g')
 if [ ! -f $DIR/42Kmi/extraip.txt ] ; then
 PEERIP=$(while read -r i; do echo "${i%}"; done < /proc/net/ip_conntrack | grep "${CONSOLE}" | grep -Eo '(([0-9]{1,3}\.?){4})' | grep -o '^.*\..*$' | grep -v "${CONSOLE}" | grep -v "${ROUTER}" |grep -Ev "${IGNORE}"| grep -Ev "^192\.168\.(([0-9]{1,3}\.?){2})" | grep -Ev "^$ROUTERSHORT" | grep -Ev "^$WANSHORT" | egrep -Ev "$FILTERIP" | awk '!a[$0]++' | sed -n 1p ) ### Get Wii U Peer's IP
 else
@@ -109,7 +109,8 @@ else
 fi
 ##### BLOCK #####
 
-LOOP=$(exec "$0" && $KILLOLD && kill $$)
+#LOOP=$(exec "$0" && kill $$)
+LOOP=$(exec "$0")
 
 {
 ##########
@@ -125,7 +126,7 @@ echo $$ > ${LOCKFILE}
 
 # do stuff
 #sleep 1000
-$KILLOLD
+$LOOP
 
 rm -f ${LOCKFILE}
 ##########
@@ -133,15 +134,15 @@ rm -f ${LOCKFILE}
 
 {
 if { ping -q -c 1 -W 1 -s 1 "${CONSOLE}" | grep -q -F -w "100% packet loss" ;} &> /dev/null; then :; else
-$KILLOLD
+$LOOP
 { while ping -q -c 1 -W 1 "${CONSOLE}" | grep -q -F -w "100% packet loss"; do :; done ;} &> /dev/null; wait
 #while sleep 60; do 
 while sleep :; do 
- if { iptables -nL| grep -Foq "$PEERIP"; }; then :; else ${BLOCK}; sleep $((2 * $COUNT)); wait &> /dev/null; fi
-done
+ if { iptables -nL| grep -Foq "$PEERIP"; }; then :; else ${BLOCK}; wait &> /dev/null; fi
+
+ done
 fi
 
-$KILLOLD
 $LOOP
 } &> /dev/null
 }

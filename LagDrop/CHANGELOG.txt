@@ -6,17 +6,22 @@ experience lag-free gameplay in online console games utilizing peer-to-peer matc
 
 
 Changes
-Version 1.7.3
+Version 1.7.4 - 2016-09-01
+- Minor change to ignore function. Corrected a previously overlooked error.
+- Removed wait time restart script. Faster testing of peers.
+- Started adding dates to change log. 
+
+Version 1.7.3 - 2016-08-24
 - Fixed master switch function to exit script instead of "truing"
 - Added action select. User can choose to REJECT (0) peers (default action) or DROP (1) them.
 
-Version 1.7.2
+Version 1.7.2 - 2016-08-18
 - Added master switch to allow easy toggling of LagDrop. 1 to enable, 0 to disable. Default is 1. Set in the options.txt file
 
-Version 1.7.1
+Version 1.7.1 - 2016-08-09
 -Corrected an error in TraceRoute average calculation that divided summed times by one less than the number of recorded times.
 
-Version 1.7.0
+Version 1.7.0 - 2016-08-07
 - Changed lag metric from Ping mdev to Ping avg
 - Changes to default settings.
 - Removed clear interval from lagdrop.sh
@@ -30,10 +35,10 @@ Version 1.6.2
 Version 1.6.1
 - Adjusted WAN and LAN filters
 
-Version 1.6.0
+Version 1.6.0 - 2016-07-16
 -More efficient. Only new peer IPs are checked.
 
-Version 1.5.0
+Version 1.5.0 - 2016-06-27
 -Fixed redundancy issue. More efficient iptables rules handling.
 -Prevent peer IP pinging if peer IP is already in iptables
 -LagDrop now sets rules to its own chain to prevent interference with user's other existing iptable rules
@@ -41,38 +46,38 @@ Version 1.5.0
 Version 1.4.1
 -Reverted DROP to REJECT
 
-Version 1.4.0
+Version 1.4.0 - 2016-06-24
 -Minor fixes...
 
-Version 1.3.1
+Version 1.3.1 - 2016-06-23
 -REJECT to DROP
 
-Version 1.3.0
+Version 1.3.0 - 2016-06-18
 -User-defined periodic clearing of LagDrop iptables entries
 
-Version 1.2.1
+Version 1.2.1 - 2016-06-17
 -Minor changes for stability
 
-Version 1.2.0
+Version 1.2.0 - 2016-06-16
 -Prevent pinging of checked IPs
 -Increased frequency of IP checks
 
-Version 1.1.1
+Version 1.1.1 - 2016-06-14
 -Minor IP block fix
 
-Version 1.1.0
+Version 1.1.0 - 2016-06-14
 - Fixed redundant IP blocks.
 
-Version 1.0.0
+Version 1.0.0 - 2016-06-13
 - Fixed issue causing router crash
 - Added conditional filter of additional IP address by user via extraip.txt
 - Included Xbox One version
 
-Version 0.9.0
+Version 0.9.0 - 2016-04-03
 Minor fix in getting IP addresses
 Fixed lagrop.startup
 
-Version 0.8.0:
+Version 0.8.0 - 2016-04-02
 - Semantic versioning begining with this release.
 - Change log
 - lagdrop.sh renamed to lagdrop_wiiu.sh, and script is adjusted to reflect those changes
