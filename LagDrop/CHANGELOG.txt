@@ -6,6 +6,11 @@ experience lag-free gameplay in online console games utilizing peer-to-peer matc
 
 
 Changes
+Version 1.7.5 - 20016-09-15
+- Improved loopback function. Script now uses function redundancy within script instead of executing script again at termination of script. Just initiate once.
+- Fixed intiation process to limit LagDrop specific tables creation to one in iptables
+- Added LagDrop kill script. Just run lagdropkill.sh to terminate all scripts with lagdrop in their names.
+
 Version 1.7.4 - 2016-09-01
 - Minor change to ignore function. Corrected a previously overlooked error.
 - Removed wait time restart script. Faster testing of peers.

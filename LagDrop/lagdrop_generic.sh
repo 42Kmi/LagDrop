@@ -1,6 +1,6 @@
 #!/bin/sh
 ##### 42Kmi LagDrop, Written by 42Kmi. Property of 42Kmi, LLC. #####
-##### Ver 1.7.4
+##### Ver 1.7.5
 ######################################################################################################
 #               .////////////   -+osyyys+-   `////////////////////-                      `//////////`#
 #              /Ny++++++++hM+/hNho/----:+hNo hN++++++oMMm++++++mMy`                      hMhhhhhhdMh #
@@ -26,7 +26,7 @@
 ##### Ban SLOW Peers #####
 
 ##### Prepare LagDrop's IPTABLES Chains #####
-if { iptables -L| grep -Eoq "(LDREJECT|LDACCEPT).*anywhere"; }; then :; else iptables -N LDREJECT; iptables -P LDREJECT DROP; iptables -N LDACCEPT; iptables -P LDACCEPT ACCEPT; iptables -t filter -A FORWARD -j LDACCEPT; iptables -t filter -A FORWARD -j LDREJECT; fi
+if { iptables -L| grep -Eoq "(LDREJECT|LDACCEPT).*anywhere"; }; then :; else iptables -N LDREJECT && iptables -N LDACCEPT; iptables -P LDREJECT DROP && iptables -P LDACCEPT ACCEPT; iptables -t filter -A FORWARD -j LDACCEPT && iptables -t filter -A FORWARD -j LDREJECT; fi
 ##### Prepare LagDrop's IPTABLES Chains #####
 
 ##### Make Files #####
@@ -109,7 +109,6 @@ else
 fi
 ##### BLOCK #####
 
-#LOOP=$(exec "$0" && kill $$)
 LOOP=$(exec "$0")
 
 {
@@ -126,27 +125,27 @@ echo $$ > ${LOCKFILE}
 
 # do stuff
 #sleep 1000
-$LOOP
 
 rm -f ${LOCKFILE}
 ##########
 } &
 
+lagdropexecute ()
+{ #LagDrop loops within here. It's cool, yo.
 {
 if { ping -q -c 1 -W 1 -s 1 "${CONSOLE}" | grep -q -F -w "100% packet loss" ;} &> /dev/null; then :; else
-$LOOP
+lagdropexecute
 { while ping -q -c 1 -W 1 "${CONSOLE}" | grep -q -F -w "100% packet loss"; do :; done ;} &> /dev/null; wait
-#while sleep 60; do 
 while sleep :; do 
  if { iptables -nL| grep -Foq "$PEERIP"; }; then :; else ${BLOCK}; wait &> /dev/null; fi
 
  done
 fi
 
-$LOOP
+lagdropexecute
 } &> /dev/null
-}
-fi
+} &> /dev/null
+} fi
 ##### Ban SLOW Peers #####
 ##### 42Kmi International Competitive Gaming #####
 ##### Visit 42Kmi.com #####
