@@ -1,9 +1,13 @@
 42Kmi LagDrop
 Avoid laggy matches in peer-to-peer matchmaking online games, such as Super Smash Bros. for Wii U.
 
-How it works
+LagDrop in action at https://www.youtube.com/watch?v=6g9MiaE-2k0
+
+How it works 
 ________________
 Games such as Super Smash Bros for Wii U utilizes peer-to-peer matchmaking, meaning that opponents connect directly to each other for matches and do not rely on some far away server. This script scans for peer IP addresses connected to your Wii U and pings them with the details specified in options.txt file. Any IP address that returns an average ping time higher than your specified limit is blocked from your Wii U. Ping times above your limit are anticipated to be laggy, so why not prevent potential lag?
+
+LagDrop is natively console-agnostic. Console specific scripts reflect console-specific severs ignored before testing for pingd times. IE, if the conles IP address in option.txt file for the lagdrop_wiiu script is set to a PlayStation 4 IP address, LagDrop will run for the PlayStation 4, however Sony IP addresses will still be scanned as the lagdrop_wiiu script is set to ignore Nintendo sever IP addresses.
 
 How to use
 ________________

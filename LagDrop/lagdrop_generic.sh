@@ -1,6 +1,6 @@
 #!/bin/sh
 ##### 42Kmi LagDrop, Written by 42Kmi. Property of 42Kmi, LLC. #####
-##### Ver 1.7.5
+##### Ver 1.7.6
 ######################################################################################################
 #               .////////////   -+osyyys+-   `////////////////////-                      `//////////`#
 #              /Ny++++++++hM+/hNho/----:+hNo hN++++++oMMm++++++mMy`                      hMhhhhhhdMh #
@@ -26,7 +26,8 @@
 ##### Ban SLOW Peers #####
 
 ##### Prepare LagDrop's IPTABLES Chains #####
-if { iptables -L| grep -Eoq "(LDREJECT|LDACCEPT).*anywhere"; }; then :; else iptables -N LDREJECT && iptables -N LDACCEPT; iptables -P LDREJECT DROP && iptables -P LDACCEPT ACCEPT; iptables -t filter -A FORWARD -j LDACCEPT && iptables -t filter -A FORWARD -j LDREJECT; fi
+if { iptables -L| grep -Eoq "(LDACCEPT).*anywhere"; }; then :; else iptables -N LDACCEPT; iptables -P LDACCEPT ACCEPT; iptables -t filter -A FORWARD -j LDACCEPT; fi
+if { iptables -L| grep -Eoq "(LDREJECT).*anywhere"; }; then :; else iptables -N LDREJECT; iptables -P LDREJECT DROP; iptables -t filter -A FORWARD -j LDREJECT; fi
 ##### Prepare LagDrop's IPTABLES Chains #####
 
 ##### Make Files #####
@@ -35,8 +36,6 @@ SCRIPTNAME=$(echo "${0##*/}")
 kill -9 `ps -w | grep -v $$ | grep -F "$SCRIPTNAME"` &> /dev/null
 DIR=$(echo $0 | sed -E "s/\/$SCRIPTNAME//g")
 SWITCH=$(while read -r i; do echo "${i%}"; done < /$DIR/42Kmi/options_$CONSOLENAME.txt | sed -n 10p | sed -E 's/^.*=//g') ### Enable (1)/Disable(0) LagDrop
-if [ "${SWITCH}" = 0 ] || [ "${SWITCH}" = OFF ] || [ "${SWITCH}" = off ]; then exit;
-else {
 GETSTATIC=$(echo `nvram get static_leases | grep -Ei -o "$CONSOLENAME.*=([0-9]{1,3}\.?){4}" | sed -E 's/=? .*//g' | grep -Eo "([0-9]{1,3}\.?){4}"| sed -E 's/\=$//g'`)
 if [ ! -f $DIR/42Kmi ] ; then mkdir -p $DIR/42Kmi ; fi
 if [ ! -f $DIR/42Kmi/options_$CONSOLENAME.txt ] ; then echo -e "$CONSOLENAME=$GETSTATIC\nPINGLIMIT=90\nCOUNT=5\nSIZE=1024\nMODE=1\nMAXTTL=10\nPROBES=5\nTRACELIMIT=20\nACTION=REJECT\nSWITCH=ON\n;" > $DIR/42Kmi/options_$CONSOLENAME.txt; fi ### Makes options file if it doesn't exist
@@ -130,6 +129,8 @@ rm -f ${LOCKFILE}
 ##########
 } &
 
+if [ "${SWITCH}" = 0 ] || [ "${SWITCH}" = OFF ] || [ "${SWITCH}" = off ]; then exit && $LOOP;
+else {
 lagdropexecute ()
 { #LagDrop loops within here. It's cool, yo.
 {
