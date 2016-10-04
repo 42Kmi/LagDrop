@@ -3,6 +3,8 @@ Avoid laggy matches in peer-to-peer matchmaking online games, such as Super Smas
 
 ![LagDrop](http://i.imgur.com/GGJmYyr.png)
 
+[See LagDrop in action!](https://www.youtube.com/watch?v=6g9MiaE-2k0)
+
 How it works
 ________________
 Games such as Super Smash Bros for Wii U utilizes peer-to-peer matchmaking, meaning that opponents connect directly to each other for matches and do not rely on some far away server. This script scans for peer IP addresses connected to your Wii U and pings them with the details specified in options.txt file. Any IP address that returns an average ping time higher than your specified limit is blocked from your Wii U. Ping times above your limit are anticipated to be laggy, so why not prevent potential lag?
@@ -51,3 +53,6 @@ extraip.txt file: User can create this regex-formatted file to filter additional
 
 * Eg: ^192\.168\. will filter all addresses begining with 192.168 from being checked against LagDrop.
 * 	^192\.1(([0-3]{1}))0\. will filter addresses begining with 192.100, 192.110, 192.120, and 192.130
+
+[![Donate to keep us going!](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=HA78KL8EWDJ8Q)
+Donate to keep us going!
