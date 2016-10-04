@@ -35,11 +35,17 @@
 
 <p><img src="http://i.imgur.com/GGJmYyr.png" alt="LagDrop"></p>
 
+<p><a href="https://www.youtube.com/watch?v=6g9MiaE-2k0">See LagDrop in action!</a></p>
+
 <p>How it works</p>
 
 <hr>
 
 <p>Games such as Super Smash Bros for Wii U utilizes peer-to-peer matchmaking, meaning that opponents connect directly to each other for matches and do not rely on some far away server. This script scans for peer IP addresses connected to your Wii U and pings them with the details specified in options.txt file. Any IP address that returns an average ping time higher than your specified limit is blocked from your Wii U. Ping times above your limit are anticipated to be laggy, so why not prevent potential lag?</p>
+
+<ul>
+<li>LagDrop is natively console-agnostic. Console specific scripts reflect console-specific severs ignored before testing for pingd times. IE, if the conles IP address in option.txt file for the lagdrop_wiiu script is set to a PlayStation 4 IP address, LagDrop will run for the PlayStation 4, however Sony IP addresses will still be scanned as the lagdrop_wiiu script is set to ignore Nintendo sever IP addresses.</li>
+</ul>
 
 <p>How to use</p>
 
@@ -93,6 +99,9 @@
 <li>Eg: ^192.168. will filter all addresses begining with 192.168 from being checked against LagDrop.</li>
 <li>  ^192.1(([0-3]{1}))0. will filter addresses begining with 192.100, 192.110, 192.120, and 192.130</li>
 </ul>
+
+<p><a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&amp;hosted_button_id=HA78KL8EWDJ8Q"><img src="https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif" alt="Donate to keep us going!"></a>
+Donate to keep us going!</p>
       </section>
       <footer>
         <p>This project is maintained by <a href="https://github.com/42Kmi">42Kmi</a></p>
