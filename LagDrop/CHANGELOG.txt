@@ -6,6 +6,11 @@ experience lag-free gameplay in online console games utilizing peer-to-peer matc
 
 
 Changes
+Version 1.7.7 - 2016-10-15
+- Randomized packets sent for ping test.
+- Fixed lagdropclear.sh
+- Added lagdropcount.sh for counting allowed and blocked peers
+
 Version 1.7.6 - 2016-10-04
 - Added new Nintendo server IP for WiiU and 3DS LagDrop scripts
 - Added clear toggle to lagdropclear.sh;  Defalut (0) clears LDACCEPT and LDREJECT lists, 1 clears LDACCEPT list only. Open in text editor to adjust setting.
