@@ -56,4 +56,8 @@ extraip.txt file: User can create this regex-formatted file to filter additional
 * 	^192\.1(([0-3]{1}))0\. will filter addresses begining with 192.100, 192.110, 192.120, and 192.130
 
 [![Donate to keep us going!](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=HA78KL8EWDJ8Q)
+<<<<<<< HEAD
 Donate to keep us going!
+=======
+Donate to keep us going!
+>>>>>>> origin/master
