@@ -25,8 +25,6 @@ This guide uses DD-WRT as reference and assumes that you are familiar with DD-WR
 
 
 ***This is not intended or expected to harm your router, however, 42Kmi bears no responsibility for any damages that may occur.*** 
-***LagDrop is only intended to be used for automated lag-based peer blocking/filtering. Any use of, or modification to, LagDrop outside of its original intended scope is prohibited.***
-
 
 
 1. Go to the DD-WRT web interface. Go “Services” and find “Static Leases.” Click Add.
@@ -44,7 +42,7 @@ Options.txt file: 4 parameters
 5. Mode: Determine who to block by different tests. 1 for Ping, 2 for TraceRoute, 3 for Ping or TraceRoute, 4 for Ping and TraceRoute. Default is 1.
 6. Max TTL: Maximum TTL for the TraceRoute test. Default is 10
 7. Probes: Number of times each node is checked during TraceRoute. Default is 5
-8. TraceLimit: The limit of the TraceRoute time average. Values higher than this are blocked. Default is 20
+8. TraceLimit: The limit of the TraeRoute time average. Values higher than this are blocked. Default is 20
 9. ACTION: Action select. Choose to REJECT (0 or REJECT) or DROP (1 or DROP) peers Default is REJECT.
 10. SWITCH: The master switch to enable (1 or ON) or disable (0 OFF) LagDrop. Default is ON.
 

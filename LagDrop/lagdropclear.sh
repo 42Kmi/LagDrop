@@ -3,7 +3,7 @@
 ##### Add this to cron to run at some interval. Execute this script to clear the LagDrop chains from iptables
 
 ### Edit to adjust function ###
-MODE=0 #0 = clears LDACCEPT and LDREJECT; 1 = clears LDREJECT only.
+mode=0 #0 = clears LDACCEPT and LDREJECT; 1 = clears LDREJECT only.
 ### Edit to adjust function ###
 
 ### Magic happens here ###
