@@ -6,6 +6,11 @@ experience lag-free gameplay in online console games utilizing peer-to-peer matc
 
 
 Changes
+Version 1.7.8 - 2016-10-30
+- Added Packet Loss Test option: Blocks peer if packet loss greater than indicated percent is detected, has priority over regular Ping and Trace Route tests. Default is off and 80 (percent).
+- Changed how LagDrop handles extraip.txt file. Now IP addresses can be added in formatted single lines, which IP address separated by pipes (|) (like Regular Expression) or they can be added to separate lines. Titles/Headings can be added to group IP addresses, title/headings must be on one line surrounded by # (eg, #This is a Heading#). Last line in extraip.txt must be blank, a semicolon or contain #.
+- Auto-initialize iptables FORWARD table for LagDrop work.
+
 Version 1.7.7 - 2016-10-15
 - Randomized packets sent for ping test.
 - Fixed lagdropclear.sh
