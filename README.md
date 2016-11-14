@@ -50,7 +50,10 @@ Options.txt file: 10 parameters
 * ACTION: Action select. Choose to REJECT (0 or REJECT) or DROP (1 or DROP) peers Default is REJECT.
 * CHECKPACKETLOSS: When enabled, will check ping for packet loss percentage (PACKETLOSSLIMIT). If packet loss is greater than the specified limit, then the peer is blocked. If no packet loss is detected, LagDrop proceeds with the other tests. Set to ON, on, 1, YES, or yes to enable. Default is OFF.
 * PACKETLOSSLIMIT: Value to determine blocking for CHECKPACKETLOSS. Default is 80.
-
+* SENTINEL: checks most recent allowed peer for packet loss. If packet loss occurs, peer is blocked. Uses PACKETLOSSLIMIT parameter. Default OFF/NO/Disable/0
+* CLEARALLOWED: periodically clears older allowed peers no longer connected to router. Default is OFF/NO/Disable/0
+* CLEARBLOCKED: periodically clears older blocked peers no longer connected to router. Default isOFF/NO/Disable/0
+* CLEARLIMIT: Number of entries per ALLOWED/BLOCKED before clearing old entries begins. Default is 10
 * SWITCH: The master switch to enable (1 or ON) or disable (0 OFF) LagDrop. Default is ON.
 
 extraip.txt file: User can create this regex-formatted to filter additional IP addresses from LagDrop. IP addresses can be added in formatted single lines, which IP address separated by pipes (|) (like Regular Expression) or they can be added to separate lines. Titles/Headings can be added to group IP addresses, title/headings must be on one line surrounded by # (eg, #This is a Heading#). Last line in extraip.txt must be blank, a semicolon or contain #.

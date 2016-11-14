@@ -48,10 +48,14 @@ Options.txt file: 4 parameters
 9. ACTION: Action select. Choose to REJECT (0 or REJECT) or DROP (1 or DROP) peers Default is REJECT.
 10. CHECKPACKETLOSS: When enabled, will check ping for packet loss percentage (PACKETLOSSLIMIT). If packet loss is greater than the specified limit, then the peer is blocked. If no packet loss is detected, LagDrop proceeds with the other tests. Set to ON, on, 1, YES, or yes to enable. Default is OFF.
 11. PACKETLOSSLIMIT: Value to determine blocking for CHECKPACKETLOSS. Default is 80.
-12. SWITCH: The master switch to enable (1 or ON) or disable (0 OFF) LagDrop. Default is ON.
+12. SENTINEL: checks most recent allowed peer for packet loss. If packet loss occurs, peer is blocked. Uses PACKETLOSSLIMIT parameter. Default OFF/NO/Disable/0
+13. CLEARALLOWED: periodically clears older allowed peers no longer connected to router. Default is OFF/NO/Disable/0
+14. CLEARBLOCKED: periodically clears older blocked peers no longer connected to router. Default isOFF/NO/Disable/0
+15. CLEARLIMIT: Number of entries per ALLOWED/BLOCKED before clearing old entries begins. Default is 10
+16. SWITCH: The master switch to enable (1 or ON) or disable (0 OFF) LagDrop. Default is ON.
 
-extraip.txt file
-	User can create this regex-formatted to filter additional IP addresses from LagDrop. IP addresses can be added in formatted single lines, which IP address separated by pipes (|) (like Regular Expression) or they can be added to separate lines. Titles/Headings can be added to group IP addresses, title/headings must be on one line surrounded by # (eg, #This is a Heading#). Last line in extraip.txt must be blank, a semicolon or contain #.
+filter.txt file
+	User can create this regex-formatted to filter additional IP addresses from LagDrop. IP addresses can be added in formatted single lines, which IP address separated by pipes (|) (like Regular Expression) or they can be added to separate lines. Titles/Headings can be added to group IP addresses, title/headings must be on one line surrounded by # (eg, #This is a Heading#). Last line in filter.txt must be blank, a semicolon or contain #.
 	
 	Eg: ^192\.168\. will filter all addresses begining with 192.168 from being checked against LagDrop.
 	^192\.1(([0-3]{1}))0\. will filter addresses begining with 192.100, 192.110, 192.120, and 192.130
