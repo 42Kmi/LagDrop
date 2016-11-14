@@ -67,7 +67,8 @@
 
 <p>This guide uses DD-WRT as reference and assumes that you are familiar with DD-WRT or similar firmware. Do the equivalent of whatever custom firmware is on your router.</p>
 
-<p><strong><em>This is not intended or expected to harm your router, however, 42Kmi bears no responsibility for any damages that may occur.</em></strong> </p>
+<p><strong><em>LagDrop is not intended or expected to harm your router, however, 42Kmi bears no responsibility for any damages that may occur.</em></strong>
+<strong><em>LagDrop is only intended to be used for automated lag-based peer blocking/filtering. Any use of, or modification to, LagDrop outside of its original intended scope is prohibited.</em></strong></p>
 
 <ol>
 <li>Go to the DD-WRT web interface. Go “Services” and find “Static Leases.” Click Add.</li>
@@ -88,12 +89,18 @@
 <li>Mode: Determine who to block by different tests. 1 for Ping, 2 for TraceRoute, 3 for Ping or TraceRoute, 4 for Ping and TraceRoute. Default is 1.</li>
 <li>Max TTL: Maximum TTL for the TraceRoute test. Default is 10</li>
 <li>Probes: Number of times each node is checked during TraceRoute. Default is 5</li>
-<li>TraceLimit: The limit of the TraeRoute time average. Values higher than this are blocked. Default is 20</li>
+<li>TraceLimit: The limit of the TraceRoute time average. Values higher than this are blocked. Default is 20</li>
 <li>ACTION: Action select. Choose to REJECT (0 or REJECT) or DROP (1 or DROP) peers Default is REJECT.</li>
+<li>CHECKPACKETLOSS: When enabled, will check ping for packet loss percentage (PACKETLOSSLIMIT). If packet loss is greater than the specified limit, then the peer is blocked. If no packet loss is detected, LagDrop proceeds with the other tests. Set to ON, on, 1, YES, or yes to enable. Default is OFF.</li>
+<li>PACKETLOSSLIMIT: Value to determine blocking for CHECKPACKETLOSS. Default is 80.</li>
+<li>SENTINEL: checks most recent allowed peer for packet loss. If packet loss occurs, peer is blocked. Uses PACKETLOSSLIMIT parameter. Default OFF/NO/Disable/0</li>
+<li>CLEARALLOWED: periodically clears older allowed peers no longer connected to router. Default is OFF/NO/Disable/0</li>
+<li>CLEARBLOCKED: periodically clears older blocked peers no longer connected to router. Default isOFF/NO/Disable/0</li>
+<li>CLEARLIMIT: Number of entries per ALLOWED/BLOCKED before clearing old entries begins. Default is 10</li>
 <li>SWITCH: The master switch to enable (1 or ON) or disable (0 OFF) LagDrop. Default is ON.</li>
 </ul>
 
-<p>extraip.txt file: User can create this regex-formatted file to filter additional IP addresses from LagDrop. All entries MUST be on the same line and separated by the pipe (|) with periods escaped with backslash \</p>
+<p>filter.txt file: User can create this regex-formatted to filter additional IP addresses from LagDrop. IP addresses can be added in formatted single lines, which IP address separated by pipes (|) (like Regular Expression) or they can be added to separate lines. Titles/Headings can be added to group IP addresses, title/headings must be on one line surrounded by # (eg, #This is a Heading#). Last line in filter.txt must be blank, a semicolon or contain #.</p>
 
 <ul>
 <li>Eg: ^192.168. will filter all addresses begining with 192.168 from being checked against LagDrop.</li>
