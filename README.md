@@ -56,7 +56,7 @@ Options.txt file: 10 parameters
 * CLEARLIMIT: Number of entries per ALLOWED/BLOCKED before clearing old entries begins. Default is 10
 * SWITCH: The master switch to enable (1 or ON) or disable (0 OFF) LagDrop. Default is ON.
 
-extraip.txt file: User can create this regex-formatted to filter additional IP addresses from LagDrop. IP addresses can be added in formatted single lines, which IP address separated by pipes (|) (like Regular Expression) or they can be added to separate lines. Titles/Headings can be added to group IP addresses, title/headings must be on one line surrounded by # (eg, #This is a Heading#). Last line in extraip.txt must be blank, a semicolon or contain #.
+filter.txt file: User can create this regex-formatted to filter additional IP addresses from LagDrop. IP addresses can be added in formatted single lines, which IP address separated by pipes (|) (like Regular Expression) or they can be added to separate lines. Titles/Headings can be added to group IP addresses, title/headings must be on one line surrounded by # (eg, #This is a Heading#). Last line in filter.txt must be blank, a semicolon or contain #.
 
 * Eg: ^192\.168\. will filter all addresses begining with 192.168 from being checked against LagDrop.
 * 	^192\.1(([0-3]{1}))0\. will filter addresses begining with 192.100, 192.110, 192.120, and 192.130

@@ -36,7 +36,7 @@ This guide uses DD-WRT as reference and assumes that you are familiar with DD-WR
 5. In SCP client, navigate to /jffs/42Kmi and open and configure the options.txt file
 6. Play Smash Bros for Wii U online and enjoy! Be Glorious!
 
-Options.txt file: 4 parameters
+Options.txt file: the parameters
 1. WiiU [console name]: your Wii U’s static IP. This is filled by default after setting a static IP for your Wii U. You can change this to the Wii U static IP of your choice.
 2. PingLimit: This is the maximum millisecond ping time allowed before blocking the peer. Default is 90.
 3. Count: This is the number of packets to send to peer. Default is 5.
