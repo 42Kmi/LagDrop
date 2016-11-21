@@ -33,7 +33,7 @@ if { iptables -L FORWARD| grep -Eoq "^LDREJECT.*anywhere"; }; then eval "#LDREJE
 ##### Prepare LagDrop's IPTABLES Chains #####
 
 ##### Make Files #####
-CONSOLENAME=xbox
+CONSOLENAME=wiiu
 SCRIPTNAME=$(echo "${0##*/}")
 kill -9 $(ps -w | grep -v $$ | grep -F "$SCRIPTNAME") &> /dev/null
 DIR=$(echo $0 | sed -E "s/\/$SCRIPTNAME//g")
@@ -75,7 +75,7 @@ MODE=$(echo "$SETTINGS"| sed -n 5p | sed -E 's/^.*=//g') ### 0 or 1=Ping, 2=Trac
 ROUTER=$(nvram get lan_ipaddr | grep -Eo "(([0-9]{1,3}\.?){3})\.([0-9]{1,3})")
 ROUTERSHORT=$(nvram get lan_ipaddr | grep -Eo '(([0-9]{1,3}\.?){3})' | sed -E 's/\./\\./g' | sed -n 1p)
 WANSHORT=$(nvram get wan_ipaddr | grep -Eo "(([0-9]{1,3}\.?){3})\.([0-9]{1,3})" | sed -E 's/\./\\./g' | sed -n 1p)
-FILTERIP=$(echo"^104\.((6[4-9]{1})|(7[0-9]{1})|(8[0-9]{1})|(9[0-9]{1})|(10[0-9]{1})|(11[0-9]{1})|(12[0-7]{1}))|^13\.((6[4-9]{1})|(7[0-9]{1})|(8[0-9]{1})|(9[0-9]{1})|(10[0-7]{1}))|^131\.253\.(([2-4]{1}[1-9]{1}))|^134\.170\.|^137\.117\.|^137\.135\.|^138\.91\.|^152\.163\.|^157\.((5[4-9]{1})|60)\.|^168\.((6[1-3]{1}))\.|^191\.239\.160\.97|^23\.((3[2-9]{1})|(6[0-7]{1}))\.|^23\.((9[6-9]{1})|(10[0-3]{1}))\.|^2((2[4-9]{1})|(3[0-9]{1}))\.|^40\.((7[4-9]{1})|([8-9]{1}[0-9]{1})|(10[0-9]{1})|(11[0-9]{1})|(12[0-5]{1}))\.|^52\.((8[4-9]{1})|(9[0-5]{1}))\.|^54\.((22[4-9]{1})|(23[0-9]{1}))\.|^54\.((23[0-1]{1}))\.|^64\.86\.|^65\.((5[2-5]{1}))\.|^69\.164.\(([0-9]{1})|([1-5]{1}[0-9]{1})|((6[0-3]{1}))\.|^40.(7[4-9]|[8-9][0-9]|1[0-1][0-9]|12[0-7]).|^138.91.|^13.64.|^157.54.")
+FILTERIP=$(echo "^63\.241\.6\.(4[8-9]|5[0-5])|^63\.241\.60\.4[0-4]|^64\.37\.(12[8-9]|1[3-9][0-9])\.|^69\.153\.161\.(1[6-9]|2[0-9]|3[0-1])|^199\.107\.70\.7[2-9]|^199\.108\.([0-9]|1[0-5])\.|^199\.108\.(19[2-9]|20[0-7])\.")
 #FILTERIP=$(echo "^99999") #Debug
 RANDOM=$(echo $(echo $(dd bs=1 count=1 if=/dev/urandom 2>/dev/null)|hexdump -v -e '/1 "%02X"'|sed -e s/"0A$"//g)) #Generates random value between 0-FF
 IGNORE=$(echo $({ if { { iptables -nL LDACCEPT && iptables -nL LDREJECT ; } | grep -Eoq "([0-9]{1,3}\.?){4}"; } then echo "$({ iptables -nL LDACCEPT && iptables -nL LDREJECT ; } | grep -Eo "([0-9]{1,3}\.?){4}" | awk '!a[$0]++' |grep -v "${CONSOLE}"|grep -v "127.0.0.1"| sed -E 's/^/\^/g' | sed 's/\./\\\./g')"|sed -E 's/$/\|/g'; else echo "${ROUTER}"; fi; })|sed -E 's/\|$//g'|sed -E 's/\ //g')

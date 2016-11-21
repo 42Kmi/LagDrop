@@ -56,10 +56,13 @@ Options.txt file: 10 parameters
 * CLEARLIMIT: Number of entries per ALLOWED/BLOCKED before clearing old entries begins. Default is 10
 * SWITCH: The master switch to enable (1 or ON) or disable (0 OFF) LagDrop. Default is ON.
 
-filter.txt file: User can create this regex-formatted to filter additional IP addresses from LagDrop. IP addresses can be added in formatted single lines, which IP address separated by pipes (|) (like Regular Expression) or they can be added to separate lines. Titles/Headings can be added to group IP addresses, title/headings must be on one line surrounded by # (eg, #This is a Heading#). Last line in filter.txt must be blank, a semicolon or contain #.
+* Add "*/1 * * * * root /bin/sh /jffs/runlagdrop.sh SUFFIX" without quotes to cron to run your LagDrop script and keep it alive. SUFFIX is the suffix to your desired LagDrop script, eg: "*/1 * * * * root /bin/sh /jffs/runlagdrop.sh wiiu" for lagdrop_wiiu.sh
 
-* Eg: ^192\.168\. will filter all addresses begining with 192.168 from being checked against LagDrop.
-* 	^192\.1(([0-3]{1}))0\. will filter addresses begining with 192.100, 192.110, 192.120, and 192.130
+whitelist.txt and blacklist.txt files
+	* User can create this regex-formatted to exclude (whitelist.txt) or always block (blacklist.txt) IP addresses from LagDrop. IP addresses can be added in formatted single lines, which IP address separated by pipes (|) (like Regular Expression) or they can be added to separate lines. Titles/Headings can be added to group IP addresses, title/headings must be on one line surrounded by # (eg, #This is a Heading#). 
+	
+	* Eg: ^192\.168\. will filter all addresses begining with 192.168 from being checked against LagDrop.
+	^192\.1(([0-3]{1}))0\. will filter addresses begining with 192.100, 192.110, 192.120, and 192.130
 
 [![Donate to keep us going!](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=HA78KL8EWDJ8Q)
 Donate to keep us going!

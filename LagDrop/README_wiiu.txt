@@ -32,9 +32,10 @@ This guide uses DD-WRT as reference and assumes that you are familiar with DD-WR
 1. Go to the DD-WRT web interface. Go “Services” and find “Static Leases.” Click Add.
 2. Set Wii U to static IP address on Router, include “WiiU” (or your console identifier [wiiu, xboxone, 3ds, etc.]) in the assigned hostname. Scroll to bottom of page and click “Apply Settings.” 
 3. Place lagdrop.sh in jffs folder
-4. In DD-WRT, go to Administration > Commands, and run  the appropriate Lagdrop for your system, eg: “sh /jffs/lagdrop_wii.sh” (or run “/jffs/lagdrop.sh” from SSH command-line interface). Initial files and directories will be created. Wii U static IP will be populated into options.txt file (this will be first listed static IP address with WiiU in the hostname).
+4. In DD-WRT, go to Administration > Commands, and run the appropriate Lagdrop for your system, eg: “sh /jffs/lagdrop_wii.sh” (or run “/jffs/lagdrop.sh” from SSH command-line interface). Initial files and directories will be created. Wii U static IP will be populated into options.txt file (this will be first listed static IP address with WiiU in the hostname).
 5. In SCP client, navigate to /jffs/42Kmi and open and configure the options.txt file
-6. Play Smash Bros for Wii U online and enjoy! Be Glorious!
+6. In Administration, Cron Add "*/1 * * * * root /bin/sh /jffs/runlagdrop.sh SUFFIX" without quotes, where SUFFIX is the suffix of your intended LagDrop script, eg: wiiu for will run lagdrop_wiiu.sh
+7. Play Smash Bros for Wii U online and enjoy! Be Glorious!
 
 Options.txt file: the parameters
 1. WiiU [console name]: your Wii U’s static IP. This is filled by default after setting a static IP for your Wii U. You can change this to the Wii U static IP of your choice.
@@ -54,8 +55,10 @@ Options.txt file: the parameters
 15. CLEARLIMIT: Number of entries per ALLOWED/BLOCKED before clearing old entries begins. Default is 10
 16. SWITCH: The master switch to enable (1 or ON) or disable (0 OFF) LagDrop. Default is ON.
 
-filter.txt file
-	User can create this regex-formatted to filter additional IP addresses from LagDrop. IP addresses can be added in formatted single lines, which IP address separated by pipes (|) (like Regular Expression) or they can be added to separate lines. Titles/Headings can be added to group IP addresses, title/headings must be on one line surrounded by # (eg, #This is a Heading#). Last line in filter.txt must be blank, a semicolon or contain #.
+Add "*/1 * * * * root /bin/sh /jffs/runlagdrop.sh SUFFIX" without quotes to cron to run your LagDrop script and keep it alive. SUFFIX is the suffix to your desired LagDrop script, eg: "*/1 * * * * root /bin/sh /jffs/runlagdrop.sh wiiu" for lagdrop_wiiu.sh
+
+whitelist.txt and blacklist.txt files
+	User can create this regex-formatted to exclude (whitelist.txt) or always block (blacklist.txt) IP addresses from LagDrop. IP addresses can be added in formatted single lines, which IP address separated by pipes (|) (like Regular Expression) or they can be added to separate lines. Titles/Headings can be added to group IP addresses, title/headings must be on one line surrounded by # (eg, #This is a Heading#). 
 	
 	Eg: ^192\.168\. will filter all addresses begining with 192.168 from being checked against LagDrop.
 	^192\.1(([0-3]{1}))0\. will filter addresses begining with 192.100, 192.110, 192.120, and 192.130

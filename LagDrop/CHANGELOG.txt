@@ -6,6 +6,22 @@ experience lag-free gameplay in online console games utilizing peer-to-peer matc
 
 
 Changes
+Version 2.0.5 - 2016-11-21
+- Changed filter.txt to whitelist.txt; added blacklist function with blacklist.txt Rules for blacklist.txt are written similarly to whitelist.txt. IP addresses in blacklist.txt are always blocked.
+- More optimizations.
+- PlayStation version of LagDrop is here!
+- Use lagdrop script suffix as argument for runlagdrop.sh when added to cron.
+
+Version 2.0.0 - 2016-11-14
+- Fixed function of SWITCH, now works as it should.
+- Added sentinel, continuously checks most recent allowed peer for packet loss. If packet loss occurs, peer is blocked.
+- Added feature to clear our cached peers after.
+- Optimization: removed multiple instances of ping. Retrieves info for ping and packet loss tests from same ping info stored in memory
+- Optimization: Settings stored to memory, read once per run.
+- Optimization: IP connections list presorted early and stored to memory, read once per run.
+- Corrected ping tests results from being based on maximum ping time to the average ping time.
+- Additional IPs to ignore should be added to filter.txt file file in 42Kmi folder (formally the extraip.txt file). This change was made for clarifaction sake.
+
 Version 1.7.8 - 2016-10-30
 - Added Packet Loss Test option: Blocks peer if packet loss greater than indicated percent is detected, has priority over regular Ping and Trace Route tests. Default is off and 80 (percent).
 - Changed how LagDrop handles extraip.txt file. Now IP addresses can be added in formatted single lines, which IP address separated by pipes (|) (like Regular Expression) or they can be added to separate lines. Titles/Headings can be added to group IP addresses, title/headings must be on one line surrounded by # (eg, #This is a Heading#). Last line in extraip.txt must be blank, a semicolon or contain #.
