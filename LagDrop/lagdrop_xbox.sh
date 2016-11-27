@@ -40,20 +40,20 @@ DIR=$(echo $0|sed -E "s/\/$SCRIPTNAME//g")
 SETTINGS=$(while read -r i; do echo "${i%}"; done < "$DIR"/42Kmi/options_"$CONSOLENAME".txt|sed -E "/(^#.*#$|^$|\;|#^[ \t]*$)|#/d"|sed -E 's/^.*=//g') #Settings stored here, called from memory
 
 ##### Fix whitelist.txt & blacklist.txt #####
-if [ -f $"{DIR}"/42Kmi/whitelist.txt ]
+if [ -f "${DIR}"/42Kmi/whitelist.txt ]
 then
-	if (tail -n 1 $"{DIR}"/42Kmi/whitelist.txt|grep -E "^;?$") ;
+	if (tail -n 1 "${DIR}"/42Kmi/whitelist.txt|grep -E "^;?$") ;
 	then :; 
-	else echo -en "\n;" >> $"{DIR}"/42Kmi/whitelist.txt;
+	else echo -en "\n;" >> "${DIR}"/42Kmi/whitelist.txt;
 	fi; &> /dev/null
 else :;
 fi
 
-if [ -f $"{DIR}"/42Kmi/blacklist.txt ]
+if [ -f "${DIR}"/42Kmi/blacklist.txt ]
 then
-	if (tail -n 1 $"{DIR}"/42Kmi/blacklist.txt|grep -E "^;?$") ;
+	if (tail -n 1 "${DIR}"/42Kmi/blacklist.txt|grep -E "^;?$") ;
 	then :; 
-	else echo -en "\n;" >> $"{DIR}"/42Kmi/blacklist.txt;
+	else echo -en "\n;" >> "${DIR}"/42Kmi/blacklist.txt;
 	fi; &> /dev/null
 else :;
 fi
