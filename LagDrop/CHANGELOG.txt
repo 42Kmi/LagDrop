@@ -6,7 +6,12 @@ experience lag-free gameplay in online console games utilizing peer-to-peer matc
 
 
 Changes
-Version 2.0.5 - 2016-11-21
+Version 2.0.2 - 2016-11-27
+- Caught an error. My bad. Should be fixed now.
+- Amazon AWS IP list in regex available. Add it to your whitelist.txt to filter servers dependent on Amazon AWS from being tested by LagDrop.
+- Amazon AWS IPs added to lagdrop_wiiu.sh and lagdrop_3ds.sh. Nintendo uses Amazon servers.
+
+Version 2.0.2 - 2016-11-21
 - Changed filter.txt to whitelist.txt; added blacklist function with blacklist.txt Rules for blacklist.txt are written similarly to whitelist.txt. IP addresses in blacklist.txt are always blocked.
 - More optimizations.
 - PlayStation version of LagDrop is here!

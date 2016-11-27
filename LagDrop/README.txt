@@ -1,6 +1,7 @@
 #42Kmi LagDrop
 Avoid laggy matches in peer-to-peer matchmaking online games, such as Super Smash Bros. for Wii U.
 
+
 ![LagDrop](http://i.imgur.com/GGJmYyr.png)
 
 [See LagDrop in action!](https://www.youtube.com/watch?v=6g9MiaE-2k0)
@@ -32,19 +33,21 @@ This guide uses DD-WRT as reference and assumes that you are familiar with DD-WR
 
 When reading, please substitute any instances of "lagdrop.sh" for the lagdrop_SUFFIX.sh script of your preference. 
 Please read the changelog for update details.
-1. Go to the DD-WRT web interface. Go â€œServicesâ€ and find â€œStatic Leases.â€ Click Add.
-2. Set console to static IP address on Router, include your console identifier (wiiu, xbox, 3ds, ps4, etc.) in the assigned hostname. Scroll to bottom of page and click â€œApply Settings.â€ 
+
+
+1. Go to the DD-WRT web interface. Go “Services” and find “Static Leases.” Click Add.
+2. Set console to static IP address on Router, include your console identifier (wiiu, xbox, 3ds, ps4, etc.) in the assigned hostname. Scroll to bottom of page and click “Apply Settings.” 
 3. Place lagdrop.sh in jffs folder
-4. In DD-WRT, go to Administration > Commands, and run the appropriate Lagdrop for your system, eg: â€œsh /jffs/lagdrop_wii.shâ€ (or run â€œ/jffs/lagdrop.shâ€ from SSH command-line interface). Initial files and directories will be created. Wii U static IP will be populated into options.txt file (this will be first listed static IP address with console identifier in the hostname).
+4. In DD-WRT, go to Administration > Commands, and run the appropriate Lagdrop for your system, eg: “sh /jffs/lagdrop_wii.sh” (or run “/jffs/lagdrop.sh” from SSH command-line interface). Initial files and directories will be created. Wii U static IP will be populated into options.txt file (this will be first listed static IP address with console identifier in the hostname).
 5. In SCP client, navigate to /jffs/42Kmi and open and configure the options.txt file
 6. In Administration, Cron Add "*/1 * * * * root /bin/sh /jffs/runlagdrop.sh SUFFIX" without quotes, where SUFFIX is the suffix of your intended LagDrop script, eg: "*/1 * * * * root /bin/sh /jffs/runlagdrop.sh wiiu" for will run lagdrop_wiiu.sh
 7. Play online and enjoy! Be Glorious!
 
 Options.txt file: the parameters
-*1.[console name]: your consoleâ€™s static IP. This is filled by default after setting a static IP for your console. The [console name] is determined by name given in lagdrop.sh
+*1.[console name]: your console’s static IP. This is filled by default after setting a static IP for your console. The [console name] is determined by name given in lagdrop.sh
 *2. PingLimit: This is the maximum millisecond ping time allowed before blocking the peer. Default is 90.
 *3. Count: This is the number of packets to send to peer. Default is 5.
-*4. Size: This is the size of the packet in bytes. This is really a test of the peerâ€™s bandwidth. Default is 1024
+*4. Size: This is the size of the packet in bytes. This is really a test of the peer’s bandwidth. Default is 1024
 *5. Mode: Determine who to block by different tests. 1 for Ping, 2 for TraceRoute, 3 for Ping or TraceRoute, 4 for Ping and TraceRoute. Default is 1.
 *6. Max TTL: Maximum TTL for the TraceRoute test. Default is 10
 *7. Probes: Number of times each node is checked during TraceRoute. Default is 5
