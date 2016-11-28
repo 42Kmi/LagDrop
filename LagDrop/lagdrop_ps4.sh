@@ -1,6 +1,7 @@
 #!/bin/sh
+export LC_ALL=C
 ##### 42Kmi LagDrop, Written by 42Kmi. Property of 42Kmi, LLC. #####
-##### Ver 2.0.3
+##### Ver 2.0.4
 ######################################################################################################
 #               .////////////   -+osyyys+-   `////////////////////-                      `//////////`#
 #              /Ny++++++++hM+/hNho/----:+hNo hN++++++oMMm++++++mMy`                      hMhhhhhhdMh #
@@ -67,7 +68,7 @@ if [ ! -f "$DIR"/42Kmi ] ; then mkdir -p "$DIR"/42Kmi ; fi
 if [ ! -f "$DIR"/42Kmi/options_$CONSOLENAME.txt ] ; then echo -e "$CONSOLENAME=$GETSTATIC\nPINGLIMIT=90\nCOUNT=5\nSIZE=1024\nMODE=1\nMAXTTL=10\nPROBES=5\nTRACELIMIT=30\nACTION=REJECT\nCHECKPACKETLOSS=OFF\nPACKETLOSSLIMIT=80\nSENTINEL=OFF\nCLEARALLOWED=OFF\nCLEARBLOCKED=OFF\nCLEARLIMIT=10\nSWITCH=ON\n;" > "$DIR"/42Kmi/options_$CONSOLENAME.txt; fi ### Makes options file if it doesn't exist
 ##### Make Files #####
 CONSOLE=$(echo "$SETTINGS"|sed -n 1p) ### Your Wii U's IP address. Change this in the $CONSOLENAMEip.txt file
-IPCONNECT=$(while read -r i; do echo "${i%}"; done < /proc/net/ip_conntrack|grep "$CONSOLE") ### IP connections stored here, called from memory
+IPCONNECT=$(while read -r i; do echo "${i%}"; done < /proc/net/ip_conntrack|grep "$CONSOLE"|sed -E "/(^#.*#$|^$|\;|#^[ \t]*$)|#/d") ### IP connections stored here, called from memory
 LIMIT=$(echo "$SETTINGS"|sed -n 2p) ### Your max average millisecond limit. Peers pinging higher than this value are blocked. Default is 3.
 COUNT=$(echo "$SETTINGS"|sed -n 3p) ### How many packets to send. Default is 5
 SIZE=$(echo "$SETTINGS"|sed -n 4p) ### Size of packets. Default is 1024
@@ -77,13 +78,13 @@ ROUTERSHORT=$(nvram get lan_ipaddr|grep -Eo '(([0-9]{1,3}\.?){3})'|sed -E 's/\./
 WANSHORT=$(nvram get wan_ipaddr|grep -Eo "(([0-9]{1,3}\.?){3})\.([0-9]{1,3})"|sed -E 's/\./\\./g'|sed -n 1p)
 FILTERIP=$(echo "^63\.241\.6\.(4[8-9]|5[0-5])|^63\.241\.60\.4[0-4]|^64\.37\.(12[8-9]|1[3-9][0-9])\.|^69\.153\.161\.(1[6-9]|2[0-9]|3[0-1])|^199\.107\.70\.7[2-9]|^199\.108\.([0-9]|1[0-5])\.|^199\.108\.(19[2-9]|20[0-7])\.")
 #FILTERIP=$(echo "^99999") #Debug, Add IPs to whitelist.txt file instead
-RANDOM=$(echo $(echo $(dd bs=1 count=1 if=/dev/urandom 2>/dev/null)|hexdump -v -e '/1 "%02X"'|sed -e s/"0A$"//g)) #Generates random value between 0-FF
+RANDOM=$(echo $(dd bs=1 count=1 if=/dev/urandom 2>/dev/null)|hexdump -v -e '/1 "%02X"'|sed -e s/"0A$"//g) #Generates random value between 0-FF
 IGNORE=$(echo $({ if { { iptables -nL LDACCEPT && iptables -nL LDREJECT ; }|grep -Eoq "([0-9]{1,3}\.?){4}"; } then echo "$({ iptables -nL LDACCEPT && iptables -nL LDREJECT ; }|grep -Eo "([0-9]{1,3}\.?){4}"|awk '!a[$0]++'|grep -v "${CONSOLE}"|grep -v "127.0.0.1"|sed -E 's/^/\^/g'|sed 's/\./\\\./g')"|sed -E 's/$/\|/g'; else echo "${ROUTER}"; fi; })|sed -E 's/\|$//g'|sed -E 's/\ //g')
 if [ ! -f "$DIR"/42Kmi/whitelist.txt ] ; then
-PEERIP=$(echo "$IPCONNECT"|sed -E "/(^#.*#$|^$|\;|#^[ \t]*$)|#/d"|grep -Eo "(([0-9]{1,3}\.?){3})\.([0-9]{1,3})"|grep -o '^.*\..*$'|grep -v "${CONSOLE}"|grep -v "${ROUTER}"|grep -Ev "${IGNORE}"|grep -Ev "^192\.168\.(([0-9]{1,3}\.?){2})"|grep -Ev "^$ROUTERSHORT"|grep -Ev "^$WANSHORT"|egrep -Ev "$FILTERIP"|awk '!a[$0]++'|sed -n 1p) ### Get Wii U Peer's IP
+PEERIP=$(echo "$IPCONNECT"|grep -Eo "(([0-9]{1,3}\.?){3})\.([0-9]{1,3})"|grep -o '^.*\..*$'|grep -v "${CONSOLE}"|grep -v "${ROUTER}"|grep -Ev "${IGNORE}"|grep -Ev "^$ROUTERSHORT"|grep -Ev "^$WANSHORT"|egrep -Ev "$FILTERIP"|awk '!a[$0]++'|sed -n 1p) ### Get Wii U Peer's IP
 else
 WHITELIST=$(echo "$(while read -r i; do echo "${i%}"; done < "${DIR}"/42Kmi/whitelist.txt|sed -E "s/^/\^/g"|sed -E "s/\^#|\^$//g"|sed -E "s/\^\^/^/g"|sed -E "/(^#.*#$|^$|\;|#^[ \t]*$)|#/d"|sed -E "s/$/|/g")"|sed -E 's/\|$//g'|sed -E "s/(\ *)//g"|sed -E 's/\b\.\b/\\./g') ### Additional IPs to filter out. Make whitelist.txt in 42Kmi folder, add IPs there. Can now support extra lines and titles. See README
-PEERIP=$(echo "$IPCONNECT"|sed -E "/(^#.*#$|^$|\;|#^[ \t]*$)|#/d"|grep -Eo "(([0-9]{1,3}\.?){3})\.([0-9]{1,3})"|grep -o '^.*\..*$'|grep -v "${CONSOLE}"|grep -v "${ROUTER}"|grep -Ev "${IGNORE}"|grep -Ev "^192\.168\.(([0-9]{1,3}\.?){2})"|grep -Ev "^$ROUTERSHORT"|grep -Ev "^$WANSHORT"|egrep -Ev "$FILTERIP"|egrep -Ev "$WHITELIST"|awk '!a[$0]++'|sed -n 1p) ### Get Wii U Peer's IP
+PEERIP=$(echo "$IPCONNECT"|grep -Eo "(([0-9]{1,3}\.?){3})\.([0-9]{1,3})"|grep -o '^.*\..*$'|grep -v "${CONSOLE}"|grep -v "${ROUTER}"|grep -Ev "${IGNORE}"|grep -Ev "^$ROUTERSHORT"|grep -Ev "^$WANSHORT"|egrep -Ev "$FILTERIP"|egrep -Ev "$WHITELIST"|awk '!a[$0]++'|sed -n 1p) ### Get Wii U Peer's IP
 fi
 EXISTS=$({ iptables -nL LDACCEPT && iptables -nL LDREJECT ;}|grep -Foq "$PEERIP")
 ##### The Ping #####
@@ -182,7 +183,7 @@ then
 	RECENTSOURCE=$(iptables -nL LDACCEPT|tail -1|grep -Eo "([0-9]{1,3}\.?){4}"|sed -n 2p)
 	LASTRULE=$(iptables --line-number -nL LDACCEPT|tail -1|grep -Eo "^[0-9]{1,}")
 	CHECKUP=$(ping -q -c 30 -W 1 -s 1 -p "${RANDOM}" "${RECENT}"|grep -Eo "[0-9]{1,3}\% packet loss"|sed -E "s/%.*$//g" &)
-		if echo "$IPCONNECT"|sed -E "/(^#.*#$|^$|\;|#^[ \t]*$)|#/d"|grep -o "$RECENT"|grep -Eo "([0-9]{1,3}\.?){4}"
+		if echo "$IPCONNECT"|grep -o "$RECENT"|grep -Eo "([0-9]{1,3}\.?){4}"
 		then 
 			if [ "${CHECKUP}" -gt "${PACKETLOSSLIMIT}" ]; then { eval "iptables -I LDREJECT -s $RECENTSOURCE -d $RECENT -j $ACTION1; iptables -D LDACCEPT $LASTRULE; iptables -D LDACCEPT -d $RECENTSOURCE -s $RECENT -j $ACTION1"; }; fi;
 		else :;
@@ -203,7 +204,7 @@ then
 	TOPALLOW=$(iptables -nL LDACCEPT|grep -E "^ACCEPT"|sed "s/${CONSOLE}//g"|grep -Eo "([0-9]{1,3}\.?){4}"|sed -n 1p)
 	if [ "${COUNTALLOW}" -ge "${CLEARLIMIT}" ];
 	then
-		if echo "$IPCONNECT"|sed -E "/(^#.*#$|^$|\;|#^[ \t]*$)|#/d"|grep -q "${CONSOLE}"|grep -oq "$TOPALLOW"; then :;
+		if echo "$IPCONNECT"|grep -q "${CONSOLE}"|grep -oq "$TOPALLOW"; then :;
 		else eval "iptables -D LDACCEPT 1;"
 		fi
 	else :;
@@ -219,7 +220,7 @@ then
 	OLDBLOCK=$(iptables --line-number -nL LDREJECT|tail -1|grep -Eo "^[0-9]{1,}")
 	if [ "${COUNTBLOCKED}" -ge "${CLEARLIMIT}" ];
 	then
-		if echo "$IPCONNECT"|sed -E "/(^#.*#$|^$|\;|#^[ \t]*$)|#/d"|grep -q "${CONSOLE}"|grep -oq "$BOTTOMBLOCKED"; then :;
+		if echo "$IPCONNECT"|grep -q "${CONSOLE}"|grep -oq "$BOTTOMBLOCKED"; then :;
 		else eval "iptables -D LDREJECT $OLDBLOCK;"
 		fi
 	else :;	
@@ -232,6 +233,7 @@ if { iptables -L LDREJECT|grep "$PEERIP"; } && { iptables -L LDACCEPT|grep "$PEE
 ##### Can't be in both #####
 }
 fi
+KILLOLD=$(kill -9 `ps -w | grep -F "$SCRIPTNAME" | grep -v $$` &> /dev/null)
 LOOP=$(exec "$0")
 
 {
@@ -248,12 +250,12 @@ echo $$ > ${LOCKFILE}
 
 # do stuff
 #sleep 1000
-
+$KILLOLD
 rm -f ${LOCKFILE}
 ##########
 } &
-
-if [ "${SWITCH}" = 0 ] || [ "${SWITCH}" = OFF ] || [ "${SWITCH}" = off ]; then exit && $LOOP;
+if "$DIR"/lagdrop_"$SUFFIX".sh; then :; else
+if [ "${SWITCH}" = 0 ] || [ "${SWITCH}" = OFF ] || [ "${SWITCH}" = off ]; then exit && $KILLOLD;
 else {
 lagdropexecute ()
 { #LagDrop loops within here. It's cool, yo.
@@ -266,10 +268,12 @@ if { "$EXISTS"; }; then :; else ${PACKETBLOCK} && ${BLOCK}; wait &> /dev/null; f
  
  done
 fi
+$KILLOLD
 lagdropexecute
 } &> /dev/null
 } &> /dev/null
 } fi
+fi
 ##### Ban SLOW Peers #####
 ##### 42Kmi International Competitive Gaming #####
 ##### Visit 42Kmi.com #####
