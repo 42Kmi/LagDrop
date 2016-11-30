@@ -37,76 +37,123 @@
 
 <p><a href="https://www.youtube.com/watch?v=6g9MiaE-2k0">See LagDrop in action!</a></p>
 
-<p>How it works</p>
+<h2>
+<a id="how-it-works" class="anchor" href="#how-it-works" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>How it works</h2>
 
 <hr>
 
-<p>Games such as Super Smash Bros for Wii U utilizes peer-to-peer matchmaking, meaning that opponents connect directly to each other for matches and do not rely on some far away server. This script scans for peer IP addresses connected to your Wii U and pings them with the details specified in options.txt file. Any IP address that returns an average ping time higher than your specified limit is blocked from your Wii U. Ping times above your limit are anticipated to be laggy, so why not prevent potential lag?</p>
+<p>Some games, like Super Smash Bros for Wii U, utilize peer-to-peer matchmaking, meaning that opponents connect directly to each other for matches and do not rely on some distant server to maintain facilitation of controller inputs between players. LagDrop scans for peer IP addresses connected to your console and pings them with the parameters specified in the console-specific options.txt file. Any peer IP address that fails the test (returns an average ping time/TraceRoute average/ or packet loss percentage higher than the specified limit) is blocked from your console. Values above your limit are anticipated to be laggy, so why not prevent potential lag?</p>
 
-<ul>
-<li>LagDrop is natively console-agnostic. Console specific scripts reflect console-specific severs ignored before testing for pingd times. IE, if the conles IP address in option.txt file for the lagdrop_wiiu script is set to a PlayStation 4 IP address, LagDrop will run for the PlayStation 4, however Sony IP addresses will still be scanned as the lagdrop_wiiu script is set to ignore Nintendo sever IP addresses.</li>
-</ul>
+<blockquote>
+<p>LagDrop is natively console-agnostic. Console-specific scripts reflect console-specific severs ignored before testing peers. IE, if the IP address in option.txt file for the lagdrop_wiiu script is set to a static IP assigned to a PlayStation 4, LagDrop will run for the PlayStation 4, however Sony server IP addresses will still be scanned as the lagdrop_wiiu script is set to ignore Nintendo sever IP addresses.</p>
+</blockquote>
 
-<p>How to use</p>
+<h1>
+<a id="how-to-use" class="anchor" href="#how-to-use" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>How to use</h1>
 
 <hr>
 
-<p>Required:</p>
+<h4>
+<a id="required" class="anchor" href="#required" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Required:</h4>
 
 <ul>
 <li>Router with DD-WRT or other aftermarket firmware capable of running scripts.</li>
-<li>SCP client to upload script and edit options file (e.g., WinSCP)</li>
-</ul>
-
-<p>Optional:</p>
-
-<ul>
+<li>SCP client to upload script and edit options file (e.g., WinSCP)
+##### Optional:</li>
 <li>USB 2.0 LAN adapter for wired Wii U </li>
 <li>SSH command-line interface (e.g., Putty) </li>
 </ul>
 
-<p>This guide uses DD-WRT as reference and assumes that you are familiar with DD-WRT or similar firmware. Do the equivalent of whatever custom firmware is on your router.</p>
+<p><em>This guide uses DD-WRT as reference and assumes that you are familiar with DD-WRT or similar firmware. Do the equivalent of whatever firmware is on your compatible router.</em></p>
 
+<blockquote>
 <p><strong><em>LagDrop is not intended or expected to harm your router, however, 42Kmi bears no responsibility for any damages that may occur.</em></strong>
-<strong><em>LagDrop is only intended to be used for automated lag-based peer blocking/filtering. Any use of, or modification to, LagDrop outside of its original intended scope is prohibited.</em></strong></p>
-
-<ol>
-<li>Go to the DD-WRT web interface. Go “Services” and find “Static Leases.” Click Add.</li>
-<li>Set Wii U to static IP address on Router, include “WiiU” (or your console identifier [wiiu, xboxone, 3ds, etc.]) in the assigned hostname. Scroll to bottom of page and click “Apply Settings.” </li>
-<li>Place lagdrop.sh in jffs folder</li>
-<li>In DD-WRT, go to Administration &gt; Commands, and run  the appropriate Lagdrop for your system, eg: “sh /jffs/lagdrop_wii.sh” (or run “/jffs/lagdrop.sh” from SSH command-line interface). Initial files and directories will be created. Wii U static IP will be populated into options.txt file (this will be first listed static IP address with WiiU in the hostname).</li>
-<li>In SCP client, navigate to /jffs/42Kmi and open and configure the options.txt file</li>
-<li>Play Smash Bros for Wii U online and enjoy! Be Glorious!</li>
-</ol>
-
-<p>Options.txt file: 10 parameters</p>
+<strong><em>LagDrop is only intended to be used for automated lag-based peer blocking/filtering. Any use of, or modification to, LagDrop outside of its original intended scope is prohibited; 42Kmi will NOT have your back.</em></strong></p>
+</blockquote>
 
 <ul>
-<li>WiiU [console name]: your Wii U’s static IP. This is filled by default after setting a static IP for your Wii U. You can change this to the Wii U static IP of your choice.</li>
-<li>PingLimit: This is the maximum millisecond ping time allowed before blocking the peer. Default is 90.</li>
-<li>Count: This is the number of packets to send to peer. Default is 5.</li>
-<li>Size: This is the size of the packet in bytes. This is really a test of the peer’s bandwidth. Default is 1024</li>
-<li>Mode: Determine who to block by different tests. 1 for Ping, 2 for TraceRoute, 3 for Ping or TraceRoute, 4 for Ping and TraceRoute. Default is 1.</li>
-<li>Max TTL: Maximum TTL for the TraceRoute test. Default is 10</li>
-<li>Probes: Number of times each node is checked during TraceRoute. Default is 5</li>
-<li>TraceLimit: The limit of the TraceRoute time average. Values higher than this are blocked. Default is 20</li>
-<li>ACTION: Action select. Choose to REJECT (0 or REJECT) or DROP (1 or DROP) peers Default is REJECT.</li>
-<li>CHECKPACKETLOSS: When enabled, will check ping for packet loss percentage (PACKETLOSSLIMIT). If packet loss is greater than the specified limit, then the peer is blocked. If no packet loss is detected, LagDrop proceeds with the other tests. Set to ON, on, 1, YES, or yes to enable. Default is OFF.</li>
-<li>PACKETLOSSLIMIT: Value to determine blocking for CHECKPACKETLOSS. Default is 80.</li>
-<li>SENTINEL: checks most recent allowed peer for packet loss. If packet loss occurs, peer is blocked. Uses PACKETLOSSLIMIT parameter. Default OFF/NO/Disable/0</li>
-<li>CLEARALLOWED: periodically clears older allowed peers no longer connected to router. Default is OFF/NO/Disable/0</li>
-<li>CLEARBLOCKED: periodically clears older blocked peers no longer connected to router. Default isOFF/NO/Disable/0</li>
-<li>CLEARLIMIT: Number of entries per ALLOWED/BLOCKED before clearing old entries begins. Default is 10</li>
-<li><p>SWITCH: The master switch to enable (1 or ON) or disable (0 OFF) LagDrop. Default is ON.</p></li>
-<li><p>Add "<em>/1 * * * * root /bin/sh /jffs/runlagdrop.sh SUFFIX" without quotes to cron to run your LagDrop script and keep it alive. SUFFIX is the suffix to your desired LagDrop script, eg: "</em>/1 * * * * root /bin/sh /jffs/runlagdrop.sh wiiu" for lagdrop_wiiu.sh</p></li>
+<li><em>When reading, please substitute any instances of "lagdrop.sh" for the lagdrop_SUFFIX.sh script of your preference.</em></li>
+<li><em>If creating your own filters or using for PC, please edit lagdrop_generic.sh in a text editor, find "CONSOLENAME=CONSOLE_NAME_HERE" and change "CONSOLE_NAME_HERE" to your identifier here, without spaces (pc, computer, etc). Save the file, then rename lagdrop_generic.sh substituting generic for your identifier (ie, lagdrop_computer.sh).</em></li>
+<li><p><em>Please read the changelog for version update details.</em></p></li>
 </ul>
 
-<p>whitelist.txt and blacklist.txt files
-    * User can create this regex-formatted to exclude (whitelist.txt) or always block (blacklist.txt) IP addresses from LagDrop. IP addresses can be added in formatted single lines, which IP address separated by pipes (|) (like Regular Expression) or they can be added to separate lines. Titles/Headings can be added to group IP addresses, title/headings must be on one line surrounded by # (eg, #This is a Heading#). </p>
+<ol>
+<li><p>In the DD-WRT web interface, go to the "Administration" tab and enable JFFS. To use a SCP client, enable SSH management (if you can't enable it, enable SSHd in the "Secure Shell" settings located in the "services" tab first). Scroll to the bottom and apply settings.</p></li>
+<li><p>Go to the "Services" tab in the DD-WRT web interface. Under the DHCP server settings, look for "static leases". Enter the MAC and IP addresses of your device. Include your console identifier (wiiu, xbox, 3ds, ps4, PC etc.) in the hostname case. Scroll to the bottom of the page and apply settings. PC users will have to edit lagdrop_generic.sh and fill the "CONSOLENAME=" line with the hostname given in the DD-WRT DHCP settings (e.g. CONSOLENAME=PC) before continuing.</p></li>
+<li><p>In the SCP client, enter your router's IP in the hostname case, "root" as username and your password then click on ok. Drop the following files in the jffs folder: lagdropclear.sh, lagdropcount.sh, lagdropkill.sh and runlagdrop.sh along with the lagdrop file suited for your device (e.g. lagdrop_ps4.sh for PS4, lagdrop_generic.sh for PC etc...).</p></li>
+<li><p>In the DD-WRT web interface, go to Administration &gt; Commands, and run the appropriate Lagdrop for your system, e.g.: "sh /jffs/lagdrop_wiiu.sh" for a Wii U (or run "/jffs/lagdrop_wiiu.sh" from SSH command-line interface). The 42Kmi directory and options.txt will be created.</p></li>
+<li><p>In the SCP client, navigate to /jffs/42Kmi. Open the options.txt file and edit the parameters. It should be pre-filled with your device's hostname and static IP address previously entered in DD-WRT's DHCP server settings for your device.</p></li>
+<li>
+<p>In the "Administration" tab of DD-wrt web interface, enable Cron and add this as an additional cron job:</p>
 
-<pre><code>* Eg: ^192\.168\. will filter all addresses begining with 192.168 from being checked against LagDrop.
-^192\.1(([0-3]{1}))0\. will filter addresses begining with 192.100, 192.110, 192.120, and 192.130
-</code></pre>
+<blockquote>
+<p>"*/1 * * * * root /bin/sh /jffs/runlagdrop.sh SUFFIX" </p>
+</blockquote>
+
+<p>without quotes, where SUFFIX is the suffix of your intended LagDrop script
+(eg: "*/1 * * * * root /bin/sh /jffs/runlagdrop.sh wiiu" for will run lagdrop_wiiu.sh).</p>
+</li>
+</ol>
+
+<h2>
+<a id="7-play-online-and-enjoy-be-glorious" class="anchor" href="#7-play-online-and-enjoy-be-glorious" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>7. Play online and enjoy! Be Glorious!</h2>
+
+<h1>
+<a id="optionstxt" class="anchor" href="#optionstxt" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Options.txt</h1>
+
+<p>This file which is created on the first run of the LagDrop contains the parameters used by LagDrop. The file name will be options_IDENTIFIER.txt, but will referred to as "option.txt" here. Te parameters include:</p>
+
+<ol>
+<li>
+<strong>[console name]:</strong> your console’s static IP. This is filled on the first run of LagDrop after setting a static IP for your console. The [console name] is determined by name given in lagdrop.sh</li>
+<li>
+<strong>PingLimit:</strong> This is the maximum average ping time in milliseconds permitted before blocking the peer. Default is 90.</li>
+<li>
+<strong>Count:</strong> This is the number of packets sent to peer. Default is 5.</li>
+<li>
+<strong>Size:</strong> This is the size of the packet in bytes, which tests of the peer’s bandwidth. Default is 1024</li>
+<li>
+<strong>Mode:</strong> Determines which test(s) is/are used. 0 or 1 for Ping only, 2 for TraceRoute only, 3 for Ping or TraceRoute (peer is blocked if they fail ping test or TraceRoute test), 4 for Ping and TraceRoute (peer is blocked if they fail ping test AND TraceRoute test). Default is 1.</li>
+<li>
+<strong>Max TTL:</strong> Maximum TTL for the TraceRoute test. Default is 10</li>
+<li>
+<strong>Probes:</strong> Number of times each node is checked during TraceRoute. Default is 5</li>
+<li>
+<strong>TraceLimit:</strong> The limit of the TraceRoute time average <em>(TraceRoute tests the ping time between nodes from you to the peer. LagDrop reads it as an average of those times.)</em> . Values higher than this are blocked. Default is 20</li>
+<li>
+<strong>ACTION:</strong> Action performed when peer fails. Choose to REJECT (0 or REJECT) or DROP (1 or DROP) peers Default is REJECT.</li>
+<li>
+<strong>CHECKPACKETLOSS:</strong> When enabled, will check ping for packet loss percentage (PACKETLOSSLIMIT). If packet loss is greater than the specified limit, then the peer is blocked. If no packet loss is detected, LagDrop proceeds with the other tests. <em>(This test has priority over ping and TraceRoute tests and is strict!)</em> Set to ON/on/1/YES/yes to enable. Default is OFF.</li>
+<li>
+<strong>PACKETLOSSLIMIT:</strong> Value to determine blocking for CHECKPACKETLOSS. Default is 80.</li>
+<li>
+<strong>SENTINEL:</strong> Evaluates currently connected peer for packet loss. If packet loss occurs, peer is blocked. Uses PACKETLOSSLIMIT parameter. Default OFF/NO/Disable/0</li>
+<li>
+<strong>CLEARALLOWED:</strong> periodically clears older allowed peers no longer connected to router. Default is OFF/NO/Disable/0</li>
+<li>
+<strong>CLEARBLOCKED:</strong> periodically clears older blocked peers no longer connected to router. Default is OFF/NO/Disable/0</li>
+<li>
+<strong>CLEARLIMIT:</strong> Number of entries per ALLOWED/BLOCKED before clearing old entries begins. Default is 10</li>
+<li>
+<strong>SWITCH:</strong> The master switch to enable (1/ON) or disable (0/OFF) LagDrop. Default is ON.</li>
+</ol>
+
+<hr>
+
+<h2>
+<a id="whitelisttxt-and-blacklisttxt-files" class="anchor" href="#whitelisttxt-and-blacklisttxt-files" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>whitelist.txt and blacklist.txt files</h2>
+
+<p>In the 42Kmi folder, whitelist.txt and blacklist.txt can be created in order to always allow (whitelist.txt) or always block (blacklist.txt) IPs from LagDrop. </p>
+
+<ul>
+<li>IP addresses can be added in formatted single lines, with IP address separated by pipes (|), like Regular Expression, or they can be added to separate lines. IP ranges in the format 0.0.0.0-1.2.3.4 are not supported, instead write the IP range inregular expression. Titles/Headings can be added to group IP addresses, title/headings must be on one line surrounded by # (e.g., #This is a Heading#). 
+
+<ul>
+<li>E.g.: <code>^192\.168\.</code> will filter all addresses beginning with 192.168 from being checked by LagDrop.</li>
+<li>E.g.: <code>^192\.1(([0-3]{1}))0\.</code> will filter addresses beginning with 192.100, 192.110, 192.120, and 192.130 from being checked by LagDrop.</li>
+</ul>
+</li>
+</ul>
 
 <p><a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&amp;hosted_button_id=HA78KL8EWDJ8Q"><img src="https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif" alt="Donate to keep us going!"></a>
 Donate to keep us going!</p>
