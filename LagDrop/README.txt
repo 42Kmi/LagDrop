@@ -5,6 +5,7 @@ Avoid laggy matches in peer-to-peer matchmaking online games, such as Super Smas
 ![LagDrop](http://i.imgur.com/GGJmYyr.png)
 
 [See LagDrop in action!](https://www.youtube.com/watch?v=6g9MiaE-2k0)
+[Discuss LagDrop at 42Kmi.com](http://42kmi.com/Forum-42Kmi-LagDrop)
 
 ## How it works
 ________________
@@ -15,11 +16,13 @@ Some games, like Super Smash Bros for Wii U, utilize peer-to-peer matchmaking, m
 # How to use
 ----
 #### Required:
-* Router with DD-WRT or other aftermarket firmware capable of running scripts.
+* Router with [DD-WRT](http://dd-wrt.com) or other aftermarket firmware capable of running scripts. [Check if your router is compatible with DD-WRT here.](http://dd-wrt.com/site/support/router-database)
 * SCP client to upload script and edit options file (e.g., WinSCP)
 ##### Optional:
 * USB 2.0 LAN adapter for wired Wii U 
 * SSH command-line interface (e.g., Putty) 
+
+>Need a DD-WRT compatible router? Try [NETGEAR WNR3500L N30](http://amzn.to/2gV6GfI) or [TRENDnet TEW-818DRU AC190](http://amzn.to/2gvdGmt)!
 
 
 *This guide uses DD-WRT as reference and assumes that you are familiar with DD-WRT or similar firmware. Do the equivalent of whatever firmware is on your compatible router.*
@@ -80,6 +83,14 @@ In the 42Kmi folder, whitelist.txt and blacklist.txt can be created in order to 
     * E.g.: `^192\.168\.` will filter all addresses beginning with 192.168 from being checked by LagDrop.
     * E.g.: `^192\.1(([0-3]{1}))0\.` will filter addresses beginning with 192.100, 192.110, 192.120, and 192.130 from being checked by LagDrop.
 
+# Testimonials
+----
+* > Matchmaking was faster with LagDrop than with my PeerBlock country filtering since there was way more players "available" to play against. Be sure I'm gonna talk about \[LagDrop\] as it's the best and only way to fully enjoy P2P games.
+
+* > I'm stunned at how it improved my SFV experience. Before and with country filtering, I'd play a "teleporting" guy one game out of three. Haven't faced any since.
+
+* > It's incredible how the netcode/matchmaking benefits to those players with crappy internet/wi-fi or whatever. Thanks to \[LagDrop\] I've been much more competitive against 3K+ players as it got rid from all the laggers.
+
 
 [![Donate to keep us going!](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=HA78KL8EWDJ8Q)
-Donate to keep us going!
+Donate to LagDrop development! Created and maintained by 42Kmi.
