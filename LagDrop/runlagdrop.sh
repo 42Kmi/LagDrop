@@ -25,7 +25,7 @@ DIR=$(echo $0 | sed -E "s/\/$SCRIPTNAME//g")
 #{ until "$DIR"/lagdrop_"$SUFFIX".sh; do eval "$DIR/lagdrop_$SUFFIX.sh"; &> /dev/null LAGDROP1=$!; done } &
 
 if "$DIR"/lagdrop_"$SUFFIX".sh; then :; else
-{ until "$DIR"/lagdrop_"$SUFFIX".sh; do eval "$DIR/lagdrop_$SUFFIX.sh"; ; done } &> /dev/null &
+{ until "$DIR"/lagdrop_"$SUFFIX".sh; do eval "$DIR/lagdrop_$SUFFIX.sh"; done } &> /dev/null &
 fi
 ##### Add Lagdrop Scripts Here #####
 exit

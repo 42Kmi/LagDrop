@@ -6,7 +6,10 @@ experience lag-free gameplay in online console games utilizing peer-to-peer matc
 
 
 Changes
-Version 2.0.3 - 2016-11-28
+Version 2.0.5 - 2016-12-04
+- Optimizations: Changed read method for blacklist, whitelist, and settings
+
+Version 2.0.4 - 2016-11-28
 - Adjusted an issue with CPU spikes.
 
 Version 2.0.3 - 2016-11-27
