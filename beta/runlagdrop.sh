@@ -2,6 +2,7 @@
 SUFFIX=$1 ###change this to match the ending of the lagdrop file you want to run
 SCRIPTNAME=$(echo "${0##*/}")
 DIR=$(echo $0 | sed -E "s/\/$SCRIPTNAME//g")
+
 ##### Run LagDrop On Startup #####
 #{
 ###########
