@@ -6,11 +6,11 @@ experience lag-free gameplay in online console games utilizing peer-to-peer matc
 
 
 Changes
-Version 2.0.5 beta - 2016-12-05
+Version 2.0.5 beta - 2016-12-06
 - Adjusted reading from blacklist.txt and whitelist.txt
 - Removed "blacklist/whitelist correction" module from LagDrop scripts. Please ensure that the last line of blacklist.txt and whitelist.txt are blank newlines.
-- runlagdrop.sh terminates if lagdrop_.sh script is already running; re-enabled lockfile for runllagdrop.sh
-- Versioning added to runlagdrop.sh and lagdropkill.sh
+- removed runlagdrop.sh, was causing more problems with new changes. New persistence method used.
+- Improved lagdropkill.sh
 
 Version 2.0.4 - 2016-11-28
 - Adjusted an issue with CPU spikes.
