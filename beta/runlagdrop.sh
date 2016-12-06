@@ -2,7 +2,6 @@
 SUFFIX=$1 ###change this to match the ending of the lagdrop file you want to run
 SCRIPTNAME=$(echo "${0##*/}")
 DIR=$(echo $0 | sed -E "s/\/$SCRIPTNAME//g")
-
 ##### Run LagDrop On Startup #####
 #{
 ###########
@@ -23,9 +22,8 @@ DIR=$(echo $0 | sed -E "s/\/$SCRIPTNAME//g")
 ###########
 #} &
 ##### Add Lagdrop Scripts Here #####
-#{ until "$DIR"/lagdrop_"$SUFFIX".sh; do eval "$DIR/lagdrop_$SUFFIX.sh"; &> /dev/null LAGDROP1=$!; done } &
 
-if "$DIR"/lagdrop_"$SUFFIX".sh; then :; else
+if "$DIR"/lagdrop_"$SUFFIX".sh; then exit; else
 { until "$DIR"/lagdrop_"$SUFFIX".sh; do eval "$DIR/lagdrop_$SUFFIX.sh"; done }; &> /dev/null &
 fi
 ##### Add Lagdrop Scripts Here #####
