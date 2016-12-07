@@ -25,7 +25,13 @@ rm -f ${LOCKFILE}
 ##### Add Lagdrop Scripts Here #####
 
 if "$DIR"/lagdrop_"$SUFFIX".sh; then :; else
+persist()
+{
+if "$DIR"/lagdrop_"$SUFFIX".sh; then :; else
 	eval "$DIR/lagdrop_$SUFFIX.sh" &> /dev/null &
+fi
+persist
+}
 fi
 ##### Add Lagdrop Scripts Here #####
 exit
