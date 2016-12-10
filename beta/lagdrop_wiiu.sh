@@ -54,9 +54,9 @@ CHECKPORTS=$(echo "$SETTINGS"|sed -n 16p)
 PORTS=$(echo "$SETTINGS"|sed -n 17p)
 ##### Check Ports #####
 if [ "${CHECKPORTS}" = 1 ] || [ "${CHECKPORTS}" = ON ] || [ "${CHECKPORTS}" = on ] || [ "${CHECKPORTS}" = YES ] || [ "${CHECKPORTS}" = yes ]; then
-IPCONNECT=$(while read -r i; do echo "${i%}"; done < /proc/net/ip_conntrack|grep "dst=$CONSOLE" |grep -E "dport\=${PORTS}\b"|sed -E "/(^#.*#$|^$|\;|#^[ \t]*$)|#/d") ### IP connections stored here, called from memory
+IPCONNECT=$(while read -r i; do echo "${i%}"; done < /proc/net/ip_conntrack|grep "$CONSOLE" |grep -E "dport\=${PORTS}\b"|sed -E "/(^#.*#$|^$|\;|#^[ \t]*$)|#/d") ### IP connections stored here, called from memory
 else
-	IPCONNECT=$(while read -r i; do echo "${i%}"; done < /proc/net/ip_conntrack|grep "dst=$CONSOLE"|sed -E "/(^#.*#$|^$|\;|#^[ \t]*$)|#/d") ### IP connections stored here, called from memory
+	IPCONNECT=$(while read -r i; do echo "${i%}"; done < /proc/net/ip_conntrack|grep "$CONSOLE"|sed -E "/(^#.*#$|^$|\;|#^[ \t]*$)|#/d") ### IP connections stored here, called from memory
 fi
 ##### Check Ports #####
 LIMIT=$(echo "$SETTINGS"|sed -n 2p) ### Your max average millisecond limit. Peers pinging higher than this value are blocked. Default is 3.
