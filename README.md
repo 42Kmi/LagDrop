@@ -40,7 +40,7 @@ Some games, like Super Smash Bros for Wii U, utilize peer-to-peer matchmaking, m
 
 2. Go to the "Services" tab in the DD-WRT web interface. Under the DHCP server settings, look for "static leases". Enter the MAC and IP addresses of your device. Include your console identifier (wiiu, xbox, 3ds, ps4, PC etc.) in the hostname case. Scroll to the bottom of the page and apply settings. PC users will have to edit lagdrop_generic.sh and fill the "CONSOLENAME=" line with the hostname given in the DD-WRT DHCP settings (e.g. CONSOLENAME=PC) before continuing.
 
-3. In the SCP client, enter your router's IP in the hostname case, "root" as username and your password then click on ok. Drop the following files in the jffs folder: lagdropclear.sh, lagdropcount.sh, lagdropkill.sh and runlagdrop.sh along with the lagdrop file suited for your device (e.g. lagdrop_ps4.sh for PS4, lagdrop_generic.sh for PC etc...).
+3. In the SCP client, enter your router's IP in the hostname case, "root" as username and your password then click OK. Drop the following files in the jffs folder: lagdropclear.sh, lagdropcount.sh, lagdropkill.sh and runlagdrop.sh along with the lagdrop file suited for your device (e.g. lagdrop_ps4.sh for PS4, lagdrop_generic.sh for PC etc...). Chmod the jffs folder to 755 recursive (In WinSCP, right-click jffs folder, go to properties, set permission to 755, enable checkbox for "Set group, owner, and permissions recursively").
 
 4. In the DD-WRT web interface, go to Administration > Commands, and run the appropriate Lagdrop for your system, e.g.: "sh /jffs/lagdrop_wiiu.sh" for a Wii U (or run "/jffs/lagdrop_wiiu.sh" from SSH command-line interface). The 42Kmi directory and options.txt will be created.
 
@@ -55,31 +55,33 @@ Some games, like Super Smash Bros for Wii U, utilize peer-to-peer matchmaking, m
 7. Play online and enjoy! Be Glorious!
 ----
 # Options.txt
-This file which is created on the first run of the LagDrop contains the parameters used by LagDrop. The file name will be options_IDENTIFIER.txt, but will referred to as "option.txt" here. Te parameters include:
+This file which is created on the first run of the LagDrop contains the parameters used by LagDrop. The file name will be options_IDENTIFIER.txt, but will referred to as "option.txt" here. The parameters include:
 
 1. **[console name]:** your console’s static IP. This is filled on the first run of LagDrop after setting a static IP for your console. The [console name] is determined by name given in lagdrop.sh
 2. **PingLimit:** This is the maximum average ping time in milliseconds permitted before blocking the peer. Default is 90.
 3. **Count:** This is the number of packets sent to peer. Default is 5.
 4. **Size:** This is the size of the packet in bytes, which tests of the peer’s bandwidth. Default is 1024
 5. **Mode:** Determines which test(s) is/are used. 0 or 1 for Ping only, 2 for TraceRoute only, 3 for Ping or TraceRoute (peer is blocked if they fail ping test or TraceRoute test), 4 for Ping and TraceRoute (peer is blocked if they fail ping test AND TraceRoute test). Default is 1.
-6. **Max TTL:** Maximum TTL for the TraceRoute test. Default is 10
-7. **Probes:** Number of times each node is checked during TraceRoute. Default is 5
-8. **TraceLimit:** The limit of the TraceRoute time average *(TraceRoute tests the ping time between nodes from you to the peer. LagDrop reads it as an average of those times.)* . Values higher than this are blocked. Default is 20
+6. **Max TTL:** Maximum TTL for the TraceRoute test (Active when Mode is set to 2, 3, or 4). Default is 10.
+7. **Probes:** Number of times each node is checked during TraceRoute (Active when Mode is set to 2, 3, or 4). Default is 5.
+8. **TraceLimit:** The limit of the TraceRoute time average *(TraceRoute tests the ping time between nodes from you to the peer. LagDrop reads it as an average of those times.)* . Values higher than this are blocked (Active when Mode is set to 2, 3, or 4). Default is 20
 9. **ACTION:** Action performed when peer fails. Choose to REJECT (0 or REJECT) or DROP (1 or DROP) peers Default is REJECT.
 10. **CHECKPACKETLOSS:** When enabled, will check ping for packet loss percentage (PACKETLOSSLIMIT). If packet loss is greater than the specified limit, then the peer is blocked. If no packet loss is detected, LagDrop proceeds with the other tests. *(This test has priority over ping and TraceRoute tests and is strict!)* Set to ON/on/1/YES/yes to enable. Default is OFF.
-11. **PACKETLOSSLIMIT:** Value to determine blocking for CHECKPACKETLOSS. Default is 80.
+11. **PACKETLOSSLIMIT:** Value to determine blocking for CHECKPACKETLOSS. Default is 80 (80% Packet loss).
 12. **SENTINEL:** Evaluates currently connected peer for packet loss. If packet loss occurs, peer is blocked. Uses PACKETLOSSLIMIT parameter. Default OFF/NO/Disable/0
 13. **CLEARALLOWED:** periodically clears older allowed peers no longer connected to router. Default is OFF/NO/Disable/0
 14. **CLEARBLOCKED:** periodically clears older blocked peers no longer connected to router. Default is OFF/NO/Disable/0
 15. **CLEARLIMIT:** Number of entries per ALLOWED/BLOCKED before clearing old entries begins. Default is 10
-16. **SWITCH:** The master switch to enable (1/ON) or disable (0/OFF) LagDrop. Default is ON.
+16. **PORTFILTER:** Limits peer IP scanning to specified ports; to enable (1/ON/YES) or disable (0/OFF/NO). Default is NO. Recommended for PC gaming.
+17. **PORTS:** Ports to check. Ports should be regex formatted ,eg: 3659|(46[0-9]{3}|5[0-3][0-9]{3}|54000) will limit peer IP scanning to ports 3659 and 46000-54000.
+18. **SWITCH:** The master switch to enable (1/ON) or disable (0/OFF) LagDrop. Default is ON.
 
 ----
 
 ## whitelist.txt and blacklist.txt files
 In the 42Kmi folder, whitelist.txt and blacklist.txt can be created in order to always allow (whitelist.txt) or always block (blacklist.txt) IPs from LagDrop. 
 
-* IP addresses can be added in formatted single lines, with IP address separated by pipes (|), like Regular Expression, or they can be added to separate lines. IP ranges in the format 0.0.0.0-1.2.3.4 are not supported, instead write the IP range inregular expression. Titles/Headings can be added to group IP addresses, title/headings must be on one line surrounded by # (e.g., #This is a Heading#). 
+* IP addresses can be added in formatted single lines, with IP address separated by pipes (|), like Regular Expression, or they can be added to separate lines. IP ranges in the format 0.0.0.0-1.2.3.4 are not supported, instead write the IP range as regular expression. Titles/Headings can be added to group IP addresses, title/headings must be on one line surrounded by # (e.g., #This is a Heading#). 
     * E.g.: `^192\.168\.` will filter all addresses beginning with 192.168 from being checked by LagDrop.
     * E.g.: `^192\.1(([0-3]{1}))0\.` will filter addresses beginning with 192.100, 192.110, 192.120, and 192.130 from being checked by LagDrop.
 

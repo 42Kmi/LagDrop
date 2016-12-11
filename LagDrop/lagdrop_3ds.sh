@@ -1,7 +1,8 @@
 #!/bin/sh
 export LC_ALL=C
+trap "$0" EXIT INT TERM
 ##### 42Kmi LagDrop, Written by 42Kmi. Property of 42Kmi, LLC. #####
-##### Ver 2.0.4
+##### Ver 2.0.5
 ######################################################################################################
 #               .////////////   -+osyyys+-   `////////////////////-                      `//////////`#
 #              /Ny++++++++hM+/hNho/----:+hNo hN++++++oMMm++++++mMy`                      hMhhhhhhdMh #
@@ -38,37 +39,26 @@ CONSOLENAME=3ds
 SCRIPTNAME=$(echo "${0##*/}")
 kill -9 $(ps -w|grep -v $$|grep -F "$SCRIPTNAME") &> /dev/null
 DIR=$(echo $0|sed -E "s/\/$SCRIPTNAME//g")
-SETTINGS=$(while read -r i; do echo "${i%}"; done < "$DIR"/42Kmi/options_"$CONSOLENAME".txt|sed -E "/(^#.*#$|^$|\;|#^[ \t]*$)|#/d"|sed -E 's/^.*=//g') #Settings stored here, called from memory
-
-##### Fix whitelist.txt & blacklist.txt #####
-if [ -f "${DIR}"/42Kmi/whitelist.txt ]
-then
-	if (tail -n 1 "${DIR}"/42Kmi/whitelist.txt|grep -E "^;?$") ;
-	then :; 
-	else echo -en "\n;" >> "${DIR}"/42Kmi/whitelist.txt;
-	fi; &> /dev/null
-else :;
-fi
-
-if [ -f "${DIR}"/42Kmi/blacklist.txt ]
-then
-	if (tail -n 1 "${DIR}"/42Kmi/blacklist.txt|grep -E "^;?$") ;
-	then :; 
-	else echo -en "\n;" >> "${DIR}"/42Kmi/blacklist.txt;
-	fi; &> /dev/null
-else :;
-fi
-##### Fix whitelist.txt & blacklist.txt #####
+SETTINGS=$(tail +1 "$DIR"/42Kmi/options_"$CONSOLENAME".txt|sed -E "/(^#.*#$|^$|\;|#^[ \t]*$)|#/d"|sed -E 's/^.*=//g') #Settings stored here, called from memory
+if "$DIR"/lagdrop_"$SUFFIX".sh; then :; else
 SWITCH=$(echo "$SETTINGS"|tail -1) ### Enable (1)/Disable(0) LagDrop
 if [ "${SWITCH}" = 0 ] || [ "${SWITCH}" = OFF ] || [ "${SWITCH}" = off ]; then :;
 else
 {
 GETSTATIC=$(echo $(nvram get static_leases|sed -E 's/= /\n/g'|sed -E 's/((([a-z]|[A-Z]|[0-9]){2})\:?){6}=//g'|grep -i "$CONSOLENAME"|grep -Eo "([0-9]{1,3}\.?){4}"|sed -n 1p))
 if [ ! -f "$DIR"/42Kmi ] ; then mkdir -p "$DIR"/42Kmi ; fi
-if [ ! -f "$DIR"/42Kmi/options_$CONSOLENAME.txt ] ; then echo -e "$CONSOLENAME=$GETSTATIC\nPINGLIMIT=90\nCOUNT=5\nSIZE=1024\nMODE=1\nMAXTTL=10\nPROBES=5\nTRACELIMIT=30\nACTION=REJECT\nCHECKPACKETLOSS=OFF\nPACKETLOSSLIMIT=80\nSENTINEL=OFF\nCLEARALLOWED=OFF\nCLEARBLOCKED=OFF\nCLEARLIMIT=10\nSWITCH=ON\n;" > "$DIR"/42Kmi/options_$CONSOLENAME.txt; fi ### Makes options file if it doesn't exist
+if [ ! -f "$DIR"/42Kmi/options_$CONSOLENAME.txt ] ; then echo -e "$CONSOLENAME=$GETSTATIC\nPINGLIMIT=90\nCOUNT=5\nSIZE=1024\nMODE=1\nMAXTTL=10\nPROBES=5\nTRACELIMIT=30\nACTION=REJECT\nCHECKPACKETLOSS=OFF\nPACKETLOSSLIMIT=80\nSENTINEL=OFF\nCLEARALLOWED=OFF\nCLEARBLOCKED=OFF\nCLEARLIMIT=10\nCHECKPORTS=NO\nPORTS=\nSWITCH=ON\n;" > "$DIR"/42Kmi/options_$CONSOLENAME.txt; fi ### Makes options file if it doesn't exist
 ##### Make Files #####
-CONSOLE=$(echo "$SETTINGS"|sed -n 1p) ### Your Wii U's IP address. Change this in the $CONSOLENAMEip.txt file
-IPCONNECT=$(while read -r i; do echo "${i%}"; done < /proc/net/ip_conntrack|grep "$CONSOLE"|sed -E "/(^#.*#$|^$|\;|#^[ \t]*$)|#/d") ### IP connections stored here, called from memory
+CONSOLE=$(echo "$SETTINGS"|sed -n 1p) ### Your console's IP address. Change this in the options.txt file
+CHECKPORTS=$(echo "$SETTINGS"|sed -n 16p)
+PORTS=$(echo "$SETTINGS"|sed -n 17p)
+##### Check Ports #####
+if [ "${CHECKPORTS}" = 1 ] || [ "${CHECKPORTS}" = ON ] || [ "${CHECKPORTS}" = on ] || [ "${CHECKPORTS}" = YES ] || [ "${CHECKPORTS}" = yes ]; then
+IPCONNECT=$(while read -r i; do echo "${i%}"; done < /proc/net/ip_conntrack|grep "$CONSOLE" |grep -E "dport\=${PORTS}\b"|sed -E "/(^#.*#$|^$|\;|#^[ \t]*$)|#/d") ### IP connections stored here, called from memory
+else
+	IPCONNECT=$(while read -r i; do echo "${i%}"; done < /proc/net/ip_conntrack|grep "$CONSOLE"|sed -E "/(^#.*#$|^$|\;|#^[ \t]*$)|#/d") ### IP connections stored here, called from memory
+fi
+##### Check Ports #####
 LIMIT=$(echo "$SETTINGS"|sed -n 2p) ### Your max average millisecond limit. Peers pinging higher than this value are blocked. Default is 3.
 COUNT=$(echo "$SETTINGS"|sed -n 3p) ### How many packets to send. Default is 5
 SIZE=$(echo "$SETTINGS"|sed -n 4p) ### Size of packets. Default is 1024
@@ -81,12 +71,14 @@ FILTERIP=$(echo "^38\.112\.28\9[6-9]|^60\.32\.179\.(1[6-9]|2[0-3])|^60\.36\.183\
 RANDOM=$(echo $(dd bs=1 count=1 if=/dev/urandom 2>/dev/null)|hexdump -v -e '/1 "%02X"'|sed -e s/"0A$"//g) #Generates random value between 0-FF
 IGNORE=$(echo $({ if { { iptables -nL LDACCEPT && iptables -nL LDREJECT ; }|grep -Eoq "([0-9]{1,3}\.?){4}"; } then echo "$({ iptables -nL LDACCEPT && iptables -nL LDREJECT ; }|grep -Eo "([0-9]{1,3}\.?){4}"|awk '!a[$0]++'|grep -v "${CONSOLE}"|grep -v "127.0.0.1"|sed -E 's/^/\^/g'|sed 's/\./\\\./g')"|sed -E 's/$/\|/g'; else echo "${ROUTER}"; fi; })|sed -E 's/\|$//g'|sed -E 's/\ //g')
 if [ ! -f "$DIR"/42Kmi/whitelist.txt ] ; then
-PEERIP=$(echo "$IPCONNECT"|grep -Eo "(([0-9]{1,3}\.?){3})\.([0-9]{1,3})"|grep -o '^.*\..*$'|grep -v "${CONSOLE}"|grep -v "${ROUTER}"|grep -Ev "${IGNORE}"|grep -Ev "^$ROUTERSHORT"|grep -Ev "^$WANSHORT"|egrep -Ev "$FILTERIP"|awk '!a[$0]++'|sed -n 1p) ### Get Wii U Peer's IP
+PEERIP=$(echo "$IPCONNECT"|grep -Eo "(([0-9]{1,3}\.?){3})\.([0-9]{1,3})"|grep -o '^.*\..*$'|grep -v "${CONSOLE}"|grep -v "${ROUTER}"|grep -Ev "${IGNORE}"|grep -Ev "^$ROUTERSHORT"|grep -Ev "^$WANSHORT"|egrep -Ev "$FILTERIP"|awk '!a[$0]++'|sed -n 1p) ### Get console Peer's IP
 else
-WHITELIST=$(echo "$(while read -r i; do echo "${i%}"; done < "${DIR}"/42Kmi/whitelist.txt|sed -E "s/^/\^/g"|sed -E "s/\^#|\^$//g"|sed -E "s/\^\^/^/g"|sed -E "/(^#.*#$|^$|\;|#^[ \t]*$)|#/d"|sed -E "s/$/|/g")"|sed -E 's/\|$//g'|sed -E "s/(\ *)//g"|sed -E 's/\b\.\b/\\./g') ### Additional IPs to filter out. Make whitelist.txt in 42Kmi folder, add IPs there. Can now support extra lines and titles. See README
-PEERIP=$(echo "$IPCONNECT"|grep -Eo "(([0-9]{1,3}\.?){3})\.([0-9]{1,3})"|grep -o '^.*\..*$'|grep -v "${CONSOLE}"|grep -v "${ROUTER}"|grep -Ev "${IGNORE}"|grep -Ev "^$ROUTERSHORT"|grep -Ev "^$WANSHORT"|egrep -Ev "$FILTERIP"|egrep -Ev "$WHITELIST"|awk '!a[$0]++'|sed -n 1p) ### Get Wii U Peer's IP
+WHITELIST=$(echo $(echo "$(tail +1 "${DIR}"/42Kmi/whitelist.txt|sed -E "/(^#.*#$|^$|\;|#^[ \t]*$)|#/d"|sed -E "s/^/\^/g"|sed -E "s/\^#|\^$//g"|sed -E "s/\^\^/^/g"|sed -E "s/$/|/g")")|sed -E 's/\|$//g'|sed -E "s/(\ *)//g"|sed -E 's/\b\.\b/\\./g') ### Additional IPs to filter out. Make whitelist.txt in 42Kmi folder, add IPs there. Can now support extra lines and titles. See README
+PEERIP=$(echo "$IPCONNECT"|grep -Eo "(([0-9]{1,3}\.?){3})\.([0-9]{1,3})"|grep -o '^.*\..*$'|grep -v "${CONSOLE}"|grep -v "${ROUTER}"|grep -Ev "${IGNORE}"|grep -Ev "^$ROUTERSHORT"|grep -Ev "^$WANSHORT"|egrep -Ev "$FILTERIP"|egrep -Ev "$WHITELIST"|awk '!a[$0]++'|sed -n 1p) ### Get console Peer's IP
 fi
 EXISTS=$({ iptables -nL LDACCEPT && iptables -nL LDREJECT ;}|grep -Foq "$PEERIP")
+CONTRADICTION=$(if { iptables -L LDREJECT|grep "$PEERIP"; } && { iptables -L LDACCEPT|grep "$PEERIP"; }; then eval "iptables -D LDACCEPT -p all -s $PEERIP -d $CONSOLE -j ACCEPT"; fi
+)
 ##### The Ping #####
 if { "$EXISTS"; }; then :;
 else
@@ -131,7 +123,8 @@ ACTION1=$(if [ "${ACTION}" = 1 ] || [ "${ACTION}" = drop ] || [ "${ACTION}" = DR
 if [ ! -f "$DIR"/42Kmi/blacklist.txt ] ; then :;
 else
 RECENT=$(iptables -nL LDACCEPT|tail -1|grep -Eo "([0-9]{1,3}\.?){4}"|sed -n 1p)
-BLACKLIST=$(echo "$(while read -r i; do echo "${i%}"; done < "${DIR}"/42Kmi/blacklist.txt|sed -E "s/^/\^/g"|sed -E "s/\^#|\^$//g"|sed -E "s/\^\^/^/g"|sed -E "/(^#.*#$|^$|\;|#^[ \t]*$)|#/d"|sed -E "s/$/|/g")"|sed -E 's/\|$//g'|sed -E "s/(\ *)//g"|sed -E 's/\b\.\b/\\./g') ### Permananent ban. If encountered, automatically blocked.
+BLACKLIST=$(echo $(echo "$(tail +1 "${DIR}"/42Kmi/blacklist.txt|sed -E "/(^#.*#$|^$|\;|#^[ \t]*$)|#/d"|sed -E "s/^/\^/g"|sed -E "s/\^#|\^$//g"|sed -E "s/\^\^/^/g"|sed -E "s/$/|/g")")|sed -E 's/\|$//g'|sed -E "s/(\ *)//g"|sed -E 's/\b\.\b/\\./g') ### Permananent ban. If encountered, automatically blocked.
+
 	if { echo "${PEERIP}" |grep -E "${BLACKLIST}"; }; then eval "iptables -I LDREJECT -s $CONSOLE -d $PEERIP -j $ACTION1;"; fi
 	if { echo "${RECENT}" |grep -E "${BLACKLIST}"; }; then eval "iptables -I LDREJECT -s $CONSOLE -d $RECENT -j $ACTION1;"; fi
 fi
@@ -152,23 +145,23 @@ if [ "$(iptables -L LDREJECT|grep "${PEERIP}")" = 0 ]; then :;
 else
 ##### BLOCK ##### // 0 or 1=Ping, 2=TraceRoute, 3=Ping or TraceRoute, 4=Ping & TraceRoute
 if [ "${MODE}" != 2 ] && [ "${MODE}" != 3 ] && [ "${MODE}" != 4 ]; then
-BLOCK=$({ if { { iptables -nL LDACCEPT && iptables -nL LDREJECT ;}|grep -Foq "$PEERIP"; }; then :; else { if [ "${PINGRESULT}" -gt "${LIMIT}" ]; then { eval "iptables -I LDREJECT -s $CONSOLE -d $PEERIP -j $ACTION1;"; }; else { eval "iptables -A LDACCEPT -p all -s $PEERIP -d $CONSOLE -j ACCEPT"; } fi; } fi; } &)# Ping only
+BLOCK=$({ if "$EXISTS"; then :; else { if [ "${PINGRESULT}" -gt "${LIMIT}" ]; then { eval "iptables -I LDREJECT -s $CONSOLE -d $PEERIP -j $ACTION1;"; }; else { eval "iptables -A LDACCEPT -p all -s $PEERIP -d $CONSOLE -j ACCEPT"; } fi; } fi; } &)# Ping only
 else
 	if [ "${MODE}" = 2 ]; then
-	BLOCK=$({ if { { iptables -nL LDACCEPT && iptables -nL LDREJECT ;}|grep -Foq "$PEERIP"; }; then :; else { if [ "${TRAVG}" -gt "${TRACELIMIT}" ]; then { eval "iptables -I LDREJECT -s $CONSOLE -d $PEERIP -j $ACTION1;"; }; else { eval "iptables -A LDACCEPT -p all -s $PEERIP -d $CONSOLE -j ACCEPT"; } fi; } fi; } &)#TraceRoute only
+	BLOCK=$({ if "$EXISTS"; then :; else { if [ "${TRAVG}" -gt "${TRACELIMIT}" ]; then { eval "iptables -I LDREJECT -s $CONSOLE -d $PEERIP -j $ACTION1;"; }; else { eval "iptables -A LDACCEPT -p all -s $PEERIP -d $CONSOLE -j ACCEPT"; } fi; } fi; } &)#TraceRoute only
 	else
 		if [ "${MODE}" = 3 ]; then
-		BLOCK=$({ if { { iptables -nL LDACCEPT && iptables -nL LDREJECT ;}|grep -Foq "$PEERIP"; }; then :; else { if [ "${PINGRESULT}" -gt "${LIMIT}" ] || [ "${TRAVG}" -gt "${TRACELIMIT}" ]; then { eval "iptables -I LDREJECT -s $CONSOLE -d $PEERIP -j $ACTION1;"; }; else { eval "iptables -A LDACCEPT -p all -s $PEERIP -d $CONSOLE -j ACCEPT"; } fi; } fi; } &) #Ping OR TraceRoute
+		BLOCK=$({ if "$EXISTS"; then :; else { if [ "${PINGRESULT}" -gt "${LIMIT}" ] || [ "${TRAVG}" -gt "${TRACELIMIT}" ]; then { eval "iptables -I LDREJECT -s $CONSOLE -d $PEERIP -j $ACTION1;"; }; else { eval "iptables -A LDACCEPT -p all -s $PEERIP -d $CONSOLE -j ACCEPT"; } fi; } fi; } &) #Ping OR TraceRoute
 		else
 				if [ "${MODE}" = 4 ]; then
-				BLOCK=$({ if { { iptables -nL LDACCEPT && iptables -nL LDREJECT ;}|grep -Foq "$PEERIP"; }; then :; else { if [ "${PINGRESULT}" -gt "${LIMIT}" ] && [ "${TRAVG}" -gt "${TRACELIMIT}" ]; then { eval "iptables -I LDREJECT -s $CONSOLE -d $PEERIP -j $ACTION1;"; }; else { eval "iptables -A LDACCEPT -p all -s $PEERIP -d $CONSOLE -j ACCEPT"; } fi; } fi; } &) #Ping AND TraceRoute
+				BLOCK=$({ if "$EXISTS"; then :; else { if [ "${PINGRESULT}" -gt "${LIMIT}" ] && [ "${TRAVG}" -gt "${TRACELIMIT}" ]; then { eval "iptables -I LDREJECT -s $CONSOLE -d $PEERIP -j $ACTION1;"; }; else { eval "iptables -A LDACCEPT -p all -s $PEERIP -d $CONSOLE -j ACCEPT"; } fi; } fi; } &) #Ping AND TraceRoute
 				fi
 		fi
 	fi
 fi
 fi
 ##### Can't be in both #####
-if { iptables -L LDREJECT|grep "$PEERIP"; } && { iptables -L LDACCEPT|grep "$PEERIP"; }; then eval "iptables -D LDACCEPT -p all -s $PEERIP -d $CONSOLE -j ACCEPT"; fi
+"$CONTRADICTION"
 ##### Can't be in both #####
 ##### BLOCK #####
 
@@ -182,8 +175,8 @@ then
 	RECENT=$(iptables -nL LDACCEPT|tail -1|grep -Eo "([0-9]{1,3}\.?){4}"|sed -n 1p)
 	RECENTSOURCE=$(iptables -nL LDACCEPT|tail -1|grep -Eo "([0-9]{1,3}\.?){4}"|sed -n 2p)
 	LASTRULE=$(iptables --line-number -nL LDACCEPT|tail -1|grep -Eo "^[0-9]{1,}")
-	CHECKUP=$(ping -q -c 30 -W 1 -s 1 -p "${RANDOM}" "${RECENT}"|grep -Eo "[0-9]{1,3}\% packet loss"|sed -E "s/%.*$//g" &)
-		if echo "$IPCONNECT"|grep -o "$RECENT"|grep -Eo "([0-9]{1,3}\.?){4}"
+	CHECKUP=$(if echo "$IPCONNECT"|grep -o "$RECENT"; then ping -q -c 17 -W 1 -s 1 -p "${RANDOM}" "${RECENT}"|grep -Eo "[0-9]{1,3}\% packet loss"|sed -E "s/%.*$//g"; fi &)
+		if echo "$IPCONNECT"|grep -o "$RECENT"
 		then 
 			if [ "${CHECKUP}" -gt "${PACKETLOSSLIMIT}" ]; then { eval "iptables -I LDREJECT -s $RECENTSOURCE -d $RECENT -j $ACTION1; iptables -D LDACCEPT $LASTRULE; iptables -D LDACCEPT -d $RECENTSOURCE -s $RECENT -j $ACTION1"; }; fi;
 		else :;
@@ -229,7 +222,7 @@ else :;
 fi
 ##### Clear Old #####
 ##### Can't be in both #####
-if { iptables -L LDREJECT|grep "$PEERIP"; } && { iptables -L LDACCEPT|grep "$PEERIP"; }; then eval "iptables -D LDACCEPT -p all -s $PEERIP -d $CONSOLE -j ACCEPT"; fi
+"$CONTRADICTION" 
 ##### Can't be in both #####
 }
 fi
@@ -273,6 +266,7 @@ lagdropexecute
 } &> /dev/null
 } &> /dev/null
 } fi
+fi
 fi
 ##### Ban SLOW Peers #####
 ##### 42Kmi International Competitive Gaming #####
