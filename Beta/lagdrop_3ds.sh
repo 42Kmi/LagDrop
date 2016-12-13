@@ -40,7 +40,7 @@ SCRIPTNAME=$(echo "${0##*/}")
 kill -9 $(ps -w|grep -v $$|grep -F "$SCRIPTNAME") &> /dev/null
 DIR=$(echo $0|sed -E "s/\/$SCRIPTNAME//g")
 SETTINGS=$(tail +1 "$DIR"/42Kmi/options_"$CONSOLENAME".txt|sed -E "s/#.*$//g"|sed -E "/(^#.*#$|^$|\;|#^[ \t]*$)|#/d"|sed -E 's/^.*=//g') #Settings stored here, called from memory
-if "$DIR"/lagdrop_"$SUFFIX".sh; then :; else
+if "$DIR"/lagdrop_"$CONSOLENAME".sh; then :; else
 SWITCH=$(echo "$SETTINGS"|tail -1) ### Enable (1)/Disable(0) LagDrop
 if [ "${SWITCH}" = 0 ] || [ "${SWITCH}" = OFF ] || [ "${SWITCH}" = off ]; then :;
 else
