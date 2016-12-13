@@ -76,7 +76,6 @@ WHITELIST=$(echo $(echo "$(tail +1 "${DIR}"/42Kmi/whitelist.txt|sed -E "/(^#.*#$
 PEERIP=$(echo "$IPCONNECT"|grep -Eo "(([0-9]{1,3}\.?){3})\.([0-9]{1,3})"|grep -o '^.*\..*$'|grep -v "${CONSOLE}"|grep -v "${ROUTER}"|grep -Ev "${IGNORE}"|grep -Ev "^$ROUTERSHORT"|grep -Ev "^$WANSHORT"|egrep -Ev "$FILTERIP"|egrep -Ev "$WHITELIST"|awk '!a[$0]++'|sed -n 1p) ### Get console Peer's IP
 fi
 EXISTS=$({ iptables -nL LDACCEPT && iptables -nL LDREJECT ;}|grep -Fo "$PEERIP")
-CONTRADICTION=$(if { iptables -L LDREJECT|grep "$PEERIP"; } && { iptables -L LDACCEPT|grep "$PEERIP"; }; then eval "iptables -D LDACCEPT -p all -s $PEERIP -d $CONSOLE -j ACCEPT"; fi)
 ##### The Ping #####
 if { "$EXISTS"; }; then :;
 else
@@ -166,9 +165,6 @@ else
 	fi
 fi
 fi
-##### Can't be in both #####
-"$CONTRADICTION"
-##### Can't be in both #####
 ##### BLOCK #####
 
 ##### SENTINEL Modulus #####
@@ -227,9 +223,6 @@ then
 else :;
 fi
 ##### Clear Old #####
-##### Can't be in both #####
-"$CONTRADICTION" 
-##### Can't be in both #####
 }
 fi
 KILLOLD=$(kill -9 `ps -w | grep -F "$SCRIPTNAME" | grep -v $$` &> /dev/null)
