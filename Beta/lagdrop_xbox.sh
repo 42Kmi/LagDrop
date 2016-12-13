@@ -225,6 +225,10 @@ fi
 ##### Clear Old #####
 }
 fi
+##### Can't Be In Both #####
+DUPE=$(iptables -nL LDACCEPT|tail -1|grep -Eo "([0-9]{1,3}\.?){4}"|grep -vF "$CONSOLE"|sed -n 1p)
+CONTRADICTION=$(if iptables -mL LDREJECT|grep "$DUPE"; then eval "iptables -D LDACCEPT -p all -s $DUPE -d $CONSOLE -j ACCEPT"; fi)
+##### Can't Be In Both #####
 KILLOLD=$(kill -9 `ps -w | grep -F "$SCRIPTNAME" | grep -v $$` &> /dev/null)
 LOOP=$(exec "$0")
 
