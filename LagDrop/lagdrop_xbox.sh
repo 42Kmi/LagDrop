@@ -2,7 +2,7 @@
 export LC_ALL=C
 trap "$0" EXIT INT TERM
 ##### 42Kmi LagDrop, Written by 42Kmi. Property of 42Kmi, LLC. #####
-##### Ver 2.0.5
+##### Ver 2.0.6
 ######################################################################################################
 #               .////////////   -+osyyys+-   `////////////////////-                      `//////////`#
 #              /Ny++++++++hM+/hNho/----:+hNo hN++++++oMMm++++++mMy`                      hMhhhhhhdMh #
@@ -35,26 +35,25 @@ if { iptables -L FORWARD|grep -Eoq "^LDREJECT.*anywhere"; }; then eval "#LDREJEC
 ##### Prepare LagDrop's IPTABLES Chains #####
 
 ##### Make Files #####
-CONSOLENAME=wiiu
+CONSOLENAME=xbox
 SCRIPTNAME=$(echo "${0##*/}")
 kill -9 $(ps -w|grep -v $$|grep -F "$SCRIPTNAME") &> /dev/null
 DIR=$(echo $0|sed -E "s/\/$SCRIPTNAME//g")
-SETTINGS=$(tail +1 "$DIR"/42Kmi/options_"$CONSOLENAME".txt|sed -E "/(^#.*#$|^$|\;|#^[ \t]*$)|#/d"|sed -E 's/^.*=//g') #Settings stored here, called from memory
-if "$DIR"/lagdrop_"$SUFFIX".sh; then :; else
+SETTINGS=$(tail +1 "$DIR"/42Kmi/options_"$CONSOLENAME".txt|sed -E "s/#.*$//g"|sed -E "/(^#.*#$|^$|\;|#^[ \t]*$)|#/d"|sed -E 's/^.*=//g') #Settings stored here, called from memory
 SWITCH=$(echo "$SETTINGS"|tail -1) ### Enable (1)/Disable(0) LagDrop
 if [ "${SWITCH}" = 0 ] || [ "${SWITCH}" = OFF ] || [ "${SWITCH}" = off ]; then :;
 else
 {
 GETSTATIC=$(echo $(nvram get static_leases|sed -E 's/= /\n/g'|sed -E 's/((([a-z]|[A-Z]|[0-9]){2})\:?){6}=//g'|grep -i "$CONSOLENAME"|grep -Eo "([0-9]{1,3}\.?){4}"|sed -n 1p))
 if [ ! -f "$DIR"/42Kmi ] ; then mkdir -p "$DIR"/42Kmi ; fi
-if [ ! -f "$DIR"/42Kmi/options_$CONSOLENAME.txt ] ; then echo -e "$CONSOLENAME=$GETSTATIC\nPINGLIMIT=90\nCOUNT=5\nSIZE=1024\nMODE=1\nMAXTTL=10\nPROBES=5\nTRACELIMIT=30\nACTION=REJECT\nCHECKPACKETLOSS=OFF\nPACKETLOSSLIMIT=80\nSENTINEL=OFF\nCLEARALLOWED=OFF\nCLEARBLOCKED=OFF\nCLEARLIMIT=10\nCHECKPORTS=NO\nPORTS=\nSWITCH=ON\n;" > "$DIR"/42Kmi/options_$CONSOLENAME.txt; fi ### Makes options file if it doesn't exist
+if [ ! -f "$DIR"/42Kmi/options_$CONSOLENAME.txt ] ; then echo -e "$CONSOLENAME=$GETSTATIC\nPINGLIMIT=90\nCOUNT=5\nSIZE=1024\nMODE=1\nMAXTTL=10\nPROBES=5\nTRACELIMIT=30\nACTION=REJECT\nCHECKPACKETLOSS=OFF\nPACKETLOSSLIMIT=80\nSENTINEL=OFF\nCLEARALLOWED=OFF\nCLEARBLOCKED=OFF\nCLEARLIMIT=10\nCHECKPORTS=NO\nPORTS=\nRESTONMULTIPLAYER=NO\nNUMBEROFPEERS=\SWITCH=ON\n;" > "$DIR"/42Kmi/options_$CONSOLENAME.txt; fi ### Makes options file if it doesn't exist
 ##### Make Files #####
 CONSOLE=$(echo "$SETTINGS"|sed -n 1p) ### Your console's IP address. Change this in the options.txt file
 CHECKPORTS=$(echo "$SETTINGS"|sed -n 16p)
 PORTS=$(echo "$SETTINGS"|sed -n 17p)
 ##### Check Ports #####
 if [ "${CHECKPORTS}" = 1 ] || [ "${CHECKPORTS}" = ON ] || [ "${CHECKPORTS}" = on ] || [ "${CHECKPORTS}" = YES ] || [ "${CHECKPORTS}" = yes ]; then
-IPCONNECT=$(while read -r i; do echo "${i%}"; done < /proc/net/ip_conntrack|grep "$CONSOLE" |grep -E "dport\=${PORTS}\b"|sed -E "/(^#.*#$|^$|\;|#^[ \t]*$)|#/d") ### IP connections stored here, called from memory
+IPCONNECT=$(while read -r i; do echo "${i%}"; done < /proc/net/ip_conntrack|grep "src=$CONSOLE" |grep -E "dport\=${PORTS}\b"|sed -E "/(^#.*#$|^$|\;|#^[ \t]*$)|#/d") ### IP connections stored here, called from memory
 else
 	IPCONNECT=$(while read -r i; do echo "${i%}"; done < /proc/net/ip_conntrack|grep "$CONSOLE"|sed -E "/(^#.*#$|^$|\;|#^[ \t]*$)|#/d") ### IP connections stored here, called from memory
 fi
@@ -76,9 +75,7 @@ else
 WHITELIST=$(echo $(echo "$(tail +1 "${DIR}"/42Kmi/whitelist.txt|sed -E "/(^#.*#$|^$|\;|#^[ \t]*$)|#/d"|sed -E "s/^/\^/g"|sed -E "s/\^#|\^$//g"|sed -E "s/\^\^/^/g"|sed -E "s/$/|/g")")|sed -E 's/\|$//g'|sed -E "s/(\ *)//g"|sed -E 's/\b\.\b/\\./g') ### Additional IPs to filter out. Make whitelist.txt in 42Kmi folder, add IPs there. Can now support extra lines and titles. See README
 PEERIP=$(echo "$IPCONNECT"|grep -Eo "(([0-9]{1,3}\.?){3})\.([0-9]{1,3})"|grep -o '^.*\..*$'|grep -v "${CONSOLE}"|grep -v "${ROUTER}"|grep -Ev "${IGNORE}"|grep -Ev "^$ROUTERSHORT"|grep -Ev "^$WANSHORT"|egrep -Ev "$FILTERIP"|egrep -Ev "$WHITELIST"|awk '!a[$0]++'|sed -n 1p) ### Get console Peer's IP
 fi
-EXISTS=$({ iptables -nL LDACCEPT && iptables -nL LDREJECT ;}|grep -Foq "$PEERIP")
-CONTRADICTION=$(if { iptables -L LDREJECT|grep "$PEERIP"; } && { iptables -L LDACCEPT|grep "$PEERIP"; }; then eval "iptables -D LDACCEPT -p all -s $PEERIP -d $CONSOLE -j ACCEPT"; fi
-)
+EXISTS=$({ iptables -nL LDACCEPT && iptables -nL LDREJECT ;}|grep -Fo "$PEERIP")
 ##### The Ping #####
 if { "$EXISTS"; }; then :;
 else
@@ -130,6 +127,14 @@ BLACKLIST=$(echo $(echo "$(tail +1 "${DIR}"/42Kmi/blacklist.txt|sed -E "/(^#.*#$
 fi
 ##### BLACKLIST #####
 
+##### Count Connected IPs #####
+RESTONMULTIPLAYER=$(echo "$SETTINGS"|sed -n 18p)
+NUMBEROFPEERS=$(echo "$SETTINGS"|sed -n 19p)
+OMIT=$WHITELIST && $BLACKLIST && $FILTER|sed -E 's/\^//g'
+IPCONNECTCOUNT=$(echo -ne "$IPCONNECT"| grep -Ev "$OMIT"|grep -Ec "^")
+
+##### Count Connected IPs #####
+
 ##### Ping Packet Loss Block #####
 PACKETLOSSLIMIT=$(echo "$SETTINGS"|sed -n 11p)
 CHECKPACKETLOSS=$(echo "$SETTINGS"|sed -n 10p)
@@ -141,7 +146,7 @@ if [ "${CHECKPACKETLOSS}" = 1 ] || [ "${CHECKPACKETLOSS}" = ON ] || [ "${CHECKPA
 	fi
 fi
 ##### Ping Packet Loss Block #####
-if [ "$(iptables -L LDREJECT|grep "${PEERIP}")" = 0 ]; then :;
+if iptables -nL LDREJECT|grep "${PEERIP}"; then :;
 else
 ##### BLOCK ##### // 0 or 1=Ping, 2=TraceRoute, 3=Ping or TraceRoute, 4=Ping & TraceRoute
 if [ "${MODE}" != 2 ] && [ "${MODE}" != 3 ] && [ "${MODE}" != 4 ]; then
@@ -160,9 +165,6 @@ else
 	fi
 fi
 fi
-##### Can't be in both #####
-"$CONTRADICTION"
-##### Can't be in both #####
 ##### BLOCK #####
 
 ##### SENTINEL Modulus #####
@@ -221,11 +223,12 @@ then
 else :;
 fi
 ##### Clear Old #####
-##### Can't be in both #####
-"$CONTRADICTION" 
-##### Can't be in both #####
 }
 fi
+##### Can't Be In Both #####
+DUPE=$(iptables -nL LDACCEPT|tail -1|grep -Eo "([0-9]{1,3}\.?){4}"|grep -vF "$CONSOLE"|sed -n 1p)
+CONTRADICTION=$(if iptables -mL LDREJECT|grep "$DUPE"; then eval "iptables -D LDACCEPT -p all -s $DUPE -d $CONSOLE -j ACCEPT"; fi)
+##### Can't Be In Both #####
 KILLOLD=$(kill -9 `ps -w | grep -F "$SCRIPTNAME" | grep -v $$` &> /dev/null)
 LOOP=$(exec "$0")
 
@@ -247,8 +250,9 @@ $KILLOLD
 rm -f ${LOCKFILE}
 ##########
 } &
-if "$DIR"/lagdrop_"$SUFFIX".sh; then :; else
-if [ "${SWITCH}" = 0 ] || [ "${SWITCH}" = OFF ] || [ "${SWITCH}" = off ]; then exit && $KILLOLD;
+if "$DIR"/lagdrop_"$CONSOLENAME".sh; then :; else
+#if [ "${SWITCH}" = 0 ] || [ "${SWITCH}" = OFF ] || [ "${SWITCH}" = off ] || (( IPCONNECTCOUNT >= NUMBEROFPEERS )); then exit && $KILLOLD;
+if { [ "${SWITCH}" = 0 ] || [ "${SWITCH}" = OFF ] || [ "${SWITCH}" = off ]; } || { { [ "${RESTONMULTIPLAYER}" = 1 ] || [ "${RESTONMULTIPLAYER}" = yes ] || [ "${RESTONMULTIPLAYER}" = YES ] || [ "${RESTONMULTIPLAYER}" = on ] || [ "${RESTONMULTIPLAYER}" = ON ]; } && (( IPCONNECTCOUNT >= NUMBEROFPEERS )); }; then exit && $KILLOLD;
 else {
 lagdropexecute ()
 { #LagDrop loops within here. It's cool, yo.
@@ -266,7 +270,6 @@ lagdropexecute
 } &> /dev/null
 } &> /dev/null
 } fi
-fi
 fi
 ##### Ban SLOW Peers #####
 ##### 42Kmi International Competitive Gaming #####

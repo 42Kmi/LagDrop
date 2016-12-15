@@ -74,7 +74,9 @@ This file which is created on the first run of the LagDrop contains the paramete
 15. **CLEARLIMIT:** Number of entries per ALLOWED/BLOCKED before clearing old entries begins. Default is 10
 16. **PORTFILTER:** Limits peer IP scanning to specified ports; to enable (1/ON/YES) or disable (0/OFF/NO). Default is NO. Recommended for PC gaming.
 17. **PORTS:** Ports to check. Ports should be regex formatted ,eg: 3659|(46[0-9]{3}|5[0-3][0-9]{3}|54000) will limit peer IP scanning to ports 3659 and 46000-54000.
-18. **SWITCH:** The master switch to enable (1/ON) or disable (0/OFF) LagDrop. Default is ON.
+18. **RESTONMULTIPLAYER:** LagDrop will halt operation if the number of connected peers is greater than or equal to the number specified in the NUMBEROFPEERS field. Enable (1/ON/YES) or disable (0/OFF/NO) Rest on Multiplayer. Default is OFF.
+19. **NUMBEROFPEERS:** The number of connected peers before LagDrop halts.
+20. **SWITCH:** The master switch to enable (1/ON) or disable (0/OFF) LagDrop. Default is ON.
 
 ----
 
