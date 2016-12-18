@@ -1,0 +1,8 @@
+title: 42Kmi LagDrop
+description: Avoid lag and laggy matches in peer-to-peer matchmaking online games, such as Super Smash Bros. for Wii U. For routers running DD-WRT or other similar firmwares. Xbox, PS4
+google_analytics: 
+show_downloads: true
+theme: jekyll-theme-minimal
+
+gems:
+  - jekyll-mentions
