@@ -6,6 +6,10 @@ experience lag-free gameplay in online console games utilizing peer-to-peer matc
 
 
 Changes
+Ver 2.0.7 - 2016-12-19
+- Parenthetical grouping for port filtering
+- Fixed error when creating options.txt file on initiation
+
 Version 2.0.6 - 2016-12-15
 - Hash gengation: Items following # in options.txt will be ignored inline. Useful for testing new values without losing old values
 - Rest on Multiplayer: LagDrop will pause testing if the number of concurrent connections to your console is greater than a given value. Only effective when relevant peers are connected. Make sure the proper filters are in place so only relevante peers can be viewed by LagDrop. Can be enabled/disabled.
