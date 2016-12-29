@@ -6,7 +6,11 @@ experience lag-free gameplay in online console games utilizing peer-to-peer matc
 
 
 Changes
-Ver 2.0.7 - 2016-12-19
+Version 2.0.8 - 2016-12-28
+- Fixed RestOnMultiplayer, RestOnMultiplayer will disable Sentinel from acting.
+- New enable/disable array method implemented
+
+Version 2.0.7 - 2016-12-19
 - Parenthetical grouping for port filtering
 - Fixed error when creating options.txt file on initiation
 

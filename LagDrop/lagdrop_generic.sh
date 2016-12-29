@@ -2,7 +2,7 @@
 export LC_ALL=C
 trap "$0" EXIT INT TERM
 ##### 42Kmi LagDrop, Written by 42Kmi. Property of 42Kmi, LLC. #####
-##### Ver 2.0.7
+##### Ver 2.0.8
 ######################################################################################################
 #               .////////////   -+osyyys+-   `////////////////////-                      `//////////`#
 #              /Ny++++++++hM+/hNho/----:+hNo hN++++++oMMm++++++mMy`                      hMhhhhhhdMh #
@@ -41,7 +41,8 @@ kill -9 $(ps -w|grep -v $$|grep -F "$SCRIPTNAME") &> /dev/null
 DIR=$(echo $0|sed -E "s/\/"$SCRIPTNAME"//g")
 SETTINGS=$(tail +1 "$DIR"/42Kmi/options_"$CONSOLENAME".txt|sed -E "s/#.*$//g"|sed -E "/(^#.*#$|^$|\;|#^[ \t]*$)|#/d"|sed -E 's/^.*=//g') #Settings stored here, called from memory
 SWITCH=$(echo "$SETTINGS"|tail -1) ### Enable (1)/Disable(0) LagDrop
-if [ "${SWITCH}" = 0 ] || [ "${SWITCH}" = OFF ] || [ "${SWITCH}" = off ]; then :;
+RESTONMULTIPLAYER=$(echo "$SETTINGS"|sed -n 18p)
+if [ "$SWITCH" = "$(echo -n "$SWITCH" | grep -oEi "(off|0|disable(d?))")" ]; then :; 
 else
 {
 GETSTATIC=$(echo $(nvram get static_leases|sed -E 's/= /\n/g'|sed -E 's/((([a-z]|[A-Z]|[0-9]){2})\:?){6}=//g'|grep -i "$CONSOLENAME"|grep -Eo "([0-9]{1,3}\.?){4}"|sed -n 1p))
@@ -52,7 +53,7 @@ CONSOLE=$(echo "$SETTINGS"|sed -n 1p) ### Your console's IP address. Change this
 CHECKPORTS=$(echo "$SETTINGS"|sed -n 16p)
 PORTS=$(echo "$SETTINGS"|sed -n 17p)
 ##### Check Ports #####
-if [ "${CHECKPORTS}" = 1 ] || [ "${CHECKPORTS}" = ON ] || [ "${CHECKPORTS}" = on ] || [ "${CHECKPORTS}" = YES ] || [ "${CHECKPORTS}" = yes ]; then
+if [ "$CHECKPORTS" = "$(echo -n "$CHECKPORTS" | grep -oEi "(yes|1|on|enable(d?))")" ]; then
 IPCONNECT=$(while read -r i; do echo "${i%}"; done < /proc/net/ip_conntrack|grep "$CONSOLE" |grep -E "dport\=(${PORTS})\b"|sed -E "/(^#.*#$|^$|\;|#^[ \t]*$)|#/d") ### IP connections stored here, called from memory
 else
 	IPCONNECT=$(while read -r i; do echo "${i%}"; done < /proc/net/ip_conntrack|grep "$CONSOLE"|sed -E "/(^#.*#$|^$|\;|#^[ \t]*$)|#/d") ### IP connections stored here, called from memory
@@ -88,7 +89,7 @@ else
 PINGRESULT=$({ if { "$EXISTS"; }; then :; else echo "$PING"|grep -Eo "round-trip.*"|grep -Eo "\/([0-9]{1,})\.([0-9]{3})\/"|sed "s/\///g"|sed -E 's/\.([0-9]{3})//g'|sed -E "s/\..*ms//g"; &> /dev/null; fi; } &) ### Get PINGRESULT from ping
 fi
 MODE=$(echo "$SETTINGS"|sed -n 5p)
-if [ "${MODE}" != 2 ] && [ "${MODE}" != 3 ] && [ "${MODE}" != 4 ]; then :;
+if [ "$MODE" != "$(echo -n "$MODE" | grep -oEi "([2-4]{1})")" ]; then :;
 else
 ##### TRACEROUTE #####
 ##### PARAMETERS #####
@@ -114,7 +115,7 @@ DEV=$(echo $(( TR - TRAVG * TRCOUNT ))) #Difference of SUM minus AVERAGE times M
 fi
 ##### ACTION of IP Rule #####
 ACTION=$(echo "$SETTINGS"|sed -n 9p) ### DROP (1)/REJECT(0) 
-ACTION1=$(if [ "${ACTION}" = 1 ] || [ "${ACTION}" = drop ] || [ "${ACTION}" = DROP ]; then echo "DROP"; else echo "REJECT"; fi)
+ACTION1=$(if [ "$ACTION" = "$(echo -n "$ACTION" | grep -oEi "(drop)")" ]; then echo "DROP"; else echo "REJECT"; fi)
 ##### ACTION of IP Rule #####
 
 ##### BLACKLIST #####
@@ -129,17 +130,16 @@ fi
 ##### BLACKLIST #####
 
 ##### Count Connected IPs #####
-RESTONMULTIPLAYER=$(echo "$SETTINGS"|sed -n 18p)
 NUMBEROFPEERS=$(echo "$SETTINGS"|sed -n 19p)
-OMIT="$WHITELIST" && "$BLACKLIST" && "$FILTER"|sed -E 's/\^//g'
+OMIT=$("$WHITELIST" && "$BLACKLIST" && "$FILTER"|sed -E 's/\^//g')
 IPCONNECTCOUNT=$(echo -ne "$IPCONNECT"| grep -Ev "$OMIT"|grep -Ec "^")
 
 ##### Count Connected IPs #####
-
+if [ "$RESTONMULTIPLAYER" = "$(echo -n "$RESTONMULTIPLAYER" | grep -oEi "(yes|1|on)")" ] && [ "${IPCONNECTCOUNT}" -ge "${NUMBEROFPEERS}" ]; then :; else
 ##### Ping Packet Loss Block #####
 PACKETLOSSLIMIT=$(echo "$SETTINGS"|sed -n 11p)
 CHECKPACKETLOSS=$(echo "$SETTINGS"|sed -n 10p)
-if [ "${CHECKPACKETLOSS}" = 1 ] || [ "${CHECKPACKETLOSS}" = ON ] || [ "${CHECKPACKETLOSS}" = on ] || [ "${CHECKPACKETLOSS}" = YES ] || [ "${CHECKPACKETLOSS}" = yes ]; then
+if [ "$CHECKPACKETLOSS" = "$(echo -n "$CHECKPACKETLOSS" | grep -oEi "(yes|1|on|enable(d?))")" ]; then
 	if { "$EXISTS"; }; then :;
 	else
 	PINGPACKETLOSS=$({ if { "$EXISTS"; }; then :; else echo "$PING"|grep -Eo "[0-9]{1,3}\% packet loss"|sed -E "s/%.*$//g"; &> /dev/null; fi; } &) ### Packet Loss
@@ -167,10 +167,13 @@ else
 fi
 fi
 ##### BLOCK #####
+fi
 
 ##### SENTINEL Modulus #####
+if [ "$RESTONMULTIPLAYER" = "$(echo -n "$RESTONMULTIPLAYER" | grep -oEi "(yes|1|on)")" ]; then :;#RestOnMultiplayer Overrides Sentinel
+else
 SENTINEL=$(echo "$SETTINGS"|sed -n 12p) #Testing of allowed peers for packet loss
-if [ "${SENTINEL}" = 1 ] || [ "${SENTINEL}" = ON ] || [ "${SENTINEL}" = on ] || [ "${SENTINEL}" = YES ] || [ "${SENTINEL}" = yes ] || [ "${SENTINEL}" = ENABLE ] || [ "${SENTINEL}" = enable ];
+if [ "$SENTINEL" = "$(echo -n "$SENTINEL" | grep -oEi "(yes|1|on|enable(d?))")" ];
 then
 	if [ "$(iptables -nL LDREJECT|grep -Eo "$RECENT")" ]; then :;
 	else
@@ -178,7 +181,7 @@ then
 	RECENT=$(iptables -nL LDACCEPT|tail -1|grep -Eo "([0-9]{1,3}\.?){4}"|sed -n 1p)
 	RECENTSOURCE=$(iptables -nL LDACCEPT|tail -1|grep -Eo "([0-9]{1,3}\.?){4}"|sed -n 2p)
 	LASTRULE=$(iptables --line-number -nL LDACCEPT|tail -1|grep -Eo "^[0-9]{1,}")
-	CHECKUP=$(if echo "$IPCONNECT"|grep -o "$RECENT"; then ping -q -c 17 -W 1 -s 1 -p "${RANDOM}" "${RECENT}"|grep -Eo "[0-9]{1,3}\% packet loss"|sed -E "s/%.*$//g"; fi &)
+	CHECKUP=$(if echo "$IPCONNECT"|grep -o "$RECENT"; then ping -q -c 17 -W 1 -s 1 -p "${RANDOM}" "${RECENT}"|grep -Eo "[0-9]{1,3}\% packet loss"|sed -E "s/%.*$//g"; fi &) &
 		if echo "$IPCONNECT"|grep -o "$RECENT"
 		then 
 			if [ "${CHECKUP}" -gt "${PACKETLOSSLIMIT}" ]; then { eval "iptables -I LDREJECT -s $RECENTSOURCE -d $RECENT -j $ACTION1; iptables -D LDACCEPT $LASTRULE; iptables -D LDACCEPT -d $RECENTSOURCE -s $RECENT -j $ACTION1"; }; fi;
@@ -186,7 +189,7 @@ then
 		fi	
 	fi
 else :;
-
+fi
 fi
 ##### SENTINEL Modulus #####
 
@@ -194,7 +197,7 @@ fi
 CLEARLIMIT=$(echo "$SETTINGS"|sed -n 15p)
 #Allow
 CLEARALLOWED=$(echo "$SETTINGS"|sed -n 13p)
-if [ "${CLEARALLOWED}" = 1 ] || [ "${CLEARALLOWED}" = ON ] || [ "${CLEARALLOWED}" = on ] || [ "${CLEARALLOWED}" = YES ] || [ "${CLEARALLOWED}" = yes ] || [ "${CLEARALLOWED}" = ENABLE ] || [ "${CLEARALLOWED}" = enable ];
+if [ "$CLEARALLOWED" = "$(echo -n "$CLEARALLOWED" | grep -oEi "(yes|1|on|enable(d?))")" ];
 then
 	COUNTALLOW=$(iptables -L LDACCEPT|grep -Ec "^ACCEPT")
 	TOPALLOW=$(iptables -nL LDACCEPT|grep -E "^ACCEPT"|sed "s/${CONSOLE}//g"|grep -Eo "([0-9]{1,3}\.?){4}"|sed -n 1p)
@@ -209,7 +212,7 @@ else :;
 fi
 #Blocked
 CLEARBLOCKED=$(echo "$SETTINGS"|sed -n 14p)
-if [ "${CLEARBLOCKED}" = 1 ] || [ "${CLEARBLOCKED}" = ON ] || [ "${CLEARBLOCKED}" = on ] || [ "${CLEARBLOCKED}" = YES ] || [ "${CLEARBLOCKED}" = yes ] || [ "${CLEARBLOCKED}" = ENABLE ] || [ "${CLEARBLOCKED}" = enable ];
+if [ "$CLEARBLOCKED" = "$(echo -n "$CLEARBLOCKED" | grep -oEi "(yes|1|on|enable(d?))")" ];
 then
 	COUNTBLOCKED=$(iptables -L LDREJECT|grep -Ec "^(DROP|REJECT)")
 	BOTTOMBLOCKED=$(iptables -nL LDREJECT|tail -1|grep -Eo "([0-9]{1,3}\.?){4}"|sed -n 2p)
@@ -248,8 +251,8 @@ rm -f ${LOCKFILE}
 ##########
 } &
 if "$DIR"/lagdrop_"$CONSOLENAME".sh; then :; else
-#if [ "${SWITCH}" = 0 ] || [ "${SWITCH}" = OFF ] || [ "${SWITCH}" = off ] || (( IPCONNECTCOUNT >= NUMBEROFPEERS )); then exit && $KILLOLD;
-if { [ "${SWITCH}" = 0 ] || [ "${SWITCH}" = OFF ] || [ "${SWITCH}" = off ]; } || { { [ "${RESTONMULTIPLAYER}" = 1 ] || [ "${RESTONMULTIPLAYER}" = yes ] || [ "${RESTONMULTIPLAYER}" = YES ] || [ "${RESTONMULTIPLAYER}" = on ] || [ "${RESTONMULTIPLAYER}" = ON ]; } && (( IPCONNECTCOUNT >= NUMBEROFPEERS )); }; then exit && $KILLOLD;
+if [ "$RESTONMULTIPLAYER" = "$(echo -n "$RESTONMULTIPLAYER" | grep -oEi "(yes|1|on)")" ] && [ "${IPCONNECTCOUNT}" -ge "${NUMBEROFPEERS}" ]; then :; else
+if [ "$SWITCH" = "$(echo -n "$SWITCH" | grep -oEi "(off|0|disable(d?))")" ]; then exit && $KILLOLD;
 else {
 lagdropexecute ()
 { #LagDrop loops within here. It's cool, yo.
@@ -258,7 +261,7 @@ if { ping -q -c 1 -W 1 -s 1 "${CONSOLE}"|grep -q -F -w "100% packet loss" ;} &> 
 lagdropexecute
 { while ping -q -c 1 -W 1 "${CONSOLE}"|grep -q -F -w "100% packet loss"; do :; done ;} &> /dev/null; wait
 while sleep :; do 
-if { "$EXISTS"; }; then :; else ${PACKETBLOCK} && ${BLOCK}; wait &> /dev/null; fi
+if { "$EXISTS"; }; then :; else ${PACKETBLOCK} && ${BLOCK}; wait &> /dev/null &; fi
  
  done
 fi
@@ -267,6 +270,7 @@ lagdropexecute
 } &> /dev/null
 } &> /dev/null
 } fi
+fi
 fi
 ##### Ban SLOW Peers #####
 ##### 42Kmi International Competitive Gaming #####
