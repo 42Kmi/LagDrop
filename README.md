@@ -1,3 +1,6 @@
+# 42Kmi LagDrop
+Avoid laggy matches in peer-to-peer matchmaking online games, such as Super Smash Bros. for Wii U.
+
 <div markdown="1">
 <script>
   (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
@@ -10,9 +13,6 @@
 
 </script>
 </div>
-# 42Kmi LagDrop
-Avoid laggy matches in peer-to-peer matchmaking online games, such as Super Smash Bros. for Wii U.
-
 
 ![LagDrop](http://i.imgur.com/GGJmYyr.png)
 
