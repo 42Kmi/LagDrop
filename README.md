@@ -14,6 +14,17 @@ Avoid laggy matches in peer-to-peer matchmaking online games, such as Super Smas
 </script>
 </div>
 
+<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- Responsive Ad, LagDrop -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-0923604323392782"
+     data-ad-slot="5598939069"
+     data-ad-format="auto"></ins>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+
 ![LagDrop](http://i.imgur.com/GGJmYyr.png)
 
 [See LagDrop in action!](https://www.youtube.com/watch?v=6g9MiaE-2k0)
