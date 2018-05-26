@@ -46,8 +46,10 @@ Network Trash Folder
 Temporary Items
 .apdisk
 
-#Miscellaneous File
+# Miscellaneous File
 */GA_Script.html
 /GA_Script.html
+GA_Script.html
 .html
+*.html
 CNAME
