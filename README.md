@@ -1,30 +1,6 @@
 # 42Kmi LagDrop
 Avoid laggy matches in peer-to-peer matchmaking online games, such as Super Smash Bros. for Wii U.
 
-<div markdown="1">
-<script>
-  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
-
-  ga('create', 'UA-91805305-1', 'auto');
-  ga('send', 'pageview');
-
-</script>
-</div>
-
-<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-<!-- Responsive Ad, LagDrop -->
-<ins class="adsbygoogle"
-     style="display:block"
-     data-ad-client="ca-pub-0923604323392782"
-     data-ad-slot="5598939069"
-     data-ad-format="auto"></ins>
-<script>
-(adsbygoogle = window.adsbygoogle || []).push({});
-</script>
-
 ![LagDrop](http://i.imgur.com/GGJmYyr.png)
 
 [See LagDrop in action!](https://www.youtube.com/watch?v=6g9MiaE-2k0)
