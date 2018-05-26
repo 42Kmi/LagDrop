@@ -37,7 +37,7 @@ Starting with version 3.0.0, LagDrop runs differently from previous versions.
 
 2. Go to the "Services" tab in the DD-WRT web interface. Under the DHCP server settings, look for "static leases". Enter the MAC and IP addresses of your device. Include your console identifier, the keyword used for selecting the console filter, (wiiu, xbox, 3ds, ps4, PC etc.) in the hostname case. Scroll to the bottom of the page and apply settings.
 
-3. In the SCP client, enter your router's IP in the hostname case, "root" as username and your password then click OK. Drop the following files in the jffs folder: lagdropclear.sh, lagdropcount.sh,and lagdrop.sh. Chmod the jffs folder to 755 recursive (In WinSCP, right-click jffs folder, go to properties, set permission to 755, enable checkbox for "Set group, owner, and permissions recursively").
+3. In the SCP client, enter your router's IP in the hostname case, "root" as username and your password then click OK. Drop the following files in the jffs folder: lagdropclear.sh, lagdropcount.sh,and lagdrop.sh. Chmod the jffs folder to 755 recursive (In WinSCP, right-click jffs folder, go to properties, set permission to 777, enable checkbox for "Set group, owner, and permissions recursively").
 
 4. In the DD-WRT web interface, go to Administration > Commands, and run lagdrop.sh and your appropriate console identifier or your device name as included in the DHCP settings page, in quotes, as the arugment, e.g.: "sh /jffs/lagdrop.sh "wiiu"", (or run "/jffs/lagdrop.sh "wiiu" &> /dev/null" from SSH command-line interface). The 42Kmi directory and options.txt will be created.
 
