@@ -1,10 +1,3 @@
----
-title: "42Kmi LagDrop"
-output: 
-  html_document:
-    includes:
-       in_header: GA_Script.html
----
 # 42Kmi LagDrop
 Avoid laggy matches in peer-to-peer matchmaking online games, such as Super Smash Bros. for Wii U.
 
