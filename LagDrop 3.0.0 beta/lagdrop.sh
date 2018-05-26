@@ -35,7 +35,7 @@ fi
 ##### 42Kmi International Competitive Gaming #####
 ##### Please visit and join 42Kmi.com #####
 ##### Be Glorious, Be Best #####
-##### Don't Be Racist, Homophobic, Islamophobic, Misogynistic, Bigoted, etc. #####
+##### Don't Be Racist, Homophobic, Islamophobic, Misogynistic, Bigoted, Sexist, etc. #####
 ##### Ban SLOW Peers #####
 
 ##### Demo Mode #####
@@ -80,7 +80,7 @@ if [ "${SHELLIS}" = "ash" ]; then
 #GETSTATIC=$(echo $(uci -P/var/state show |grep -i -A 2 "$CONSOLENAME")|grep -Eo "(([0-9]{1,3}\.?){3})\.([0-9]{1,3})"|sed -n 1p)# for OpenWRT
 GETSTATIC=$(echo $(tail +1 "/var/etc/dnsmasq.conf"|grep -i "$CONSOLENAME"|grep -Eo "([0-9]{1,3}\.){3}([0-9]{1,3})")|sed -n 1p)# for OpenWRT
 else
-GETSTATIC=$(echo $(nvram get static_leases|sed -E 's/= /\n/g'|sed -E 's/((([a-z]|[A-Z]|[0-9]){2})\:?){6}=//g'|grep -i "$CONSOLENAME"|grep -Eo "([0-9]{1,3}\.?){4}"|sed -n 1p)) # for DD-WRT
+GETSTATIC=$(echo $(nvram get static_leases|sed -E 's/= /\n/g'|sed -E 's/((([a-z]|[A-Z]|[0-9]){2})\:?){6}=//g'|grep -i "$CONSOLENAME"|grep -Eo "([0-9]{1,3}\.){3}([0-9]{1,3})"|sed -n 1p)) # for DD-WRT
 fi
 ##### Get Static IP #####
 
@@ -253,8 +253,6 @@ else
 #RECENT=$(iptables -nL LDACCEPT|tail -1|grep -Eo "([0-9]{1,3}\.?){4}"|sed -n 1p)
 BLACKLIST=$(echo $(echo "$(tail +1 "${DIR}"/42Kmi/blacklist.txt|sed -E "/(#.*$|^$|\;|#^[ \t]*$)|#/d"|sed -E "s/^/\^/g"|sed -E "s/\^#|\^$//g"|sed -E "s/\^\^/^/g"|sed -E "s/$/|/g")")|sed -E 's/\|$//g'|sed -E "s/(\ *)//g"|sed -E 's/\b\.\b/\\./g') ### Permananent ban. If encountered, automatically blocked.
 
-	#if { echo "${PEERIP}" |grep -E "${BLACKLIST}"; }; then eval "iptables -I LDBAN -s $CONSOLE -d $PEERIP -j $ACTION1 "${WAITLOCK}";"; fi
-	#if { echo "${RECENT}" |grep -E "${BLACKLIST}"; }; then eval "iptables -I LDBAN -s $CONSOLE -d $RECENT -j $ACTION1 "${WAITLOCK}";"; fi
 	if { echo "${BLACKLIST}" |grep -E "${PEERIP}"; }; then eval "iptables -I LDBAN -s $CONSOLE -d $PEERIP -j $ACTION1 "${WAITLOCK}";"; fi
 	if { echo "${BLACKLIST}" |grep -E "${RECENT}"; }; then eval "iptables -I LDBAN -s $CONSOLE -d $RECENT -j $ACTION1 "${WAITLOCK}";"; fi
 fi
@@ -479,19 +477,19 @@ if { ping -q -c 1 -W 1 "${CONSOLE}"|grep -q -F -w "100% packet loss" ;} &> /dev/
 fi
 #####Decongest - Block all other connections#####
 
-##### CULL CLEAR PEERS #####
-cullold()
-{
-OLDESTALLOW=$(iptables -nL LDACCEPT|grep -E "^ACCEPT"|grep -Eo "([0-9]{1,3}\.?){4}"|sed -n 1p)
-#CULLEXIST=$(echo "${IPCONNECT}"|grep -Eo "${OLDESTALLOW}")
-OLDESTPEERLINE=$(iptables --line-number -nL LDACCEPT| grep -F "${OLDESTALLOW}"|awk '{print $1}'|grep -E "[0-9]{1,}"|sed -n 1p)
-if echo "${IPCONNECT}"|grep -F "${OLDESTALLOW}"; then :;
-else eval "iptables -D LDACCEPT $OLDESTPEERLINE "${WAITLOCK}";"
-fi
-cullold
-}
-cullold
-##### CULL CLEAR PEERS #####
+###### CULL CLEAR PEERS #####
+#cullold ()
+#{
+#OLDESTALLOW=$(iptables -nL LDACCEPT|grep -E "^ACCEPT"|grep -Eo "([0-9]{1,3}\.?){4}"|sed -n 1p)
+##CULLEXIST=$(echo "${IPCONNECT}"|grep -Eo "${OLDESTALLOW}")
+#OLDESTPEERLINE=$(iptables --line-number -nL LDACCEPT| grep -F "${OLDESTALLOW}"|awk '{print $1}'|grep -E "[0-9]{1,}"|sed -n 1p)
+#if echo "${IPCONNECT}"|grep -F "${OLDESTALLOW}"; then :;
+#else eval "iptables -D LDACCEPT $OLDESTPEERLINE "${WAITLOCK}";"
+#fi
+#cullold
+#}
+#cullold
+###### CULL CLEAR PEERS #####
 
 {
 ##########
