@@ -1,6 +1,6 @@
 #!/bin/sh
 ##### 42Kmi LagDrop, Written by 42Kmi. Property of 42Kmi, LLC. #####
-VERSION=$(echo "Ver 3.0.0, #OneForAll")
+VERSION=$(echo "Ver 3.0.0 beta, #OneForAll")
 export LC_ALL=C
 trap "$0" EXIT INT TERM
 ##### Kill if no argument #####
@@ -34,8 +34,8 @@ fi
 
 ##### 42Kmi International Competitive Gaming #####
 ##### Please visit and join 42Kmi.com #####
-##### Be Glorious #####
-##### Don't Be Racist #####
+##### Be Glorious, Be Best #####
+##### Don't Be Racist, Homophobic, Islamophobic, Misogynistic, Bigoted, etc. #####
 ##### Ban SLOW Peers #####
 
 ##### Demo Mode #####
@@ -199,6 +199,7 @@ if [ -f "$DIR"/42Kmi/tweak.txt ] ; then PINGRESOLUTION="${TWEAKPINGRESOLUTION}";
 #PINGGET=$(echo "$(n=0; while [[ $n -lt "${COUNT}" ]]; do ( ping -q -c "${PINGRESOLUTION}" -W 1 -s "${SIZE}""${RANDOM}" "${PEERIP}" & ) ; n=$((n+1)); done )"|grep -Eo "\/([0-9]{1,}\.[0-9]{1,})\/"|sed -E 's/(\/|\.)//g'|sed -E 's/$/+/g')
 PINGGET=$(echo "$(n=0; while [[ $n -lt "${COUNT}" ]]; do ( ping -q -c "${PINGRESOLUTION}" -W 1 -s "${SIZE}""${RANDOM}" "${PEERIP}" & ) ; n=$((n+1)); done )"|grep -Eo "\/([0-9]{1,}\.[0-9]{1,})\/"|sed -E 's/(\/|\.)//g'|sed -E 's/(^|\b)(0){1,}//g'|sed -E 's/$/+/g'|sed -E 's/\+$//g') &> /dev/nul
 PINGCOUNT=$(echo "$PINGGET"|wc -w)
+if [ "${PINGCOUNT}" != "$(echo -n "$PINGCOUNT" | grep -oEi "(0|)")" ]; then :; else PINGCOUNT=1; fi
 #PINGSUM=$(( $(echo "$PINGGET"|sed -E 's/\+$//g') ))
 PINGSUM=$(( $PINGGET ))
 #PINGFULL=$(echo $(( PINGSUM / PINGCOUNT ))|sed -E 's/\[0-9]{3}$//g' )
@@ -228,6 +229,7 @@ MXP=$(echo $(( TTL * PROBES * TRGETCOUNT )))
 #TRGET=$(if { "$EXISTS"; }; then :; else echo $(echo "$(n=0; while [[ $n -lt "${TTL}" ]]; do ( traceroute -F -m 1 -q "${PROBES}" -w 1 "${PEERIP}" 32768 & ) ; n=$((n+1)); done )"|grep -Eo "([0-9]{1,}\.[0-9]{3}\ ms)"|sed -E 's/(\/|\.|\ ms)//g'|sed -E 's/$/+/g'); fi)
 TRGET=$(echo $(echo "$(n=0; while [[ $n -lt "${TTL}" ]]; do ( traceroute -F -m "${TRGETCOUNT}" -q "${PROBES}" -w 1 "${PEERIP}" "${SIZE}" & ) ; n=$((n+1)); done )"|grep -Eo "([0-9]{1,}\.[0-9]{3}\ ms)"|sed -E 's/(\/|\.|\ ms)//g'|sed -E 's/(^|\b)(0){1,}//g'|sed -E 's/$/+/g')|sed -E 's/\+$//g') &> /dev/nul
 TRCOUNT=$(echo "$TRGET"|wc -w) #Counts for average
+if [ "${TRCOUNT}" = "$(echo -n "$TRCOUNT" | grep -oEi "(0|)")" ]; then TRCOUNT=1; fi #Fallback
 TRSUM=$(( $TRGET ))
 if [ "${TRCOUNT}" != 0 ]; then
 TRAVGFULL=$(echo $(( TRSUM / TRCOUNT ))) #TRACEROURTE sum for math
@@ -302,6 +304,7 @@ sleep "${PACKETINTERVAL}"
 PACKETGET2=$(echo "$(iptables -xnvL LDACCEPT| grep -F "$RECENT"|awk '{print $1}'|grep -E "[0-9]{1,}")")
 PACKETDIFF=$(echo $(( PACKETGET2 - PACKETGET1 )))
 PACKETCOUNT=$(echo "$PACKETGET1 $PACKETGET2"|wc -w)
+if [ "${PACKETCOUNT}" = "$(echo -n "$PACKETCOUNT" | grep -oEi "(0|)")" ]; then PACKETCOUNT=1; fi #Fallback
 PACKETAVG=$(echo $(( (( PACKETGET2 - PACKETGET1 )) / PACKETCOUNT )) / )
 PACKETDIFFSQ=$(echo $(( PACKETDIFF * PACKETDIFF )))
 PACKETXSQ=$(echo $(( (( PACKETDIFFSQ / PACKETAVG )) )))
@@ -366,6 +369,7 @@ if [ -f "$DIR"/42Kmi/tweak.txt ] ; then SENTINELXSQMODE="${TWEAKSENTINELXSQMODE}
 #SENTGET=$(echo $(echo "$(n=0; while [[ $n -lt "${SENTRUN}" ]]; do ( ping -q -c "${SENTRES}" -W 1 -s "${SENTSIZE}" "${RECENT}" & ) ; n=$((n+1)); done )"|grep -Eo "\/([0-9]{1,}\.[0-9]{1,})\/"|sed -E 's/(\/|\.)//g'|sed -E 's/$/+/g')|sed -E 's/\+$//g')
 SENTGET=$(echo $(echo "$(n=0; while [[ $n -lt "${SENTRUN}" ]]; do ( ping -q -c "${SENTRES}" -W 1 -s "${SENTSIZE}" "${RECENT}" & ) ; n=$((n+1)); done )"|grep -Eo "\/([0-9]{1,}\.[0-9]{1,})\/"|sed -E 's/(\/|\.)//g'|sed -E 's/(^|\b)(0){1,}//g'|sed -E 's/$/+/g')|sed -E 's/\+$//g'|sed -E 's/\+$//g') &> /dev/nul
 SENTCOUNT=$(echo "$SENTGET"|wc -w)
+if [ "${SENTCOUNT}" = "$(echo -n "$SENTCOUNT" | grep -oEi "(0|)")" ];then SENTCOUNT=1;fi #Fallback
 #SENTSUM=$(( $(echo "$SENTGET"|sed -E 's/\+$//g') ))
 SENTSUM=$(( $SENTGET ))
 SENTAVG=$(echo $(( SENTSUM / SENTCOUNT ))|sed -E 's/[0-9]{3}$//g' )
@@ -373,13 +377,12 @@ SENTAVG=$(echo $(( SENTSUM / SENTCOUNT ))|sed -E 's/[0-9]{3}$//g' )
 sleep "${SENTINTERVAL}"
 SENTGET2=$(echo $(echo "$(n=0; while [[ $n -lt "${SENTRUN}" ]]; do ( ping -q -c "${SENTRES}" -W 1 -s "${SENTSIZE}" "${RECENT}" & ) ; n=$((n+1)); done )"|grep -Eo "\/([0-9]{1,}\.[0-9]{1,})\/"|sed -E 's/(\/|\.)//g'|sed -E 's/(^|\b)(0){1,}//g'|sed -E 's/$/+/g')|sed -E 's/\+$//g') &> /dev/nul
 SENTCOUNT2=$(echo "$SENTGET2"|wc -w)
+if [ "${SENTCOUNT2}" = "$(echo -n "$SENTCOUNT2" | grep -oEi "(0|)")" ];then SENTCOUNT2=1;fi #Fallback
 SENTSUM2=$(( $(echo "$SENTGET2"|sed -E 's/\+$//g') ))
 SENTAVG2=$(echo $(( SENTSUM2 / SENTCOUNT2 ))|sed -E 's/[0-9]{3}$//g' )
 #SENTDIFF=$(echo $(( SENTAVG2 - SENTAVG ))|sed -E 's/\-//g')
 SENTDIFF=$(echo $(( SENTAVG2 - SENTAVG )))
 SENTAVGBOTH=$(echo $(( (( SENTAVG + SENTAVG2 )) / 2 )) )
-if [ "${SENTCOUNT}" = "$(echo -n "$SENTCOUNT" | grep -oEi "(0|)")" ];then SENTCOUNT=1;fi #Fallback
-if [ "${SENTCOUNT2}" = "$(echo -n "$SENTCOUNT2" | grep -oEi "(0|)")" ];then SENTCOUNT2=1;fi #Fallback
 if [ "${SENTAVGBOTH}" = "$(echo -n "$SENTAVGBOTH" | grep -oEi "(0|)")" ];then SENTAVGBOTH=1;fi #Fallback
 
 #####High#####
