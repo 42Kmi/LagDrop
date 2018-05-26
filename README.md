@@ -74,7 +74,7 @@ This file which is created on the first run of the LagDrop contains the paramete
 16. **CHECKPORTS:** Limits peer IP scanning to specified ports; to enable (1/ON/YES) or disable (0/OFF/NO). Default is NO. Recommended for PC gaming.
 17. **PORTS:** Ports to check. Ports should be regex formatted
 ```
-    eg: `3659|(46[0-9]{3}|5[0-3][0-9]{3}|54000)` will limit peer IP scanning to ports 3659 and 46000-54000.
+    eg: 3659|(46[0-9]{3}|5[0-3][0-9]{3}|54000) will limit peer IP scanning to ports 3659 and 46000-54000.
 ```
 18. **RESTONMULTIPLAYER:** LagDrop will halt operation if the number of connected peers is greater than or equal to the number specified in the NUMBEROFPEERS field. Enable (1/ON/YES) or disable (0/OFF/NO) Rest on Multiplayer. Default is OFF.
 19. **NUMBEROFPEERS:** The number of connected peers before LagDrop halts.
@@ -88,13 +88,15 @@ In the 42Kmi folder, whitelist.txt and blacklist.txt can be created in order to 
 
 * IP addresses can be added in formatted single lines, with IP address separated by pipes (|), like Regular Expression, or they can be added to separate lines. IP ranges in the format 0.0.0.0-1.2.3.4 are not supported, instead write the IP range as regular expression. Titles/Headings can be added to group IP addresses, title/headings must be on one line surrounded by # (e.g., #This is a Heading#). Lines with # will not be interpreted by LagDrop.
 ```
-    E.g.: `^192\.168\.` will filter all addresses beginning with 192.168 from being checked by LagDrop.
-    E.g.: `^192\.1(([0-3]{1}))0\.` will filter addresses beginning with 192.100, 192.110, 192.120, and 192.130 from being checked by LagDrop.
+    E.g.: ^192\.168\. will filter all addresses beginning with 192.168 from being checked by LagDrop.
+    E.g.: ^192\.1(([0-3]{1}))0\. will filter addresses beginning with 192.100, 192.110, 192.120, and 192.130 from being checked by LagDrop.
 ```
 
 ----
 ## tweak.txt
-This is an optional file you can create and add to the 42Kmi folder to adjust some extra parameters. Again, this is optional and not needed for LagDrop to run, however, you are free to experiment as you please. PINGRESOLUTION=5
+This is an optional file you can create and add to the 42Kmi folder to adjust some extra parameters. Again, this is optional and not needed for LagDrop to run, however, you are free to experiment as you please.
+```
+PINGRESOLUTION=5
 TRGETRESOLUTION=1
 PACKETMODE=3
 PACKETINTERVAL=3
@@ -104,6 +106,7 @@ SENTRUN=100
 SENTRES=4
 SENTINTERVAL=4
 SENTINELXSQMODE=Standard
+```
 # Testimonials
 ----
 * > Matchmaking was faster with LagDrop than with my PeerBlock country filtering since there was way more players "available" to play against. Be sure I'm gonna talk about \[LagDrop\] as it's the best and only way to fully enjoy P2P games.
