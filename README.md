@@ -44,7 +44,9 @@ Starting with version 3.0.0, LagDrop runs differently from previous versions.
 5. In the SCP client, navigate to /jffs/42Kmi. Open the options.txt file and edit the parameters. It should be pre-filled with your device's hostname and static IP address previously entered in DD-WRT's DHCP server settings for your device.
 
 6. In the "Administration" tab of DD-wrt web interface, enable Cron and add this as an additional cron job:
-    >"*/1 * * * * root /bin/sh /jffs/lagdrop.sh "ARGUMENT"" 
+    ```
+    */1 * * * * root /bin/sh /jffs/lagdrop.sh "ARGUMENT"
+    ```
 
     with quotes, where ARGUMENT is your console identifier or your hostname
     (eg: "*/1 * * * * root /bin/sh /jffs/lagdrop.sh wiiu" for will run lagdrop.sh for your the first static host with wiiu in its name).
