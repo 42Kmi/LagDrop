@@ -84,8 +84,10 @@ This file which is created on the first run of the LagDrop contains the paramete
 In the 42Kmi folder, whitelist.txt and blacklist.txt can be created in order to always allow (whitelist.txt) or always block (blacklist.txt) IPs from LagDrop. 
 
 * IP addresses can be added in formatted single lines, with IP address separated by pipes (|), like Regular Expression, or they can be added to separate lines. IP ranges in the format 0.0.0.0-1.2.3.4 are not supported, instead write the IP range as regular expression. Titles/Headings can be added to group IP addresses, title/headings must be on one line surrounded by # (e.g., #This is a Heading#). Lines with # will not be interpreted by LagDrop.
+```
     * E.g.: `^192\.168\.` will filter all addresses beginning with 192.168 from being checked by LagDrop.
     * E.g.: `^192\.1(([0-3]{1}))0\.` will filter addresses beginning with 192.100, 192.110, 192.120, and 192.130 from being checked by LagDrop.
+```
 
 ----
 ## tweak.txt
