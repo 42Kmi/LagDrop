@@ -1,4 +1,3 @@
-theme: jekyll-theme-minimal
 ---
 title: "42Kmi LagDrop"
 output: 
@@ -6,3 +5,4 @@ output:
     includes:
        in_header: GA_Script.html
 ---
+theme: jekyll-theme-minimal
