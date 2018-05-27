@@ -68,10 +68,9 @@ WAITLOCK=$(if [ "${SHELLIS}" = "ash" ]; then "-w"; else :; fi)
 #if { iptables -L FORWARD "${WAITLOCK}"|grep -Eoq "^LDACCEPT.*anywhere"; }; then eval "#LDACCEPT already exists"; else iptables -N LDACCEPT; iptables -P LDACCEPT ACCEPT; iptables -t filter -A FORWARD -j LDACCEPT; fi &> /dev/null
 #if { iptables -L FORWARD "${WAITLOCK}"|grep -Eoq "^LDREJECT.*anywhere"; }; then eval "#LDREJECT already exists"; else iptables -N LDREJECT; iptables -P LDREJECT DROP; iptables -t filter -A FORWARD -j LDREJECT; fi &> /dev/null
 #if { iptables -L FORWARD "${WAITLOCK}"|grep -Eoq "^LDBAN.*anywhere"; }; then eval "#LDBAN already exists"; else iptables -N LDBAN; iptables -P LDBAN DROP; iptables -t filter -A FORWARD -j LDBAN; fi &> /dev/null
-FINDLDTABLES=$(iptables -L FORWARD "${WAITLOCK}"| grep -Eo "^?LD(ACCEPT|REJECT|BAN)"|sort -u)
-if [[ $(echo "$FINDLDTABLES"|grep -Eo "LDACCEPT") == "LDACCEPT" ]] ; then :; else iptables -N LDACCEPT|iptables -P LDACCEPT ACCEPT|iptables -t filter -A FORWARD -j LDACCEPT; fi &> /dev/null
-if [[ $(echo "$FINDLDTABLES"|grep -Eo "LDREJECT") == "LDREJECT" ]] ; then :; else iptables -N LDREJECT|iptables -P LDREJECT DROP|iptables -t filter -A FORWARD -j LDREJECT; fi &> /dev/null
-if [[ $(echo "$FINDLDTABLES"|grep -Eo "LDBAN") == "LDBAN" ]] ; then :; else iptables -N LDBAN|iptables -P LDBAN DROP|iptables -t filter -A FORWARD -j LDBAN; fi &> /dev/null
+if ! iptables -nL LDACCEPT 2>&1 >/dev/null; then iptables -N LDACCEPT|iptables -P LDACCEPT ACCEPT|iptables -t filter -A FORWARD -j LDACCEPT; fi
+if ! iptables -nL LDREJECT 2>&1 >/dev/null; then iptables -N LDREJECT|iptables -P LDREJECT REJECT|iptables -t filter -A FORWARD -j LDREJECT; fi
+if ! iptables -nL LDBAN 2>&1 >/dev/null; then iptables -N LDBAN|iptables -P LDBAN DROP|iptables -t filter -A FORWARD -j LDBAN; fi
 ##### Prepare LagDrop's IPTABLES Chains #####
 
 ##### Make Files #####
