@@ -38,6 +38,8 @@ fi
 ##### Don't Be Racist, Homophobic, Islamophobic, Misogynistic, Bigoted, Sexist, etc. #####
 ##### Ban SLOW Peers #####
 
+##### Special thanks to CharcoalBurst, robus9one, Deniz #####
+
 ##### Demo Mode #####
 ENABLEDEMO=0 #If enabled, will activate demo mode, which will delete LagDrop from your router after the set number of days.
 if [ "$ENABLEDEMO" = "$(echo -n "$ENABLEDEMO" | grep -oEi "(yes|1|on|enable(d?))")" ]; then
@@ -62,11 +64,7 @@ WAITLOCK=$(if [ "${SHELLIS}" = "ash" ]; then "-w"; else :; fi)
 ##### Find Shell #####
 
 ##### Prepare LagDrop's IPTABLES Chains #####
-#if { iptables -L LDACCEPT && iptables -L LDREJECT; } then :; else eval "iptables -F FORWARD"; fi &> /dev/null
-#if { iptables -L FORWARD|grep -Eoq "^LDACCEPT.*anywhere"; }; then eval "#LDACCEPT already exists"; else iptables -N LDACCEPT; iptables -P LDACCEPT ACCEPT; iptables -t filter -A FORWARD -j LDACCEPT; fi &> /dev/null
-#if { iptables -L FORWARD|grep -Eoq "^LDREJECT.*anywhere"; }; then eval "#LDREJECT already exists"; else iptables -N LDREJECT; iptables -P LDREJECT DROP; iptables -t filter -A FORWARD -j LDREJECT; fi &> /dev/null
-#if { iptables -L FORWARD|grep -Eoq "^LDBAN.*anywhere"; }; then eval "#LDBAN already exists"; else iptables -N LDBAN; iptables -P LDBAN DROP; iptables -t filter -A FORWARD -j LDBAN; fi &> /dev/null
-if { iptables -L LDACCEPT "${WAITLOCK}" && iptables -L LDREJECT "${WAITLOCK}"; } then :; else eval "iptables -F FORWARD "${WAITLOCK}""; fi &> /dev/null
+#if { iptables -L LDACCEPT "${WAITLOCK}" && iptables -L LDREJECT "${WAITLOCK}"; } then :; else eval "iptables -F FORWARD "${WAITLOCK}""; fi &> /dev/null
 if { iptables -L FORWARD "${WAITLOCK}"|grep -Eoq "^LDACCEPT.*anywhere"; }; then eval "#LDACCEPT already exists"; else iptables -N LDACCEPT; iptables -P LDACCEPT ACCEPT; iptables -t filter -A FORWARD -j LDACCEPT; fi &> /dev/null
 if { iptables -L FORWARD "${WAITLOCK}"|grep -Eoq "^LDREJECT.*anywhere"; }; then eval "#LDREJECT already exists"; else iptables -N LDREJECT; iptables -P LDREJECT DROP; iptables -t filter -A FORWARD -j LDREJECT; fi &> /dev/null
 if { iptables -L FORWARD "${WAITLOCK}"|grep -Eoq "^LDBAN.*anywhere"; }; then eval "#LDBAN already exists"; else iptables -N LDBAN; iptables -P LDBAN DROP; iptables -t filter -A FORWARD -j LDBAN; fi &> /dev/null
@@ -174,11 +172,12 @@ else
 fi
 }
 ##### Filter #####
-if [ "${SHELLIS}" = "ash" ]; then :; 
-else
-RANDOMGET=$(echo $(dd bs=1 count=1 if=/dev/urandom 2>/dev/null)|hexdump -v -e '/1 "%02X"'|sed -e s/"0A$"//g) #Generates random value between 0-FF
-RANDOM=$(echo " -p $RANDOMGET")
-fi
+#if [ "${SHELLIS}" = "ash" ]; then :; 
+#else
+#RANDOMGET=$(echo $(dd bs=1 count=1 if=/dev/urandom 2>/dev/null)|hexdump -v -e '/1 "%02X"'|sed -e s/"0A$"//g) #Generates random value between 0-FF
+#RANDOM=$(echo " -p $RANDOMGET")
+#fi
+
 IGNORE=$(echo $({ if { { iptables -nL LDACCEPT && iptables -nL LDREJECT && iptables -nL LDBAN ; }|grep -Eoq "([0-9]{1,3}\.?){4}"; } then echo "$({ iptables -nL LDACCEPT && iptables -nL LDREJECT ; }|grep -Eo "([0-9]{1,3}\.?){4}"|awk '!a[$0]++'|grep -v "${CONSOLE}"|grep -v "127.0.0.1"|sed -E 's/^/\^/g'|sed 's/\./\\\./g')"|sed -E 's/$/\|/g'; else echo "${ROUTER}"; fi; })|sed -E 's/\|$//g'|sed -E 's/\ //g')
 if [ ! -f "$DIR"/42Kmi/whitelist.txt ] ; then
 PEERIP=$(echo "$IPCONNECT"|grep -Eo "(([0-9]{1,3}\.?){3})\.([0-9]{1,3})"|grep -o '^.*\..*$'|grep -v "${CONSOLE}"|grep -v "${ROUTER}"|grep -Ev "${IGNORE}"|grep -Ev "^$ROUTERSHORT"|grep -Ev "^$WANSHORT"|grep -Ev "$FILTERIP"|awk '!a[$0]++'|sed -n 1p) ### Get console Peer's IP
@@ -196,17 +195,16 @@ if [ "${MODE}" = 2 ]; then :;
 else
 
 if [ -f "$DIR"/42Kmi/tweak.txt ] ; then PINGRESOLUTION="${TWEAKPINGRESOLUTION}"; else PINGRESOLUTION=5; fi
-#PINGGET=$(echo "$(n=0; while [[ $n -lt "${COUNT}" ]]; do ( ping -q -c "${PINGRESOLUTION}" -W 1 -s "${SIZE}""${RANDOM}" "${PEERIP}" & ) ; n=$((n+1)); done )"|grep -Eo "\/([0-9]{1,}\.[0-9]{1,})\/"|sed -E 's/(\/|\.)//g'|sed -E 's/$/+/g')
-PINGGET=$(echo "$(n=0; while [[ $n -lt "${COUNT}" ]]; do ( ping -q -c "${PINGRESOLUTION}" -W 1 -s "${SIZE}""${RANDOM}" "${PEERIP}" & ) ; n=$((n+1)); done )"|grep -Eo "\/([0-9]{1,}\.[0-9]{1,})\/"|sed -E 's/(\/|\.)//g'|sed -E 's/(^|\b)(0){1,}//g'|sed -E 's/$/+/g'|sed -E 's/\+$//g') &> /dev/nul
+PINGGET=$(echo $(echo "$(n=0; while [[ $n -lt "${COUNT}" ]]; do (ping -q -c "${PINGRESOLUTION}" -W 1 -s "${SIZE}" "${PEERIP}" &) ; n=$((n+1)); done )"|grep -Eo "\/([0-9]{1,}\.[0-9]{1,})\/"|sed -E 's/(\/|\.)//g'|sed -E 's/(^|\b)(0){1,}//g'|sed -E 's/$/+/g')|sed -E 's/\+$//g') &> /dev/null
 PINGCOUNT=$(echo "$PINGGET"|wc -w)
-if [ "${PINGCOUNT}" != "$(echo -n "$PINGCOUNT" | grep -oEi "(0|)")" ]; then :; else PINGCOUNT=1; fi
-#PINGSUM=$(( $(echo "$PINGGET"|sed -E 's/\+$//g') ))
+if [ "${PINGCOUNT}" != "$(echo -n "$PINGCOUNT" | grep -oEi "(0|)")" ]; then :; else PINGCOUNT=1; fi #Fallback
 PINGSUM=$(( $PINGGET ))
 #PINGFULL=$(echo $(( PINGSUM / PINGCOUNT ))|sed -E 's/\[0-9]{3}$//g' )
 PINGFULL=$(echo $(( PINGSUM / PINGCOUNT )))
-PING=$(echo $"$PINGFULL"|sed 's/.\{3\}$//' )
-if [ "${PING}" = "$(echo -n "$PING" | grep -oEi "(0|)")" ] && [ "${PINGFULL}" -lt "1000" ];then PING=0;else ( if [ "${PING}" = "$(echo -n "$PING" | grep -oEi "(0|)")" ];then PING="$PINGFULL";fi ); fi #Fallback
+PING=$(echo "$PINGFULL"|sed -E 's/.{3}$//g' )
 
+#if [ "${PING}" = "$(echo -n "$PING" | grep -oEi "(0|)")" ] && [ "${PINGFULL}" -lt "1000" ];then PING=0;else ( if [ "${PING}" = "$(echo -n "$PING" | grep -oEi "(0|)")" ];then PING="$PINGFULL";fi ); fi #Fallback
+#
 fi
 ##### The Ping #####
 
@@ -227,16 +225,16 @@ MXP=$(echo $(( TTL * PROBES * TRGETCOUNT )))
 #New TraceRoute
 #TRGET=$(if { "$EXISTS"; }; then :; else echo $(echo "$(n=0; while [[ $n -lt "${TRGETCOUNT}" ]]; do ( traceroute -m "${TTL}" -q "${PROBES}" -w 1 "${PEERIP}" "${SIZE}" & ) ; n=$((n+1)); done )"|grep -Eo "([0-9]{1,}\.[0-9]{3}\ ms)"|sed -E 's/(\/|\.|\ ms)//g'|sed -E 's/$/+/g'); fi)
 #TRGET=$(if { "$EXISTS"; }; then :; else echo $(echo "$(n=0; while [[ $n -lt "${TTL}" ]]; do ( traceroute -F -m 1 -q "${PROBES}" -w 1 "${PEERIP}" 32768 & ) ; n=$((n+1)); done )"|grep -Eo "([0-9]{1,}\.[0-9]{3}\ ms)"|sed -E 's/(\/|\.|\ ms)//g'|sed -E 's/$/+/g'); fi)
-TRGET=$(echo $(echo "$(n=0; while [[ $n -lt "${TTL}" ]]; do ( traceroute -F -m "${TRGETCOUNT}" -q "${PROBES}" -w 1 "${PEERIP}" "${SIZE}" & ) ; n=$((n+1)); done )"|grep -Eo "([0-9]{1,}\.[0-9]{3}\ ms)"|sed -E 's/(\/|\.|\ ms)//g'|sed -E 's/(^|\b)(0){1,}//g'|sed -E 's/$/+/g')|sed -E 's/\+$//g') &> /dev/nul
+TRGET=$(echo $(echo "$(n=0; while [[ $n -lt "${TTL}" ]]; do ( traceroute -F -m "${TRGETCOUNT}" -q "${PROBES}" -w 1 "${PEERIP}" "${SIZE}" & ) ; n=$((n+1)); done )"|grep -Eo "([0-9]{1,}\.[0-9]{3}\ ms)"|sed -E 's/(\/|\.|\ ms)//g'|sed -E 's/(^|\b)(0){1,}//g'|sed -E 's/$/+/g')|sed -E 's/\+$//g') &> /dev/null
 TRCOUNT=$(echo "$TRGET"|wc -w) #Counts for average
 if [ "${TRCOUNT}" = "$(echo -n "$TRCOUNT" | grep -oEi "(0|)")" ]; then TRCOUNT=1; fi #Fallback
 TRSUM=$(( $TRGET ))
 if [ "${TRCOUNT}" != 0 ]; then
 TRAVGFULL=$(echo $(( TRSUM / TRCOUNT ))) #TRACEROURTE sum for math
-TRAVG=$(echo $TRAVGFULL | sed 's/.\{3\}$//')
+TRAVG=$(echo $TRAVGFULL | sed -E's/.{3}$//g')
 else
 TRAVGFULL=$(echo "$(( TRSUM / MXP ))") #TRACEROURTE sum for math
-TRAVG=$(echo $TRAVGFULL | sed 's/.\{3\}$//')
+TRAVG=$(echo $TRAVGFULL | sed -E's/.{3}$//g')
 fi
 if [ "${TRAVG}" = "$(echo -n "$TRAVG" | grep -oEi "(0|)")" ] && [ "${TRAVGFULL}" -lt "1000" ];then TRAVG=0;else ( if [ "${TRAVG}" = "$(echo -n "$TRAVG" | grep -oEi "(0|)")" ];then TRAVG="$TRAVGFULL";fi ) ; fi #Fallback
 ##### New TraceRoute #####
@@ -365,7 +363,7 @@ if [ -f "$DIR"/42Kmi/tweak.txt ] ; then SENTRES="${TWEAKSENTRES}"; else SENTRES=
 if [ -f "$DIR"/42Kmi/tweak.txt ] ; then SENTINELXSQMODE="${TWEAKSENTINELXSQMODE}"; else SENTINELXSQMODE=Standard; fi
 #Sentinal Values 1
 #SENTGET=$(echo $(echo "$(n=0; while [[ $n -lt "${SENTRUN}" ]]; do ( ping -q -c "${SENTRES}" -W 1 -s "${SENTSIZE}" "${RECENT}" & ) ; n=$((n+1)); done )"|grep -Eo "\/([0-9]{1,}\.[0-9]{1,})\/"|sed -E 's/(\/|\.)//g'|sed -E 's/$/+/g')|sed -E 's/\+$//g')
-SENTGET=$(echo $(echo "$(n=0; while [[ $n -lt "${SENTRUN}" ]]; do ( ping -q -c "${SENTRES}" -W 1 -s "${SENTSIZE}" "${RECENT}" & ) ; n=$((n+1)); done )"|grep -Eo "\/([0-9]{1,}\.[0-9]{1,})\/"|sed -E 's/(\/|\.)//g'|sed -E 's/(^|\b)(0){1,}//g'|sed -E 's/$/+/g')|sed -E 's/\+$//g'|sed -E 's/\+$//g') &> /dev/nul
+SENTGET=$(echo $(echo "$(n=0; while [[ $n -lt "${SENTRUN}" ]]; do (ping -q -c "${SENTRES}" -W 1 -s "${SENTSIZE}" "${RECENT}" &) ; n=$((n+1)); done )"|grep -Eo "\/([0-9]{1,}\.[0-9]{1,})\/"|sed -E 's/(\/|\.)//g'|sed -E 's/(^|\b)(0){1,}//g'|sed -E 's/$/+/g')|sed -E 's/\+$//g') &> /dev/null
 SENTCOUNT=$(echo "$SENTGET"|wc -w)
 if [ "${SENTCOUNT}" = "$(echo -n "$SENTCOUNT" | grep -oEi "(0|)")" ];then SENTCOUNT=1;fi #Fallback
 #SENTSUM=$(( $(echo "$SENTGET"|sed -E 's/\+$//g') ))
@@ -373,7 +371,7 @@ SENTSUM=$(( $SENTGET ))
 SENTAVG=$(echo $(( SENTSUM / SENTCOUNT ))|sed -E 's/[0-9]{3}$//g' )
 #Sentinal Values 2
 sleep "${SENTINTERVAL}"
-SENTGET2=$(echo $(echo "$(n=0; while [[ $n -lt "${SENTRUN}" ]]; do ( ping -q -c "${SENTRES}" -W 1 -s "${SENTSIZE}" "${RECENT}" & ) ; n=$((n+1)); done )"|grep -Eo "\/([0-9]{1,}\.[0-9]{1,})\/"|sed -E 's/(\/|\.)//g'|sed -E 's/(^|\b)(0){1,}//g'|sed -E 's/$/+/g')|sed -E 's/\+$//g') &> /dev/nul
+SENTGET2=$(echo $(echo "$(n=0; while [[ $n -lt "${SENTRUN}" ]]; do (ping -q -c "${SENTRES}" -W 1 -s "${SENTSIZE}" "${RECENT}" &) ; n=$((n+1)); done )"|grep -Eo "\/([0-9]{1,}\.[0-9]{1,})\/"|sed -E 's/(\/|\.)//g'|sed -E 's/(^|\b)(0){1,}//g'|sed -E 's/$/+/g')|sed -E 's/\+$//g') &> /dev/null
 SENTCOUNT2=$(echo "$SENTGET2"|wc -w)
 if [ "${SENTCOUNT2}" = "$(echo -n "$SENTCOUNT2" | grep -oEi "(0|)")" ];then SENTCOUNT2=1;fi #Fallback
 SENTSUM2=$(( $(echo "$SENTGET2"|sed -E 's/\+$//g') ))
@@ -466,14 +464,16 @@ KILLOLD=$(kill -9 `ps -w | grep -F "$SCRIPTNAME" | grep -v $$` &> /dev/null)
 LOOP=$(eval $(echo "$0 $1"))
 
 #####Decongest - Block all other connections#####
-
-if { iptables -L FORWARD "${WAITLOCK}"|grep -Eoq "^LDKTA.*anywhere"; }; then eval "#LDKTA already exists"; else iptables -N LDKTA; iptables -P LDKTA DROP; iptables -t filter -A FORWARD -j LDKTA; fi &> /dev/null
-
-
-if { ping -q -c 1 -W 1 "${CONSOLE}"|grep -q -F -w "100% packet loss" ;} &> /dev/null; then iptables -F LDKTA "${WAITLOCK}"; else
-	if [ "$CHECKPORTS" = "$(echo -n "$CHECKPORTS" | grep -oEi "(yes|1|on|enable(d?))")" ]; then
-	eval echo $(while read -r i; do echo "${i%}"; done < /proc/net/"$IPCON"_conntrack|grep -v "${CONSOLE}"|grep -Ev "$WHITELIST"|grep -Eo "(([0-9]{1,3}\.?){3})\.([0-9]{1,3})"|awk '!a[$0]++'|grep -Ev "^$ROUTERSHORT"|awk '!a[$0]++'|sed -E "s/^/iptables -I LDKTA -d /g"|sed -E "s/$/ -j DROP "${WAITLOCK}";/") &> /dev/null
+if [ "$DECONGEST" = "$(echo -n "$DECONGEST" | grep -oEi "(yes|1|on|enable(d?))")" ]; then
+	if { iptables -L FORWARD "${WAITLOCK}"|grep -Eoq "^LDKTA.*anywhere"; }; then eval "#LDKTA already exists"; else iptables -N LDKTA; iptables -P LDKTA DROP; iptables -t filter -A FORWARD -j LDKTA; fi &> /dev/null
+	
+	
+	if { ping -q -c 1 -W 1 "${CONSOLE}"|grep -q -F -w "100% packet loss" ;} &> /dev/null; then iptables -F LDKTA "${WAITLOCK}"; else
+		if [ "$CHECKPORTS" = "$(echo -n "$CHECKPORTS" | grep -oEi "(yes|1|on|enable(d?))")" ]; then
+		eval echo $(while read -r i; do echo "${i%}"; done < /proc/net/"$IPCON"_conntrack|grep -v "${CONSOLE}"|grep -Ev "$WHITELIST"|grep -Eo "(([0-9]{1,3}\.?){3})\.([0-9]{1,3})"|awk '!a[$0]++'|grep -Ev "^$ROUTERSHORT"|awk '!a[$0]++'|sed -E "s/^/iptables -I LDKTA -d /g"|sed -E "s/$/ -j DROP "${WAITLOCK}";/") &> /dev/null
+		fi
 	fi
+else iptables -F LDKTA "${WAITLOCK}"
 fi
 #####Decongest - Block all other connections#####
 
