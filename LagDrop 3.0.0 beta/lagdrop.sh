@@ -65,9 +65,13 @@ WAITLOCK=$(if [ "${SHELLIS}" = "ash" ]; then "-w"; else :; fi)
 
 ##### Prepare LagDrop's IPTABLES Chains #####
 #if { iptables -L LDACCEPT "${WAITLOCK}" && iptables -L LDREJECT "${WAITLOCK}"; } then :; else eval "iptables -F FORWARD "${WAITLOCK}""; fi &> /dev/null
-if { iptables -L FORWARD "${WAITLOCK}"|grep -Eoq "^LDACCEPT.*anywhere"; }; then eval "#LDACCEPT already exists"; else iptables -N LDACCEPT; iptables -P LDACCEPT ACCEPT; iptables -t filter -A FORWARD -j LDACCEPT; fi &> /dev/null
-if { iptables -L FORWARD "${WAITLOCK}"|grep -Eoq "^LDREJECT.*anywhere"; }; then eval "#LDREJECT already exists"; else iptables -N LDREJECT; iptables -P LDREJECT DROP; iptables -t filter -A FORWARD -j LDREJECT; fi &> /dev/null
-if { iptables -L FORWARD "${WAITLOCK}"|grep -Eoq "^LDBAN.*anywhere"; }; then eval "#LDBAN already exists"; else iptables -N LDBAN; iptables -P LDBAN DROP; iptables -t filter -A FORWARD -j LDBAN; fi &> /dev/null
+#if { iptables -L FORWARD "${WAITLOCK}"|grep -Eoq "^LDACCEPT.*anywhere"; }; then eval "#LDACCEPT already exists"; else iptables -N LDACCEPT; iptables -P LDACCEPT ACCEPT; iptables -t filter -A FORWARD -j LDACCEPT; fi &> /dev/null
+#if { iptables -L FORWARD "${WAITLOCK}"|grep -Eoq "^LDREJECT.*anywhere"; }; then eval "#LDREJECT already exists"; else iptables -N LDREJECT; iptables -P LDREJECT DROP; iptables -t filter -A FORWARD -j LDREJECT; fi &> /dev/null
+#if { iptables -L FORWARD "${WAITLOCK}"|grep -Eoq "^LDBAN.*anywhere"; }; then eval "#LDBAN already exists"; else iptables -N LDBAN; iptables -P LDBAN DROP; iptables -t filter -A FORWARD -j LDBAN; fi &> /dev/null
+FINDLDTABLES=$(iptables -L FORWARD "${WAITLOCK}"| grep -Eo "^?LD(ACCEPT|REJECT|BAN)"|sort -u)
+if [[ $(echo "$FINDLDTABLES"|grep -Eo "LDACCEPT") == "LDACCEPT" ]] ; then :; else iptables -N LDACCEPT|iptables -P LDACCEPT ACCEPT|iptables -t filter -A FORWARD -j LDACCEPT; fi &> /dev/null
+if [[ $(echo "$FINDLDTABLES"|grep -Eo "LDREJECT") == "LDREJECT" ]] ; then :; else iptables -N LDREJECT|iptables -P LDREJECT DROP|iptables -t filter -A FORWARD -j LDREJECT; fi &> /dev/null
+if [[ $(echo "$FINDLDTABLES"|grep -Eo "LDBAN") == "LDBAN" ]] ; then :; else iptables -N LDBAN|iptables -P LDBAN DROP|iptables -t filter -A FORWARD -j LDBAN; fi &> /dev/null
 ##### Prepare LagDrop's IPTABLES Chains #####
 
 ##### Make Files #####
