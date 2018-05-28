@@ -7,8 +7,8 @@ trap "$0" EXIT INT TERM
 if [ "$1" = "$(echo -n "$1" | grep -oEi "((\ ?){1,}|)")" ]; then
 echo "Enter an Argument!! Eg: WIIU, XBOX, PS4, PC, etc."
 echo -e "### 42Kmi LagDrop "${VERSION}\ ###"\nRouter-based Anti-Lag Solution for P2P online games.\nSupported arguments load the appropriate filters for the console.\nRunning LagDrop without argument will terminate all instances of the script.\n42Kmi.com | LagDrop.com"
-exec $(`ps -w | grep -E ".*lagdrop.*" | grep -vF "ps" |sed -E "s/root.*//g"| grep -oE "[0-9]{1,}"|sed -E "s/^/kill -9 /g"`  &> /dev/null) &> /dev/null
-exec $(`ps -w | grep -E ".*lagdrop.*" | grep -vF "ps" |sed -E "s/root.*//g"| grep -oE "[0-9]{1,}"|sed -E "s/^/killall -9 /g"`  &> /dev/null) &> /dev/null
+exec $($(ps -w | grep -E ".*lagdrop.*" | grep -vF "ps" |sed -E "s/root.*//g"| grep -oE "[0-9]{1,}"|sed -E "s/^/kill -9 /g")  &> /dev/null) &> /dev/null
+exec $($(ps -w | grep -E ".*lagdrop.*" | grep -vF "ps" |sed -E "s/root.*//g"| grep -oE "[0-9]{1,}"|sed -E "s/^/killall -9 /g")  &> /dev/null) &> /dev/null
 exit
 fi
 ##### Kill if no argument #####
@@ -64,12 +64,8 @@ WAITLOCK=$(if [ "${SHELLIS}" = "ash" ]; then "-w"; else :; fi)
 ##### Find Shell #####
 
 ##### Prepare LagDrop's IPTABLES Chains #####
-#if { iptables -L LDACCEPT "${WAITLOCK}" && iptables -L LDREJECT "${WAITLOCK}"; } then :; else eval "iptables -F FORWARD "${WAITLOCK}""; fi &> /dev/null
-#if { iptables -L FORWARD "${WAITLOCK}"|grep -Eoq "^LDACCEPT.*anywhere"; }; then eval "#LDACCEPT already exists"; else iptables -N LDACCEPT; iptables -P LDACCEPT ACCEPT; iptables -t filter -A FORWARD -j LDACCEPT; fi &> /dev/null
-#if { iptables -L FORWARD "${WAITLOCK}"|grep -Eoq "^LDREJECT.*anywhere"; }; then eval "#LDREJECT already exists"; else iptables -N LDREJECT; iptables -P LDREJECT DROP; iptables -t filter -A FORWARD -j LDREJECT; fi &> /dev/null
-#if { iptables -L FORWARD "${WAITLOCK}"|grep -Eoq "^LDBAN.*anywhere"; }; then eval "#LDBAN already exists"; else iptables -N LDBAN; iptables -P LDBAN DROP; iptables -t filter -A FORWARD -j LDBAN; fi &> /dev/null
 if ! iptables -nL LDACCEPT 2>&1 >/dev/null; then iptables -N LDACCEPT|iptables -P LDACCEPT ACCEPT|iptables -t filter -A FORWARD -j LDACCEPT; fi
-if ! iptables -nL LDREJECT 2>&1 >/dev/null; then iptables -N LDREJECT|iptables -P LDREJECT REJECT|iptables -t filter -A FORWARD -j LDREJECT; fi
+if ! iptables -nL LDREJECT 2>&1 >/dev/null; then iptables -N LDREJECT|iptables -P LDREJECT DROP|iptables -t filter -A FORWARD -j LDREJECT; fi
 if ! iptables -nL LDBAN 2>&1 >/dev/null; then iptables -N LDBAN|iptables -P LDBAN DROP|iptables -t filter -A FORWARD -j LDBAN; fi
 ##### Prepare LagDrop's IPTABLES Chains #####
 
@@ -86,7 +82,9 @@ fi
 ##### Get Static IP #####
 
 SCRIPTNAME=$(echo "${0##*/}")
-kill -9 $(ps -w|grep -v $$|grep -F "$SCRIPTNAME") &> /dev/null
+#kill -9 $(ps -w|grep -v $$|grep -F "$SCRIPTNAME") &> /dev/null
+kill -9 $(ps -w | grep -F "$SCRIPTNAME" | grep -v $$) &> /dev/null
+
 DIR=$(echo $0|sed -E "s/\/"$SCRIPTNAME"//g")
 if [ ! -d "$DIR"/42Kmi ] ; then mkdir -p "$DIR"/42Kmi ; fi
 if [ ! -f "$DIR"/42Kmi/options_"$CONSOLENAME".txt ] ; then echo -e "$CONSOLENAME=$GETSTATIC\nPINGLIMIT=20\nCOUNT=20\nSIZE=2048\nMODE=1\nMAXTTL=20\nPROBES=5\nTRACELIMIT=30\nACTION=REJECT\nCHECKPACKETLOSS=OFF\nPACKETLOSSLIMIT=10\nSENTINEL=OFF\nCLEARALLOWED=OFF\nCLEARBLOCKED=OFF\nCLEARLIMIT=10\nCHECKPORTS=NO\nPORTS=\nRESTONMULTIPLAYER=NO\nNUMBEROFPEERS=\nDECONGEST=OFF\nSWITCH=ON\n;" > "$DIR"/42Kmi/options_"$CONSOLENAME".txt; fi ### Makes options file if it doesn't exist
@@ -205,9 +203,6 @@ PINGSUM=$(( $PINGGET ))
 #PINGFULL=$(echo $(( PINGSUM / PINGCOUNT ))|sed -E 's/\[0-9]{3}$//g' )
 PINGFULL=$(echo $(( PINGSUM / PINGCOUNT )))
 PING=$(echo "$PINGFULL"|sed -E 's/.{3}$//g' )
-
-#if [ "${PING}" = "$(echo -n "$PING" | grep -oEi "(0|)")" ] && [ "${PINGFULL}" -lt "1000" ];then PING=0;else ( if [ "${PING}" = "$(echo -n "$PING" | grep -oEi "(0|)")" ];then PING="$PINGFULL";fi ); fi #Fallback
-#
 fi
 ##### The Ping #####
 
@@ -222,12 +217,9 @@ PROBES=$(echo "$SETTINGS"|sed -n 7p)
 TRACELIMIT=$(echo "$SETTINGS"|sed -n 8p)
 ##### PARAMETERS #####
 ##### New TraceRoute #####
-
 if [ -f "$DIR"/42Kmi/tweak.txt ] ; then TRGETCOUNT="${TWEAKTRGETCOUNT}"; else TRGETCOUNT=1; fi
 MXP=$(echo $(( TTL * PROBES * TRGETCOUNT )))
 #New TraceRoute
-#TRGET=$(if { "$EXISTS"; }; then :; else echo $(echo "$(n=0; while [[ $n -lt "${TRGETCOUNT}" ]]; do ( traceroute -m "${TTL}" -q "${PROBES}" -w 1 "${PEERIP}" "${SIZE}" & ) ; n=$((n+1)); done )"|grep -Eo "([0-9]{1,}\.[0-9]{3}\ ms)"|sed -E 's/(\/|\.|\ ms)//g'|sed -E 's/$/+/g'); fi)
-#TRGET=$(if { "$EXISTS"; }; then :; else echo $(echo "$(n=0; while [[ $n -lt "${TTL}" ]]; do ( traceroute -F -m 1 -q "${PROBES}" -w 1 "${PEERIP}" 32768 & ) ; n=$((n+1)); done )"|grep -Eo "([0-9]{1,}\.[0-9]{3}\ ms)"|sed -E 's/(\/|\.|\ ms)//g'|sed -E 's/$/+/g'); fi)
 TRGET=$(echo $(echo "$(n=0; while [[ $n -lt "${TTL}" ]]; do ( traceroute -F -m "${TRGETCOUNT}" -q "${PROBES}" -w 1 "${PEERIP}" "${SIZE}" & ) ; n=$((n+1)); done )"|grep -Eo "([0-9]{1,}\.[0-9]{3}\ ms)"|sed -E 's/(\/|\.|\ ms)//g'|sed -E 's/(^|\b)(0){1,}//g'|sed -E 's/$/+/g')|sed -E 's/\+$//g') &> /dev/null
 TRCOUNT=$(echo "$TRGET"|wc -w) #Counts for average
 if [ "${TRCOUNT}" = "$(echo -n "$TRCOUNT" | grep -oEi "(0|)")" ]; then TRCOUNT=1; fi #Fallback
@@ -251,7 +243,6 @@ ACTION1=$(if [ "$ACTION" = "$(echo -n "$ACTION" | grep -oEi "(drop|1)")" ]; then
 ##### BLACKLIST #####
 if [ ! -f "$DIR"/42Kmi/blacklist.txt ] ; then :;
 else
-#RECENT=$(iptables -nL LDACCEPT|tail -1|grep -Eo "([0-9]{1,3}\.?){4}"|sed -n 1p)
 BLACKLIST=$(echo $(echo "$(tail +1 "${DIR}"/42Kmi/blacklist.txt|sed -E "/(#.*$|^$|\;|#^[ \t]*$)|#/d"|sed -E "s/^/\^/g"|sed -E "s/\^#|\^$//g"|sed -E "s/\^\^/^/g"|sed -E "s/$/|/g")")|sed -E 's/\|$//g'|sed -E "s/(\ *)//g"|sed -E 's/\b\.\b/\\./g') ### Permananent ban. If encountered, automatically blocked.
 
 	if { echo "${BLACKLIST}" |grep -E "${PEERIP}"; }; then eval "iptables -I LDBAN -s $CONSOLE -d $PEERIP -j $ACTION1 "${WAITLOCK}";"; fi
@@ -351,7 +342,6 @@ SENTINEL=$(echo "$SETTINGS"|sed -n 12p) #Testing of allowed peers for packet los
 sentinel ()
 {
 if [ "$SENTINEL" = "$(echo -n "$SENTINEL" | grep -oEi "(yes|1|on|enable(d?))")" ]; then
-#RECENT=$(iptables -nL LDACCEPT|tail -1|grep -Eo "([0-9]{1,3}\.?){4}"|sed -n 1p)
 RECENTSOURCE=$(iptables -nL LDACCEPT|tail -1|grep -Eo "([0-9]{1,3}\.?){4}"|sed -n 2p)
 #LASTRULE=$(iptables --line-number -nL LDACCEPT|tail -1|grep -Eo "^[0-9]{1,}")
 LASTRULE=$(iptables --line-number -nL LDACCEPT|grep -F "${RECENT}"|grep -Eo "^[0-9]{1,}")
@@ -365,11 +355,9 @@ if [ -f "$DIR"/42Kmi/tweak.txt ] ; then SENTRES="${TWEAKSENTRES}"; else SENTRES=
 #SENTINELXSQMODE=Standard #Standard or HIGH
 if [ -f "$DIR"/42Kmi/tweak.txt ] ; then SENTINELXSQMODE="${TWEAKSENTINELXSQMODE}"; else SENTINELXSQMODE=Standard; fi
 #Sentinal Values 1
-#SENTGET=$(echo $(echo "$(n=0; while [[ $n -lt "${SENTRUN}" ]]; do ( ping -q -c "${SENTRES}" -W 1 -s "${SENTSIZE}" "${RECENT}" & ) ; n=$((n+1)); done )"|grep -Eo "\/([0-9]{1,}\.[0-9]{1,})\/"|sed -E 's/(\/|\.)//g'|sed -E 's/$/+/g')|sed -E 's/\+$//g')
 SENTGET=$(echo $(echo "$(n=0; while [[ $n -lt "${SENTRUN}" ]]; do (ping -q -c "${SENTRES}" -W 1 -s "${SENTSIZE}" "${RECENT}" &) ; n=$((n+1)); done )"|grep -Eo "\/([0-9]{1,}\.[0-9]{1,})\/"|sed -E 's/(\/|\.)//g'|sed -E 's/(^|\b)(0){1,}//g'|sed -E 's/$/+/g')|sed -E 's/\+$//g') &> /dev/null
 SENTCOUNT=$(echo "$SENTGET"|wc -w)
 if [ "${SENTCOUNT}" = "$(echo -n "$SENTCOUNT" | grep -oEi "(0|)")" ];then SENTCOUNT=1;fi #Fallback
-#SENTSUM=$(( $(echo "$SENTGET"|sed -E 's/\+$//g') ))
 SENTSUM=$(( $SENTGET ))
 SENTAVG=$(echo $(( SENTSUM / SENTCOUNT ))|sed -E 's/[0-9]{3}$//g' )
 #Sentinal Values 2
@@ -463,36 +451,37 @@ fi
 
 ##### Clear Old #####
 
-KILLOLD=$(kill -9 `ps -w | grep -F "$SCRIPTNAME" | grep -v $$` &> /dev/null)
+KILLOLD=$(kill -9 $(ps -w | grep -F "$SCRIPTNAME" | grep -v $$) &> /dev/null)
 LOOP=$(eval $(echo "$0 $1"))
 
 #####Decongest - Block all other connections#####
 if [ "$DECONGEST" = "$(echo -n "$DECONGEST" | grep -oEi "(yes|1|on|enable(d?))")" ]; then
-	if { iptables -L FORWARD "${WAITLOCK}"|grep -Eoq "^LDKTA.*anywhere"; }; then eval "#LDKTA already exists"; else iptables -N LDKTA; iptables -P LDKTA DROP; iptables -t filter -A FORWARD -j LDKTA; fi &> /dev/null
-	
-	
-	if { ping -q -c 1 -W 1 "${CONSOLE}"|grep -q -F -w "100% packet loss" ;} &> /dev/null; then iptables -F LDKTA "${WAITLOCK}"; else
+	if ! iptables -nL LDKTA 2>&1 >/dev/null; then iptables -N LDKTA|iptables -P LDKTA DROP|iptables -t filter -A FORWARD -j LDKTA; else
+		if { ping -q -c 1 -W 1 "${CONSOLE}"|grep -q -F -w "100% packet loss" ;} &> /dev/null; then iptables -F LDKTA "${WAITLOCK}"; else
 		if [ "$CHECKPORTS" = "$(echo -n "$CHECKPORTS" | grep -oEi "(yes|1|on|enable(d?))")" ]; then
 		eval echo $(while read -r i; do echo "${i%}"; done < /proc/net/"$IPCON"_conntrack|grep -v "${CONSOLE}"|grep -Ev "$WHITELIST"|grep -Eo "(([0-9]{1,3}\.?){3})\.([0-9]{1,3})"|awk '!a[$0]++'|grep -Ev "^$ROUTERSHORT"|awk '!a[$0]++'|sed -E "s/^/iptables -I LDKTA -d /g"|sed -E "s/$/ -j DROP "${WAITLOCK}";/") &> /dev/null
 		fi
 	fi
+	fi &> /dev/null
+	
 else iptables -F LDKTA "${WAITLOCK}"
 fi
 #####Decongest - Block all other connections#####
 
-###### CULL CLEAR PEERS #####
-#cullold ()
-#{
-#OLDESTALLOW=$(iptables -nL LDACCEPT|grep -E "^ACCEPT"|grep -Eo "([0-9]{1,3}\.?){4}"|sed -n 1p)
-##CULLEXIST=$(echo "${IPCONNECT}"|grep -Eo "${OLDESTALLOW}")
-#OLDESTPEERLINE=$(iptables --line-number -nL LDACCEPT| grep -F "${OLDESTALLOW}"|awk '{print $1}'|grep -E "[0-9]{1,}"|sed -n 1p)
+##### CULL CLEAR PEERS #####
+cullold ()
+{
+OLDESTALLOW=$(iptables -nL LDACCEPT|grep -E "^ACCEPT"|grep -Eo "([0-9]{1,3}\.?){4}"|sed -n 1p)
+#CULLEXIST=$(echo "${IPCONNECT}"|grep -Eo "${OLDESTALLOW}")
+OLDESTPEERLINE=$(iptables --line-number -nL LDACCEPT| grep -F "${OLDESTALLOW}"|awk '{print $1}'|grep -E "[0-9]{1,}"|sed -n 1p)
 #if echo "${IPCONNECT}"|grep -F "${OLDESTALLOW}"; then :;
-#else eval "iptables -D LDACCEPT $OLDESTPEERLINE "${WAITLOCK}";"
-#fi
-#cullold
-#}
-#cullold
-###### CULL CLEAR PEERS #####
+if ! ( echo "${IPCONNECT}"|grep -F "${OLDESTALLOW}" ) 2>&1 >/dev/null; then 
+	iptables -D LDACCEPT $OLDESTPEERLINE "${WAITLOCK}";
+fi
+cullold
+}
+cullold
+##### CULL CLEAR PEERS #####
 
 {
 ##########
@@ -523,7 +512,8 @@ if { ping -q -c 1 -W 1 -s 1 "${CONSOLE}"|grep -q -F -w "100% packet loss" ;} &> 
 lagdropexecute && sentinel && packetsentinel
 { while ping -q -c 1 -W 1 "${CONSOLE}"|grep -q -F -w "100% packet loss"; do :; done ;} &> /dev/null; wait
 while sleep :; do 
-if { "$EXISTS"; }; then :; else ${PACKETBLOCK} && ${SENTBLOCK} && ${BLOCK}; wait &> /dev/null & fi
+#if { "$EXISTS"; }; then :; else ${PACKETBLOCK} && ${SENTBLOCK} && ${BLOCK}; wait &> /dev/null & fi
+if { "$EXISTS"; }; then ${SENTBLOCK}; else ${PACKETBLOCK} && ${BLOCK}; wait &> /dev/null & fi
  
  done
 fi
