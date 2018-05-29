@@ -38,25 +38,7 @@ fi
 ##### Don't Be Racist, Homophobic, Islamophobic, Misogynistic, Bigoted, Sexist, etc. #####
 ##### Ban SLOW Peers #####
 
-##### Special thanks to CharcoalBurst, robus9one, Deniz #####
-
-##### Demo Mode #####
-ENABLEDEMO=0 #If enabled, will activate demo mode, which will delete LagDrop from your router after the set number of days.
-if [ "$ENABLEDEMO" = "$(echo -n "$ENABLEDEMO" | grep -oEi "(yes|1|on|enable(d?))")" ]; then
-DEMOLIMIT=7
-CURRENTDATE=$(date +%s)
-#Time Scales, in seconds
-#DEMOMINUTE=60
-#DEMOHOUR=360
-DEMODAY=86400
-
-if [ ! -f "$DIR"/42Kmi/options_"$CONSOLENAME".txt ] ; then echo -e "${CURRENTDATE}" > "$DIR"/42Kmi/lddemo.txt; fi ### Makes demo limit reference file if it doesn't exist
-GETLDDEMO=$(tail +1 "$DIR"/42Kmi/lddemo.txt|sed -E "s/#.*$//g"|sed -E "/(^#.*#$|^$|\;|#^[ \t]*$)|#/d"|sed -E 's/^.*=//g'|sed -n 1p) #Settings stored here, called from memory
-DEMODIFF=$(( (( GETLDDEMO - CURRENTDATE )) / DEMOMINUTE ))
-
-if [ "${DEMODIFF}" -gt "${DEMOLIMIT}" ] ; then rm -f "$0"; rm -f "$DIR"/"42Kmi/lddemo.txt"; echo "It is done." > "$DIR"/42Kmi/lddemodone.txt; fi
-fi
-##### Demo Mode ##### 
+##### Special thanks to CharcoalBurst, robus9one, Deniz ##### 
 
 ##### Find Shell #####
 SHELLIS=$(if [ -f "/usr/bin/lua" ]; then echo "ash"; else echo "no"; fi)
@@ -84,8 +66,28 @@ fi
 SCRIPTNAME=$(echo "${0##*/}")
 #kill -9 $(ps -w|grep -v $$|grep -F "$SCRIPTNAME") &> /dev/null
 kill -9 $(ps -w | grep -F "$SCRIPTNAME" | grep -v $$) &> /dev/null
-
 DIR=$(echo $0|sed -E "s/\/"$SCRIPTNAME"//g")
+
+##### Demo Mode #####
+{
+ENABLEDEMO=0 #If enabled, will activate demo mode, which will delete LagDrop from your router after the set number of days.
+if [ "$ENABLEDEMO" = "$(echo -n "$ENABLEDEMO" | grep -oEi "(yes|1|on|enable(d?))")" ]; then
+DEMOLIMIT=7
+CURRENTDATE=$(date +%s)
+#Time Scales, in seconds
+#DEMOMINUTE=60
+#DEMOHOUR=360
+DEMODAY=86400
+
+if [ ! -f "$DIR"/42Kmi/options_"$CONSOLENAME".txt ] ; then echo -e "${CURRENTDATE}" > "$DIR"/42Kmi/lddemo.txt; fi ### Makes demo limit reference file if it doesn't exist
+GETLDDEMO=$(tail +1 "$DIR"/42Kmi/lddemo.txt|sed -E "s/#.*$//g"|sed -E "/(^#.*#$|^$|\;|#^[ \t]*$)|#/d"|sed -E 's/^.*=//g'|sed -n 1p) #Settings stored here, called from memory
+DEMODIFF=$(( (( GETLDDEMO - CURRENTDATE )) / DEMOMINUTE ))
+
+if [ "${DEMODIFF}" -gt "${DEMOLIMIT}" ] ; then rm -f "$0"; rm -f "$DIR"/"42Kmi/lddemo.txt"; echo "It is done." > "$DIR"/42Kmi/lddemodone.txt; fi
+fi
+}
+##### Demo Mode #####
+
 if [ ! -d "$DIR"/42Kmi ] ; then mkdir -p "$DIR"/42Kmi ; fi
 if [ ! -f "$DIR"/42Kmi/options_"$CONSOLENAME".txt ] ; then echo -e "$CONSOLENAME=$GETSTATIC\nPINGLIMIT=20\nCOUNT=20\nSIZE=2048\nMODE=1\nMAXTTL=20\nPROBES=5\nTRACELIMIT=30\nACTION=REJECT\nCHECKPACKETLOSS=OFF\nPACKETLOSSLIMIT=10\nSENTINEL=OFF\nCLEARALLOWED=OFF\nCLEARBLOCKED=OFF\nCLEARLIMIT=10\nCHECKPORTS=NO\nPORTS=\nRESTONMULTIPLAYER=NO\nNUMBEROFPEERS=\nDECONGEST=OFF\nSWITCH=ON\n;" > "$DIR"/42Kmi/options_"$CONSOLENAME".txt; fi ### Makes options file if it doesn't exist
 SETTINGS=$(tail +1 "$DIR"/42Kmi/options_"$CONSOLENAME".txt|sed -E "s/#.*$//g"|sed -E "/(^#.*#$|^$|\;|#^[ \t]*$)|#/d"|sed -E 's/^.*=//g') #Settings stored here, called from memory
@@ -349,7 +351,7 @@ if [ -f "$DIR"/42Kmi/tweak.txt ] ; then SENTMODE="${TWEAKSENTMODE}"; else SENTMO
 #New Sentinel, Compares averages taken at two time points. Difference and ChiSquared
 if [ -f "$DIR"/42Kmi/tweak.txt ] ; then SENTLIMIT="${TWEAKSENTLIMIT}"; else SENTLIMIT=0; fi
 if [ -f "$DIR"/42Kmi/tweak.txt ] ; then SENTRUN="${TWEAKSENTRUN}"; else SENTRUN=100; fi
-if [ -f "$DIR"/42Kmi/tweak.txt ] ; then SENTRES="${TWEAKSENTINTERVAL}"; else SENTINTERVAL=4; fi
+if [ -f "$DIR"/42Kmi/tweak.txt ] ; then SENTINTERVAL="${TWEAKSENTINTERVAL}"; else SENTINTERVAL=4; fi
 SENTSIZE=$(echo "${SIZE}") #1024
 if [ -f "$DIR"/42Kmi/tweak.txt ] ; then SENTRES="${TWEAKSENTRES}"; else SENTRES=4; fi
 #SENTINELXSQMODE=Standard #Standard or HIGH
@@ -383,7 +385,6 @@ else
 SENTXSQ=$(echo $(( (( (( (( SENTAVG2 - SENTAVG )) * (( SENTAVG2 - SENTAVG )) )) / SENTAVGBOTH )) ))) # Chi-Squared of the 2 averages
 fi
 
-#if echo "$IPCONNECT"|grep -o "$RECENT"; then 
 if [ "$RECENT" = "$(echo -n "$IPCONNECT" | grep -o "$RECENT")" ]; then
 ##### BLOCK ##### // 0 or 1=Difference, 2=X^2, 3=Difference or X^2, 4=Difference and X^2
 if [ "${SENTMODE}" != "$(echo -n "${SENTMODE}" | grep -oEi "(2|3|4)")" ]; then
@@ -452,7 +453,6 @@ fi
 ##### Clear Old #####
 
 KILLOLD=$(kill -9 $(ps -w | grep -F "$SCRIPTNAME" | grep -v $$) &> /dev/null)
-LOOP=$(eval $(echo "$0 $1"))
 
 #####Decongest - Block all other connections#####
 if [ "$DECONGEST" = "$(echo -n "$DECONGEST" | grep -oEi "(yes|1|on|enable(d?))")" ]; then
@@ -513,7 +513,7 @@ lagdropexecute && sentinel && packetsentinel
 { while ping -q -c 1 -W 1 "${CONSOLE}"|grep -q -F -w "100% packet loss"; do :; done ;} &> /dev/null; wait
 while sleep :; do 
 #if { "$EXISTS"; }; then :; else ${PACKETBLOCK} && ${SENTBLOCK} && ${BLOCK}; wait &> /dev/null & fi
-if { "$EXISTS"; }; then ${SENTBLOCK}; else ${PACKETBLOCK} && ${BLOCK}; wait &> /dev/null & fi
+if { "$EXISTS"; }; then "${SENTBLOCK}"; else "${PACKETBLOCK}" && "${BLOCK}"; wait &> /dev/null & fi
  
  done
 fi

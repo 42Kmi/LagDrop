@@ -1,4 +1,7 @@
 #!/bin/sh
+SCRIPTNAME=$(echo "${0##*/}")
+kill -9 $(ps -w | grep -F "$SCRIPTNAME" | grep -v $$) &> /dev/null
+
 ##### Find Shell #####
 SHELLIS=$(if [ -f "/usr/bin/lua" ]; then echo "ash"; else echo "no"; fi)
 WAITLOCK=$(if [ "${SHELLIS}" = "ash" ]; then "-w"; else :; fi)
