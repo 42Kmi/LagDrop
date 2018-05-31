@@ -522,11 +522,11 @@ fi
 lagdropexecute && packetsentinel && sentinel
 } &> /dev/null
 } &> /dev/null
-} fi
-fi
-fi
+} fi &> /dev/null #
+fi &> /dev/null #
+fi &> /dev/null #
 }
-fi
+fi &> /dev/null #
 ##### Ban SLOW Peers #####
 ##### 42Kmi International Competitive Gaming #####
 ##### Visit 42Kmi.com #####
