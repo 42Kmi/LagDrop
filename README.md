@@ -51,6 +51,12 @@ Starting with version 3.0.0, LagDrop runs differently from previous versions.
     with quotes, where ARGUMENT is your console identifier or your hostname
     (eg: "*/1 * * * * root /bin/sh /jffs/lagdrop.sh wiiu" for will run lagdrop.sh for your the first static host with wiiu in its name).
 
+Optionally: for steps 4-6, you can instead add /YOUR_DIRECTORY/lagdropstartup.sh "ARGUMENT" to the end of your router's startup script at Administration > Commands. An example should look like: 
+
+```
+/jffs/lagdropstartup.sh "wiiu"
+```
+	
 7. Play online and enjoy! Be Glorious!
 
 Note: LagDrop will rest when your console is not connected. LagDrop also has a script kill switch in case of need. Just run lagdrop.sh without any argument to terminate all instances of lagdrop.sh and LagDrop-related scripts.

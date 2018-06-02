@@ -65,7 +65,6 @@ fi
 ##### Get Static IP #####
 
 SCRIPTNAME=$(echo "${0##*/}")
-#kill -9 $(ps -w|grep -v $$|grep -F "$SCRIPTNAME") &> /dev/null
 kill -9 $(ps -w | grep -F "$SCRIPTNAME" | grep -v $$) &> /dev/null
 DIR=$(echo $0|sed -E "s/\/"$SCRIPTNAME"//g")
 
@@ -203,7 +202,6 @@ PINGGET=$(echo $(echo "$(n=0; while [[ $n -lt "${COUNT}" ]]; do (ping -q -c "${P
 PINGCOUNT=$(echo "$PINGGET"|wc -w)
 if [ "${PINGCOUNT}" != "$(echo -n "$PINGCOUNT" | grep -oEi "(0|)")" ]; then :; else PINGCOUNT=1; fi #Fallback
 PINGSUM=$(( $PINGGET ))
-#PINGFULL=$(echo $(( PINGSUM / PINGCOUNT ))|sed -E 's/\[0-9]{3}$//g' )
 PINGFULL=$(echo $(( PINGSUM / PINGCOUNT )))
 PING=$(echo "$PINGFULL"|sed -E 's/.{3}$//g' )
 fi
@@ -346,7 +344,6 @@ sentinel ()
 {
 if [ "$SENTINEL" = "$(echo -n "$SENTINEL" | grep -oEi "(yes|1|on|enable(d?))")" ]; then
 RECENTSOURCE=$(iptables -nL LDACCEPT|tail -1|grep -Eo "([0-9]{1,3}\.?){4}"|sed -n 2p)
-#LASTRULE=$(iptables --line-number -nL LDACCEPT|tail -1|grep -Eo "^[0-9]{1,}")
 LASTRULE=$(iptables --line-number -nL LDACCEPT|grep -F "${RECENT}"|grep -Eo "^[0-9]{1,}")
 if [ -f "$DIR"/42Kmi/tweak.txt ] ; then SENTMODE="${TWEAKSENTMODE}"; else SENTMODE=3; fi # // 0 or 1=Difference, 2=X^2, 3=Difference or X^2, 4=Difference and X^2
 #New Sentinel, Compares averages taken at two time points. Difference and ChiSquared
@@ -458,14 +455,13 @@ KILLOLD=$(kill -9 $(ps -w | grep -F "$SCRIPTNAME" | grep -v $$) &> /dev/null)
 #####Decongest - Block all other connections#####
 if [ "$DECONGEST" = "$(echo -n "$DECONGEST" | grep -oEi "(yes|1|on|enable(d?))")" ]; then
 	if ! iptables -nL LDKTA 2>&1 >/dev/null; then iptables -N LDKTA|iptables -P LDKTA DROP|iptables -t filter -A FORWARD -j LDKTA; else
-		if { ping -q -c 1 -W 1 "${CONSOLE}"|grep -q -F -w "100% packet loss" ;} &> /dev/null; then iptables -F LDKTA "${WAITLOCK}"; else
-		if [ "$CHECKPORTS" = "$(echo -n "$CHECKPORTS" | grep -oEi "(yes|1|on|enable(d?))")" ]; then
-		eval echo $(while read -r i; do echo "${i%}"; done < /proc/net/"$IPCON"_conntrack|grep -v "${CONSOLE}"|grep -Ev "$WHITELIST"|grep -Eo "(([0-9]{1,3}\.?){3})\.([0-9]{1,3})"|awk '!a[$0]++'|grep -Ev "^$ROUTERSHORT"|awk '!a[$0]++'|sed -E "s/^/iptables -I LDKTA -d /g"|sed -E "s/$/ -j DROP "${WAITLOCK}";/") &> /dev/null
-		fi
+		$(while read -r i; do echo "${i%}"; done < /proc/net/"$IPCON"_conntrack|grep -v "${CONSOLE}"|grep -Ev "$WHITELIST"|grep -Eo "(([0-9]{1,3}\.?){3})\.([0-9]{1,3})"|awk '!a[$0]++'|grep -Ev "^$ROUTERSHORT"|awk '!a[$0]++'|sed -E "s/^/iptables -I LDKTA -d /g"|sed -E "s/$/ -j DROP "${WAITLOCK}";/") &> /dev/null
 	fi
-	fi &> /dev/null
 	
-else iptables -F LDKTA "${WAITLOCK}"
+else
+	if iptables -nL LDKTA 2>&1 >/dev/null; then
+	iptables -F LDKTA "${WAITLOCK}"
+	fi
 fi
 #####Decongest - Block all other connections#####
 
@@ -513,7 +509,6 @@ if { ping -q -c 1 -W 1 -s 1 "${CONSOLE}"|grep -q -F -w "100% packet loss" ;} &> 
 lagdropexecute && sentinel && packetsentinel
 { while ping -q -c 1 -W 1 "${CONSOLE}"|grep -q -F -w "100% packet loss"; do :; done ;} &> /dev/null; wait
 while sleep :; do 
-#if { "$EXISTS"; }; then :; else ${PACKETBLOCK} && ${SENTBLOCK} && ${BLOCK}; wait &> /dev/null & fi
 if { "$EXISTS"; }; then "${SENTBLOCK}"; else "${PACKETBLOCK}" && "${BLOCK}"; wait &> /dev/null & fi
  
  done
@@ -527,6 +522,7 @@ fi &> /dev/null #
 fi &> /dev/null #
 }
 fi &> /dev/null #
+
 ##### Ban SLOW Peers #####
 ##### 42Kmi International Competitive Gaming #####
 ##### Visit 42Kmi.com #####
