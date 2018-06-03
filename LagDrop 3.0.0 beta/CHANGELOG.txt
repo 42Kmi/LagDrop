@@ -6,16 +6,21 @@ experience lag-free gameplay in online console games utilizing peer-to-peer matc
 
 
 Change
-Version 3.0.0 (#AllForOne) beta - 2018-05-25
-- All the different LagDrop server filter variants have been rolled into one release, as it always should have been. Run lagdrop.sh with your static host name or a suitable console identifier as an arugment to run with the proper server filter.
+Version 3.0.0 (#OneForAll) beta - 2018-05-25
+- All the different LagDrop server filter variants have been rolled into one release, as it always should have been. Run lagdrop.sh with your static host name or a suitable console identifier as an argument to run with the proper server filter.
 - Added a kill switch if needed. Just run lagdrop.sh without an argument to kill all instances of lagdrop.sh and LagDrop-related scripts.
 - Fixed everything. Weird how Arithmetic function in bash craps itself when non-zero numbers have leading zeroes.
 - Everything is faster.
 - LagDrop runs mkdir before making files that don't already exist.
 - LagDrop should now know if you're running DD-WRT or OpenWRT. Please verify this works for you. Many thanks.
 - Improved the SENTINEL feature, but it is still experimental.
-- Added DECONGEST feature (a.k.a., Kill them all), which blocks all other connections on the router not connected to your console. Highly experimental.
+- Added DECONGEST feature (a.k.a., Kill Them All), which blocks all other connections on the router not connected to your console. Highly experimental.
 - Some functions can be further adjusted by creating tweak.txt file in the 42Kmi directory. This is optional and is not necessary for LagDrop to function, but you are free to experiment.
+- Removed random bit generator. Caused more problems than necessary.
+- Fixed iptables creation for LagDrop specific tables.
+- Suppressed noisy output so users don't have to run with "&> /dev/null"
+- Optional lagdropstartup.sh which can be included at the end of your router's startup startup scripts to ensure LagDrop is running.
+- Changed some IfThen functions to case functions, specifically ping/traceroute block, packet block, sentinel block scenarios.
 
 Version 2.0.8 - 2016-12-28
 - Fixed RestOnMultiplayer, RestOnMultiplayer will disable Sentinel from acting.
