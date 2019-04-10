@@ -1,10 +1,31 @@
 # 42Kmi LagDrop
-Avoid laggy matches in peer-to-peer matchmaking online games, such as Super Smash Bros. for Wii U.
+
+[Super Smash Bros. Ultimate](https://i.imgur.com/FFhu9Pv.png)
+
+Avoid laggy matches in any peer-to-peer matchmaking online games, such as Super Smash Bros. Ultimate, Street Fighter V, Dragon Ball FighterZ, and more!
+
+## LagDrop 3.0.0 is still under development, but it is indeed coming! New features include:
+- Monitor to see LagDrop in action
+- Unified script. If you can game on it, we got you. #OneForAll #Futureproof
+- Location to see roughly where opponents are, with regional ban feature!
+- Smart mode adjusts limits for best peers
+- More!
+
+Contact us if you're interested in testing Version 3.0.0!
+
+What to expect in 3.0.0
+
+![LagDrop Monitor](https://i.imgur.com/l4ODvaZ.png)
+
 
 ![LagDrop](http://i.imgur.com/GGJmYyr.png)
 
 [See LagDrop in action!](https://www.youtube.com/watch?v=6g9MiaE-2k0)
 [Discuss LagDrop at 42Kmi.com](http://42kmi.com/Forum-42Kmi-LagDrop)
+
+
+[FriendCode](https://i.imgur.com/FDSfaK0.jpg)
+Down to play if I'm free from studying!
 
 ## How it works
 ________________
