@@ -1,6 +1,6 @@
 # 42Kmi LagDrop
 
-[Super Smash Bros. Ultimate](https://i.imgur.com/FFhu9Pv.png)
+![Super Smash Bros. Ultimate](https://i.imgur.com/FFhu9Pv.png)
 
 Avoid laggy matches in any peer-to-peer matchmaking online games, such as Super Smash Bros. Ultimate, Street Fighter V, Dragon Ball FighterZ, and more!
 
@@ -25,7 +25,7 @@ What to expect in 3.0.0
 [Discuss LagDrop at 42Kmi.com](http://42kmi.com/Forum-42Kmi-LagDrop)
 
 
-[FriendCode](https://i.imgur.com/FDSfaK0.jpg)
+![FriendCode](https://i.imgur.com/FDSfaK0.jpg)
 Down to play if I'm free from studying!
 
 ## How it works
