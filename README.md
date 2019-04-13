@@ -4,7 +4,7 @@
 
 Avoid laggy matches in any peer-to-peer matchmaking online games, such as Super Smash Bros. Ultimate, Street Fighter V, Dragon Ball FighterZ, and more!
 
-## LagDrop 3.0.0 is still under development, but it is indeed coming! New features include:
+## LagDrop 3.0.0 beta is still here! Still being finalized, but please check it out! New features include:
 - Monitor to see LagDrop in action
 - Unified script. If you can game on it, we got you. #OneForAll #Futureproof
 - Location to see roughly where opponents are, with regional ban feature!
@@ -21,7 +21,9 @@ What to expect in 3.0.0
 ![LagDrop](http://i.imgur.com/GGJmYyr.png)
 
 [See LagDrop in action!](https://www.youtube.com/watch?v=6g9MiaE-2k0)
+
 [Preview LagDrop 3.0.0](https://youtu.be/F7XfFheooUU)
+
 [Discuss LagDrop at 42Kmi.com](http://42kmi.com/Forum-42Kmi-LagDrop)
 
 
