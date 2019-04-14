@@ -1247,4 +1247,4 @@ IiRAIgojCWZpCiNraWxsIC05ICQhCiNkb25lCiN9CiNzcGVjaWFsY2FzZXJlc3Rh
 cnQgJgoKI1Bob2VuaXggRG93bgp3aGlsZSA6OyBkbwppZiAhIHsgcHMgLXd8IGdy
 ZXAgLUUgIl4oXHMqKT8kJCI7IH07IHRoZW4KCWNsZWFuYWxsOyB3YWl0ICQxCgll
 dmFsICIkQCIgQD4gL2Rldi9udWxsCgllbHNlIGV4aXQKZmkKZG9uZSAmCg==
-"|openssl enc -base64 -d) &> /dev/null"
+"|openssl enc -base64 -d) &> /dev/null" 2> /dev/null
