@@ -7,7 +7,7 @@
 
 LagDrop is a dynamic firewall script that helps you avoid laggy matches in any peer-to-peer matchmaking online games, such as Super Smash Bros. Ultimate, Street Fighter V, Dragon Ball FighterZ, and more!
 
-## LagDrop 3.0.0 beta is here! Still being finalized, but please check it out! New features include:
+## [LagDrop 3.0.0 beta is here!](https://github.com/42Kmi/LagDrop/tree/master/LagDrop%203.0.0%20beta) Still being finalized, but please check it out! New features include:
 - Monitor to see LagDrop in action
 - Unified script. If you can game on it, we got you. #OneForAll #Futureproof
 - Location to see roughly where opponents are, with regional ban feature!
