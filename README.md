@@ -1,6 +1,6 @@
 # 42Kmi LagDrop
 
-![LagDrop](https://i.imgur.com/ltFiHsT.png)
+![LagDrop](https://i.imgur.com/tLed6iA.png)
 
 
 ![Super Smash Bros. Ultimate](https://i.imgur.com/FFhu9Pv.png)
