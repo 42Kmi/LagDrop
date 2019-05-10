@@ -59,7 +59,7 @@ Running LagDrop without argument will terminate all instances of the script.
 cleanall
 exit
 else
-#kill -9 $(ps|grep -E "$(echo $(ps|grep "${0##*/}"|grep -v $$|awk '{printf $3" "$4"|\n"}'|sort -u)|sed -E 's/.$//')"|grep -v $$|grep -Ev "(\[("kthreadd"|"ksoftirqd"|"kworker"|"khelper"|"writeback"|"bioset"|"crypto"|"kblockd"|"khubd"|"kswapd"|"fsnotify_mark"|"deferwq"|"scsi_eh_"|"usb-storage"|"cfg80211"|"jffs2_gcd_mtd3").*\])"|grep -Eo "^(\s*)?[0-9]{1,}")|: #Kill previous instances. Can't run in two places at same time.
+kill -9 $(echo $(ps|grep "${0##*/}"|grep -v "$$"|grep -Eo "^(\s*)?[0-9]{1,}"))|: #Kill previous instances. Can't run in two places at same time.
 ##### Kill if no argument #####
 
 ######################################################################################################
@@ -114,13 +114,13 @@ fi &> /dev/null &
 IPTABLESVER=$(iptables -V|grep -Eo "([0-9]{1,}\.?){3}")
 SUBFOLDER="cache"
 ##### Memory Dir #####
-PINGMEM="$SUBFOLDER/pingmem"
-GEOMEM="$SUBFOLDER/geomem"
-FILTERIGNORE="$SUBFOLDER/filterignore"
+PINGMEM="cache/pingmem"
+GEOMEMFILE="cache/geomem"
+FILTERIGNORE="cache/filterignore"
 ##### Memory Dir #####
 gogetem(){
 if ! [ -f ""$DIR"/42Kmi/${FILTERIGNORE}" ]; then touch ""$DIR"/42Kmi/${FILTERIGNORE}"; fi
-if ! [ -f ""$DIR"/42Kmi/${GEOMEM}" ]; then touch ""$DIR"/42Kmi/${GEOMEM}"; fi
+if ! [ -f ""$DIR"/42Kmi/${GEOMEMFILE}" ]; then touch ""$DIR"/42Kmi/${GEOMEMFILE}"; fi
 if  { ls -1 /tmp|grep -Eio "[0-9a-f]{38,42}"; } &> /dev/null;  then
 RANDOMGET="$(ls -1 /tmp|grep -Eio "[0-9a-f]{42}"|sed -n 1p)"
 else
@@ -148,7 +148,7 @@ ROUTERSHORT=$(echo "$ROUTER"|grep -Eo '(([0-9]{1,3}\.?){2})'|sed -E 's/\./\\./g'
 ##### Find Shell #####
 SCRIPTNAME="${0##*/}"
 DIR="${0%\/*.*}"
-if [ -f ""$DIR"/42Kmi/${GEOMEM}" ]; then sed -E -i "/#$/d" ""$DIR"/42Kmi/${GEOMEM}"; fi #Housekeeping
+if [ -f ""$DIR"/42Kmi/${GEOMEMFILE}" ]; then sed -E -i "/#$/d" ""$DIR"/42Kmi/${GEOMEMFILE}"; fi #Housekeeping
 ##### Make Files #####
 CONSOLENAME="$1"
 ##### Get Static IP #####
@@ -262,7 +262,7 @@ fi
 if [ $SHOWLOCATION = 1 ]; then
 getcountry(){
 	checkcountry(){
-	GEOMEM="$(tail +1 ""$DIR"/42Kmi/${GEOMEM}")"
+	GEOMEM="$(tail +1 ""$DIR"/42Kmi/${GEOMEMFILE}")"
 	peerenc="$(printf "$peer"|openssl enc -base64)"
 	if echo "$GEOMEM"|grep -E "^("$peer"|"$peerenc")#"; then 
 	LDCOUNTRY=$(echo "$GEOMEM"|grep -E "^("$peer"|"$peerenc")#"|sed -n 1p|sed -E "s/^($peer|$peerenc)#//g")
@@ -320,7 +320,7 @@ getcountry(){
 		esac
 	}
 	location_corrections
-	if ! { tail +1 ""$DIR"/42Kmi/${GEOMEM}"| grep -E "^("$peer"|"$peerenc")#"; }; then echo ""$peerenc"#"$LDCOUNTRY"" >> ""$DIR"/42Kmi/${GEOMEM}"; fi
+	if ! { tail +1 ""$DIR"/42Kmi/${GEOMEMFILE}"| grep -E "^("$peer"|"$peerenc")#"; }; then echo ""$peerenc"#"$LDCOUNTRY"" >> ""$DIR"/42Kmi/${GEOMEMFILE}"; fi
 	LDCOUNTRYCHECK="$(echo $LDCOUNTRY|sed -E "s/.{4}$//g")"
 	CONTINENT="$(echo $LDCOUNTRY|sed -E "s/.{4}$//g")"
 	fi
@@ -789,7 +789,8 @@ if ! [ "$SWITCH" = "$(echo -n "$SWITCH" | grep -oEi "(off|0|disable(d?))")" ]; t
 	if [ "$CHECKPORTS" = "$(echo -n "$CHECKPORTS" | grep -oEi "(yes|1|on|enable(d?))")" ]; then
 	ADDPORTS="$(echo '| grep -E "dport\=($PORTS)\b"')"
 	fi
-	IPCONNECT=$(grep "$CONSOLE" "/proc/net/"$IPCON"_conntrack""${ADDPORTS}") ### IP connections stored here, called from memory
+	#IPCONNECT=$(grep "$CONSOLE" "/proc/net/"$IPCON"_conntrack""${ADDPORTS}") ### IP connections stored here, called from memory
+	IPCONNECT=$({ cat "/proc/net/"$IPCON"_conntrack" | while read line; do echo $line; done 2> /dev/null; }|grep "$CONSOLE") ### IP connections stored here, called from memory
 	}
 	getiplist
 	##### Check Ports #####
@@ -800,7 +801,7 @@ if ! [ "$SWITCH" = "$(echo -n "$SWITCH" | grep -oEi "(off|0|disable(d?))")" ]; t
 	ADDWHITELIST="| grep -Ev "$WHITELIST""
 	fi
 	#PEERIP=$(echo "$IPCONNECT"|grep -Eo "(([0-9]{1,3}\.?){3})\.([0-9]{1,3})"|grep -Ev "^(${CONSOLE}|${ROUTER}|${IGNORE}|${ROUTERSHORT}|${FILTERIP}|${ONTHEFLYFILTER_IPs}|${WANSHORT})""${ADDWHITELIST}""${ADDfilterignore}"|awk '!a[$0]++') ### Get console Peer's IP DON'T TOUCH!
-	PEERIP=$(echo "$IPCONNECT"|grep -Eo "(([0-9]{1,3}\.?){3})\.([0-9]{1,3})"|grep -Ev "^(${CONSOLE}|${ROUTER}|${IGNORE}|${ROUTERSHORT}|${FILTERIP}|${ONTHEFLYFILTER_IPs})""${ADDWHITELIST}""${ADDfilterignore}"|awk '!a[$0]++') ### Get console Peer's IP DON'T TOUCH!
+	PEERIP=$(echo "$IPCONNECT"|grep -Eo "(([0-9]{1,3}\.?){3})\.([0-9]{1,3})"|grep -Ev "^(${CONSOLE}|${ROUTER}|${IGNORE}|${ROUTERSHORT}|${FILTERIP}|${ONTHEFLYFILTER_IPs})""${ADDWHITELIST}"|awk '!a[$0]++') ### Get console Peer's IP DON'T TOUCH!
 		##### BLACKLIST #####
 		if [ -f "$DIR"/42Kmi/blacklist.txt ] ; then
 		###*******Convert to for-loop!!!!!!!
