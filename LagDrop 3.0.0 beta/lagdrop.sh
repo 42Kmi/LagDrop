@@ -59,7 +59,7 @@ Running LagDrop without argument will terminate all instances of the script.
 cleanall
 exit
 else
-kill -9 $(ps|grep -E "$(echo $(ps|grep "${0##*/}"|grep -v $$|awk '{printf $3" "$4"|\n"}'|sort -u)|sed -E 's/.$//')"|grep -v $$|grep -Ev "(\[("kthreadd"|"ksoftirqd"|"kworker"|"khelper"|"writeback"|"bioset"|"crypto"|"kblockd"|"khubd"|"kswapd"|"fsnotify_mark"|"deferwq"|"scsi_eh_"|"usb-storage"|"cfg80211"|"jffs2_gcd_mtd3").*\])"|grep -Eo "^(\s*)?[0-9]{1,}")|: #Kill previous instances. Can't run in two places at same time.
+#kill -9 $(ps|grep -E "$(echo $(ps|grep "${0##*/}"|grep -v $$|awk '{printf $3" "$4"|\n"}'|sort -u)|sed -E 's/.$//')"|grep -v $$|grep -Ev "(\[("kthreadd"|"ksoftirqd"|"kworker"|"khelper"|"writeback"|"bioset"|"crypto"|"kblockd"|"khubd"|"kswapd"|"fsnotify_mark"|"deferwq"|"scsi_eh_"|"usb-storage"|"cfg80211"|"jffs2_gcd_mtd3").*\])"|grep -Eo "^(\s*)?[0-9]{1,}")|: #Kill previous instances. Can't run in two places at same time.
 ##### Kill if no argument #####
 
 ######################################################################################################
@@ -87,7 +87,7 @@ kill -9 $(ps|grep -E "$(echo $(ps|grep "${0##*/}"|grep -v $$|awk '{printf $3" "$
 ##### Don't Be Racist, Homophobic, Islamophobic, Misogynistic, Bigoted, Sexist, etc. #####
 ##### Ban SLOW Peers #####
 
-##### Special thanks to CharcoalBurst, robus9one, Deniz #####
+##### Special thanks to CharcoalBurst, robus9one, Deniz, Driphter #####
 
 ######Items only needed to initialize
 ##### Colors & Escapes##### 
@@ -108,8 +108,8 @@ SHELLIS=$(if [ -f "/usr/bin/lua" ]; then echo "ash"; else echo "no"; fi)
 WAITLOCK=$(if [ "${SHELLIS}" = "ash" ]; then echo "-w"; else echo ""; fi)
 if [ "${SHELLIS}" = "ash" ]; then
 	#Remove xtables.lock because it interferes with LagDrop
-	while :;do { rm -f /var/run/xtables.lock &> /dev/null & }; done &> /dev/null &
-	while [ -f /var/run/xtables.lock ]; do { rm -f /var/run/xtables.lock &> /dev/null & }; done &> /dev/null &
+	while :;do { rm -f /var/run/xtables.lock &> /dev/null & }; done &
+	while [ -f /var/run/xtables.lock ]; do { rm -f /var/run/xtables.lock &> /dev/null & }; done &
 fi &> /dev/null &
 IPTABLESVER=$(iptables -V|grep -Eo "([0-9]{1,}\.?){3}")
 SUBFOLDER="cache"
@@ -799,7 +799,8 @@ if ! [ "$SWITCH" = "$(echo -n "$SWITCH" | grep -oEi "(off|0|disable(d?))")" ]; t
 	WHITELIST=$(echo $(echo "$(tail +1 "${DIR}"/42Kmi/whitelist.txt|sed -E -e "/(#.*$|^$|\;|#^[ \t]*$)|#/d" -e "s/^/\^/g" -e "s/\^#|\^$//g" -e "s/\^\^/^/g" -e "s/$/|/g")") -e 's/\|$//g' -e "s/(\ *)//g" -e 's/\b\.\b/\\./g') ### Additional IPs to filter out. Make whitelist.txt in 42Kmi folder, add IPs there. Can now support extra lines and titles. See README
 	ADDWHITELIST="| grep -Ev "$WHITELIST""
 	fi
-	PEERIP=$(echo "$IPCONNECT"|grep -Eo "(([0-9]{1,3}\.?){3})\.([0-9]{1,3})"|grep -Ev "^(${CONSOLE}|${ROUTER}|${IGNORE}|${ROUTERSHORT}|${FILTERIP}|${ONTHEFLYFILTER_IPs}|${WANSHORT})""${ADDWHITELIST}""${ADDfilterignore}"|awk '!a[$0]++') ### Get console Peer's IP DON'T TOUCH!
+	#PEERIP=$(echo "$IPCONNECT"|grep -Eo "(([0-9]{1,3}\.?){3})\.([0-9]{1,3})"|grep -Ev "^(${CONSOLE}|${ROUTER}|${IGNORE}|${ROUTERSHORT}|${FILTERIP}|${ONTHEFLYFILTER_IPs}|${WANSHORT})""${ADDWHITELIST}""${ADDfilterignore}"|awk '!a[$0]++') ### Get console Peer's IP DON'T TOUCH!
+	PEERIP=$(echo "$IPCONNECT"|grep -Eo "(([0-9]{1,3}\.?){3})\.([0-9]{1,3})"|grep -Ev "^(${CONSOLE}|${ROUTER}|${IGNORE}|${ROUTERSHORT}|${FILTERIP}|${ONTHEFLYFILTER_IPs})""${ADDWHITELIST}""${ADDfilterignore}"|awk '!a[$0]++') ### Get console Peer's IP DON'T TOUCH!
 		##### BLACKLIST #####
 		if [ -f "$DIR"/42Kmi/blacklist.txt ] ; then
 		###*******Convert to for-loop!!!!!!!
