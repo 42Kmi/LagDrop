@@ -136,7 +136,7 @@ until [ $ROUTER != "" ]; do
 ROUTER=$(ubus call network.interface.wan status|grep -Eo "(([0-9]{1,3}\.?){3})\.([0-9]{1,3})"|sed -n 1p) # For OpenWRT
 done
 until [ $WANSHORT != ""]; do
-WANSHORT=$(if { ubus call network.interface.wan status|grep -Eoq "(([0-9]{1,3}\.?){3})\.([0-9]{1,3})"|sed -n 1p; } ; then ubus call network.interface.wan status|grep -Eo "(([0-9]{1,3}\.?){3})\.([0-9]{1,3})"|sed -n 1p|grep -Eo '(([0-9]{1,3}\.?){2})'|sed -n 1p; else echo $ROUTER; fi)# For Open-WRT
+WANSHORT=$(if { ubus call network.interface.wan status|grep -Eoq "(([0-9]{1,3}\.?){3})\.([0-9]{1,3})"|sed -n 1p; } ; then ubus call network.interface.wan status|grep -Eo "(([0-9]{1,3}\.?){3})\.([0-9]{1,3})"|sed -n 1p|sed -E "s/((\.[0-9]{1,3}){2})$//"; else echo $ROUTER; fi)# For Open-WRT
 done
 else
 ROUTER=$(nvram get lan_ipaddr|grep -Eo "(([0-9]{1,3}\.?){3})\.([0-9]{1,3})") # For DD-WRT
@@ -284,8 +284,8 @@ getcountry(){
 			"$(echo "${LDCOUNTRY}"|grep -Eo "^Taipei, TPE, TW, AS, Peicity Digital Cable Television., LTD")")
 				LDCOUNTRY="Taipei, TPE, TW, AS"
 				;;
-			"$(echo "${LDCOUNTRY}"|grep -Eo "^(水果湖街道, CN, AS)|(æ°´æžœæ¹–è¡—é“, CN, AS)")")
-				LDCOUNTRY="Shuiguo Lake, HB, CN, AS"
+			"$(echo "${LDCOUNTRY}"|grep -Eo "^水果湖街道, CN, AS")")
+				LDCOUNTRY="Wuhan, HB, CN, AS" #Shuiguo Lake, HB, CN, AS
 				;;
 		#AT
 		#EU
@@ -789,8 +789,7 @@ if ! [ "$SWITCH" = "$(echo -n "$SWITCH" | grep -oEi "(off|0|disable(d?))")" ]; t
 	if [ "$CHECKPORTS" = "$(echo -n "$CHECKPORTS" | grep -oEi "(yes|1|on|enable(d?))")" ]; then
 	ADDPORTS="$(echo '| grep -E "dport\=($PORTS)\b"')"
 	fi
-	#IPCONNECT=$(grep "$CONSOLE" "/proc/net/"$IPCON"_conntrack""${ADDPORTS}") ### IP connections stored here, called from memory
-	IPCONNECT=$({ cat "/proc/net/"$IPCON"_conntrack" | while read line; do echo $line; done 2> /dev/null; }|grep "$CONSOLE") ### IP connections stored here, called from memory
+	IPCONNECT=$(grep "$CONSOLE" "/proc/net/"$IPCON"_conntrack""${ADDPORTS}") ### IP connections stored here, called from memory
 	}
 	getiplist
 	##### Check Ports #####
@@ -800,7 +799,6 @@ if ! [ "$SWITCH" = "$(echo -n "$SWITCH" | grep -oEi "(off|0|disable(d?))")" ]; t
 	WHITELIST=$(echo $(echo "$(tail +1 "${DIR}"/42Kmi/whitelist.txt|sed -E -e "/(#.*$|^$|\;|#^[ \t]*$)|#/d" -e "s/^/\^/g" -e "s/\^#|\^$//g" -e "s/\^\^/^/g" -e "s/$/|/g")") -e 's/\|$//g' -e "s/(\ *)//g" -e 's/\b\.\b/\\./g') ### Additional IPs to filter out. Make whitelist.txt in 42Kmi folder, add IPs there. Can now support extra lines and titles. See README
 	ADDWHITELIST="| grep -Ev "$WHITELIST""
 	fi
-	#PEERIP=$(echo "$IPCONNECT"|grep -Eo "(([0-9]{1,3}\.?){3})\.([0-9]{1,3})"|grep -Ev "^(${CONSOLE}|${ROUTER}|${IGNORE}|${ROUTERSHORT}|${FILTERIP}|${ONTHEFLYFILTER_IPs}|${WANSHORT})""${ADDWHITELIST}""${ADDfilterignore}"|awk '!a[$0]++') ### Get console Peer's IP DON'T TOUCH!
 	PEERIP=$(echo "$IPCONNECT"|grep -Eo "(([0-9]{1,3}\.?){3})\.([0-9]{1,3})"|grep -Ev "^(${CONSOLE}|${ROUTER}|${IGNORE}|${ROUTERSHORT}|${FILTERIP}|${ONTHEFLYFILTER_IPs})""${ADDWHITELIST}"|awk '!a[$0]++') ### Get console Peer's IP DON'T TOUCH!
 		##### BLACKLIST #####
 		if [ -f "$DIR"/42Kmi/blacklist.txt ] ; then
