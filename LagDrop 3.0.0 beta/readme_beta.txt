@@ -3,7 +3,7 @@ LagDrop 3.0.0 beta, #OneForAll
 Currently works on DD-WRT (tested on DD-WRT v24-sp2 (02/04/15) std and DD-WRT v3.0-r36247 std (06/29/18)) and OpenWRT (tested on OpenWrt 18.06.1 r7258-5eb055306f).
 
 
-!!! ---Please ensure that openssl is installed on your system. For OpenWRT, filter for "openssl-util" on the Software page. Install openssl-util --- !!!
+!!! ---Please ensure that openssl, curl, and libcurl are installed on your system. For OpenWRT, filter for "openssl-util" on the Software page. Same for "curl" and "libcurl". Install openssl-util, curl, and libcurl--- !!!
 
 Place lagdrop.sh and killall.sh in your directory of choice. chmod both to 777
 ==============================

@@ -110,6 +110,8 @@ if [ "${SHELLIS}" = "ash" ]; then
 	#Remove xtables.lock because it interferes with LagDrop
 	while :;do { rm -f /var/run/xtables.lock &> /dev/null & }; done &
 	while [ -f /var/run/xtables.lock ]; do { rm -f /var/run/xtables.lock &> /dev/null & }; done &
+	while :; do sleep 5; curl -sk "http://example.com" &> /dev/null; done & #Keep OpenWRT Connection alive
+	while :; do sleep 5; ping -q -c 1 -W 1 "example.com" &> /dev/null; done & #Keep OpenWRT Connection alive
 fi &> /dev/null &
 IPTABLESVER=$(iptables -V|grep -Eo "([0-9]{1,}\.?){3}")
 SUBFOLDER="cache"
@@ -136,7 +138,7 @@ until [ $ROUTER != "" ]; do
 ROUTER=$(ubus call network.interface.wan status|grep -Eo "(([0-9]{1,3}\.?){3})\.([0-9]{1,3})"|sed -n 1p) # For OpenWRT
 done
 until [ $WANSHORT != ""]; do
-WANSHORT=$(if { ubus call network.interface.wan status|grep -Eoq "(([0-9]{1,3}\.?){3})\.([0-9]{1,3})"|sed -n 1p; } ; then ubus call network.interface.wan status|grep -Eo "(([0-9]{1,3}\.?){3})\.([0-9]{1,3})"|sed -n 1p|sed -E "s/((\.[0-9]{1,3}){2})$//"; else echo $ROUTER; fi)# For Open-WRT
+WANSHORT=$(if { ubus call network.interface.wan status|grep -Eoq "(([0-9]{1,3}\.?){3})\.([0-9]{1,3})"|sed -n 1p; } ; then ubus call network.interface.wan status|grep -Eo "(([0-9]{1,3}\.?){3})\.([0-9]{1,3})"|sed -n 1p|sed -E "s/((\.[0-9]{1,3}){2})$//"; else echo $ROUTER; fi)# For OpenWRT
 done
 else
 ROUTER=$(nvram get lan_ipaddr|grep -Eo "(([0-9]{1,3}\.?){3})\.([0-9]{1,3})") # For DD-WRT
@@ -239,7 +241,7 @@ ONTHEFLYFILTER="amazonaws|akamaitechnologies|twitter|nintendowifi\.net|(nintendo
 #ONTHEFLYFILTER="klhjgdfshjvckxrsjrfkctyjztyflkutyjsrehxcvhjyutresdxfcgh"
 MSFT_SERVERS="(52\.(1((4[5-9])|([5-8][0-9])|(9[0-1]))))|(52\.(2(2[4-9]|[3-5][0-9])))|(52\.(9[6-9]|10[0-9]|11[1-5]))"
 IANA_IPs="(239\.255\.255\.250)|(10(\.[0-9]{1,3}){3})|(2(2[4-9]|3[0-9])(\.[0-9]{1,3}){3})|(255(\.([0-9]){1,3}){3})|(0\.)|(100\.((6[4-9])|[7-9][0-9]|1(([0-1][0-9])|(2[0-7]))))|(172\.((1[6-9])|(2[0-9])|(3[0-1])))"
-ONTHEFLYFILTER_IPs="${IANA_IPs}|${MSFT_SERVERS}" #Ignores these IPs, usually IANA reserved or something 
+ONTHEFLYFILTER_IPs="${IANA_IPs}|${MSFT_SERVERS}|1\.0\.0\.1|1\.1\.1\.1" #Ignores these IPs, usually IANA reserved or something 
 ##### Filter #####
 ##### TWEAKS #####
 # create 42Kmi/tweak.txt to edit these values
@@ -281,35 +283,35 @@ getcountry(){
 		case "${LDCOUNTRY}" in
 		#AF
 		#AS
-			"$(echo "${LDCOUNTRY}"|grep -Eo "^Taipei, TPE, TW, AS, Peicity Digital Cable Television., LTD")")
+			"$(echo "${LDCOUNTRY}"|grep -Eo "^Taipei\, TPE\, TW\, AS\, Peicity Digital Cable Television\.\, LTD")")
 				LDCOUNTRY="Taipei, TPE, TW, AS"
 				;;
-			"$(echo "${LDCOUNTRY}"|grep -Eo "^水果湖街道, CN, AS")")
+			"$(echo "${LDCOUNTRY}"|grep -Eo "^水果湖街道\, CN\, AS")")
 				LDCOUNTRY="Wuhan, HB, CN, AS" #Shuiguo Lake, HB, CN, AS
 				;;
 		#AT
 		#EU
-			"$(echo "${LDCOUNTRY}"|grep -Eo "^Moscow, MOW, RU, EU, OJS Moscow city telephone network")")
+			"$(echo "${LDCOUNTRY}"|grep -Eo "^Moscow\, MOW\, RU\, EU\, OJS Moscow city telephone network")")
 				LDCOUNTRY="Moscow, MOW, RU, EU"
 				;;
 		#NA
-			"$(echo "${LDCOUNTRY}"|grep -Eo "^Emigrant Gap, US, NA")")
+			"$(echo "${LDCOUNTRY}"|grep -Eo "^Emigrant Gap\, US\, NA")")
 				LDCOUNTRY="Emigrant Gap, CA, US, NA"
 				;;
 			"$(echo "${LDCOUNTRY}"|grep -Eo "^Research Triangle Park, US, NA")")
 				LDCOUNTRY="Research Triangle Park, NC, US, NA"
 				;;
-			"$(echo "${LDCOUNTRY}"|grep -Eo "^Newcastle, US, NA")")
+			"$(echo "${LDCOUNTRY}"|grep -Eo "^Newcastle\, US\, NA")")
 				LDCOUNTRY="Newcastle, WA, US, NA"
 				;;
-			"$(echo "${LDCOUNTRY}"|grep -Eo "^Maplewood, US, NA")")
+			"$(echo "${LDCOUNTRY}"|grep -Eo "^Maplewood\, US\, NA")")
 				LDCOUNTRY="Maplewood, MN, US, NA"
 				;;
-			"$(echo "${LDCOUNTRY}"|grep -Eo "^Northlake, US, NA")")
+			"$(echo "${LDCOUNTRY}"|grep -Eo "^Northlake\, US\, NA")")
 				LDCOUNTRY="Northlake, Il, US, NA"
 				;;
 		#SA
-			"$(echo "${LDCOUNTRY}"|grep -Eo "^Manguinhos, BR, SA")")
+			"$(echo "${LDCOUNTRY}"|grep -Eo "^Manguinhos\, BR\, SA")")
 				LDCOUNTRY="Manguinhos, RJ, BR, SA"
 				;;
 		#OC
@@ -799,7 +801,7 @@ if ! [ "$SWITCH" = "$(echo -n "$SWITCH" | grep -oEi "(off|0|disable(d?))")" ]; t
 	WHITELIST=$(echo $(echo "$(tail +1 "${DIR}"/42Kmi/whitelist.txt|sed -E -e "/(#.*$|^$|\;|#^[ \t]*$)|#/d" -e "s/^/\^/g" -e "s/\^#|\^$//g" -e "s/\^\^/^/g" -e "s/$/|/g")") -e 's/\|$//g' -e "s/(\ *)//g" -e 's/\b\.\b/\\./g') ### Additional IPs to filter out. Make whitelist.txt in 42Kmi folder, add IPs there. Can now support extra lines and titles. See README
 	ADDWHITELIST="| grep -Ev "$WHITELIST""
 	fi
-	PEERIP=$(echo "$IPCONNECT"|grep -Eo "(([0-9]{1,3}\.?){3})\.([0-9]{1,3})"|grep -Ev "^(${CONSOLE}|${ROUTER}|${IGNORE}|${ROUTERSHORT}|${FILTERIP}|${ONTHEFLYFILTER_IPs})""${ADDWHITELIST}"|awk '!a[$0]++') ### Get console Peer's IP DON'T TOUCH!
+	PEERIP=$(echo "$IPCONNECT"|grep -Eo "(([0-9]{1,3}\.?){3})\.([0-9]{1,3})"|grep -Ev "^(${CONSOLE}|${ROUTER}|${IGNORE}|${ROUTERSHORT}|${FILTERIP}|${ONTHEFLYFILTER_IPs})""${ADDWHITELIST}"|awk '!a[$0]++'|sed -E "s/(\s)*//g") ### Get console Peer's IP DON'T TOUCH!
 		##### BLACKLIST #####
 		if [ -f "$DIR"/42Kmi/blacklist.txt ] ; then
 		###*******Convert to for-loop!!!!!!!
