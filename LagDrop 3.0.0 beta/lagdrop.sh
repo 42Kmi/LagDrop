@@ -500,10 +500,12 @@ pingavgfornull(){
 							CONTINENT_filter=$(echo -e "$COUNTRY_filter"|grep -Eo "[A-Z]{2}#$")
 							CONTINENT_LINES_count=$(tail +1 ""$DIR"/42Kmi/${PINGMEM}"|grep -Ec "${CONTINENT_filter}")
 							PING_HIST_AVG_COLOR=3 #Magenta for same continent average
-							if [ $CONTINENT_LINES_count -ge $(( $PING_HIST_AVG_MIN * 12 )) ]; then								
-								GET_PING_VALUES=$(echo $(tail +1 ""$DIR"/42Kmi/${PINGMEM}"|grep "$LOCATION_filter_Continent"|grep "${CONTINENT_filter}"|sed -E "s/(ms)?#.*$//g"|sed "s/\.//g"|sed -E "s/$/+/g")|sed -E "s/(\+$)//g")
+							if [ $CONTINENT_LINES_count -lt $(( $PING_HIST_AVG_MIN * 12 )) ]; then
+								PING_HIST_AVG_COLOR="XXXXXXXXXX"
+								PINGFULL=""
+								PINGFULLDECIMAL="$NULLTEXT"
 								else
-									if [ $FORNULL = 1 ] && { [ $PINGFULLDECIMAL = "$PINGFULLDECIMAL" ] || [ $PINGFULLDECIMAL = "0" ]; }; then PINGFULLDECIMAL="$NULLTEXT"; fi
+								GET_PING_VALUES=$(echo $(tail +1 ""$DIR"/42Kmi/${PINGMEM}"|grep "$LOCATION_filter_Continent"|grep "${CONTINENT_filter}"|sed -E "s/(ms)?#.*$//g"|sed "s/\.//g"|sed -E "s/$/+/g")|sed -E "s/(\+$)//g")
 							fi
 						else 
 						GET_PING_VALUES=$(echo $(tail +1 ""$DIR"/42Kmi/${PINGMEM}"|grep "$LOCATION_filter_Continent"|grep "${COUNTRY_filter}"|sed -E "s/(ms)?#.*$//g"|sed "s/\.//g"|sed -E "s/$/+/g")|sed -E "s/(\+$)//g")
@@ -557,7 +559,7 @@ meatandtatoes(){
 			 eval "iptables -I LDIGNORE -p all -s $peer -d $CONSOLE -j ACCEPT "${WAITLOCK}"; $IGNORE"; if ! { grep -Eo "^(${peer}|${peerenc})" ""$DIR"/42Kmi/${FILTERIGNORE}"; }; then echo "$peerenc" >> ""$DIR"/42Kmi/${FILTERIGNORE}"; fi
 				else
 				WHOIS="$(curl -sk --connect-timeout 1 "https://rdap.arin.net/registry/ip/"$peer"")"
-				if { { { echo "$WHOIS"|sed -E "s/^\s*//g"|sed "s/\"//g"| sed -E "s/(\[|\]|\{|\}|\,)//g"|sed "s/\\n/,/g"; } && { curl -sk --connect-timeout 1 "http://en.utrace.de/whois/"$peer""|grep -Ei "^[a-z]"; } && { curl -sk --connect-timeout 1 "http://lacnic.net/cgi-bin/lacnic/whois?lg=EN&query="$peer""|grep -Ei "^[a-z]"; }|sed  "s/],/]\\n/g"|sed -E "s/(\[|\]|\{|\})//g"|sed -E "s/(\")\,(\")/\1\\n\2/g"|sed -E '/^\"\"$/d'|sed 's/"//g'; }|grep -Eoi "^[a-z]{1,}\:.*$"|grep -Evi "^org(tech|abuse)"|grep -Ev "\b(${IGNORE})\b"|grep -Eoi "$SERVERS"; } 2>&1 >/dev/null; then eval "iptables -I LDIGNORE -p all -s $peer -d $CONSOLE -j ACCEPT "${WAITLOCK}"; $IGNORE"; if ! { grep -Eo "^(${peer}|${peerenc})" ""$DIR"/42Kmi/${FILTERIGNORE}"; }; then echo "$peerenc" >> ""$DIR"/42Kmi/${FILTERIGNORE}"; fi
+				if { { { echo "$WHOIS"|sed -E "s/^\s*//g"|sed "s/\"//g"| sed -E "s/(\[|\]|\{|\}|\,)//g"|sed "s/\\n/,/g"; } && { curl -sk --connect-timeout 1 "http://lacnic.net/cgi-bin/lacnic/whois?lg=EN&query="$peer""|grep -Ei "^[a-z]"; }|sed  "s/],/]\\n/g"|sed -E "s/(\[|\]|\{|\})//g"|sed -E "s/(\")\,(\")/\1\\n\2/g"|sed -E '/^\"\"$/d'|sed 's/"//g'; }|grep -Eoi "^[a-z]{1,}\:.*$"|grep -Evi "^org(tech|abuse)"|grep -Ev "\b(${IGNORE})\b"|grep -Eoi "$SERVERS"; } 2>&1 >/dev/null; then eval "iptables -I LDIGNORE -p all -s $peer -d $CONSOLE -j ACCEPT "${WAITLOCK}"; $IGNORE"; if ! { grep -Eo "^(${peer}|${peerenc})" ""$DIR"/42Kmi/${FILTERIGNORE}"; }; then echo "$peerenc" >> ""$DIR"/42Kmi/${FILTERIGNORE}"; fi
 				fi
 			fi
 		fi
@@ -702,6 +704,9 @@ if [ $PINGFULLDECIMAL = "$NULLTEXT" ] && [ TRAVGFULLDECIMAL = "$NULLTEXT" ]; the
 		#if [ "$(curl example.com)" != "" ]; then
 			if [ $SHOWLOCATION = 1 ]; then
 				pingavgfornull
+				if [ $PING_HIST_AVG_COLOR = "XXXXXXXXXX" ]; then 
+					PINGFULLDECIMAL="$NULLTEXT"
+				fi
 			fi
 		#fi
 			{
@@ -791,7 +796,8 @@ if ! [ "$SWITCH" = "$(echo -n "$SWITCH" | grep -oEi "(off|0|disable(d?))")" ]; t
 	if [ "$CHECKPORTS" = "$(echo -n "$CHECKPORTS" | grep -oEi "(yes|1|on|enable(d?))")" ]; then
 	ADDPORTS="$(echo '| grep -E "dport\=($PORTS)\b"')"
 	fi
-	IPCONNECT=$(grep "$CONSOLE" "/proc/net/"$IPCON"_conntrack""${ADDPORTS}") ### IP connections stored here, called from memory
+	#IPCONNECT=$(grep "$CONSOLE" "/proc/net/"$IPCON"_conntrack""${ADDPORTS}") ### IP connections stored here, called from memory
+	IPCONNECT=$(echo "$({ grep "$CONSOLE" "/proc/net/"$IPCON"_conntrack"||grep "$CONSOLE" "/proc/net/ip_conntrack"||grep "$CONSOLE" "/proc/net/nf_conntrack"; };)""${ADDPORTS}") ### IP connections stored here, called from memory
 	}
 	getiplist
 	##### Check Ports #####
@@ -800,6 +806,7 @@ if ! [ "$SWITCH" = "$(echo -n "$SWITCH" | grep -oEi "(off|0|disable(d?))")" ]; t
 	if [ -f "$DIR"/42Kmi/whitelist.txt ] ; then
 	WHITELIST=$(echo $(echo "$(tail +1 "${DIR}"/42Kmi/whitelist.txt|sed -E -e "/(#.*$|^$|\;|#^[ \t]*$)|#/d" -e "s/^/\^/g" -e "s/\^#|\^$//g" -e "s/\^\^/^/g" -e "s/$/|/g")") -e 's/\|$//g' -e "s/(\ *)//g" -e 's/\b\.\b/\\./g') ### Additional IPs to filter out. Make whitelist.txt in 42Kmi folder, add IPs there. Can now support extra lines and titles. See README
 	ADDWHITELIST="| grep -Ev "$WHITELIST""
+	else ADDWHITELIST=""
 	fi
 	PEERIP=$(echo "$IPCONNECT"|grep -Eo "(([0-9]{1,3}\.?){3})\.([0-9]{1,3})"|grep -Ev "^(${CONSOLE}|${ROUTER}|${IGNORE}|${ROUTERSHORT}|${FILTERIP}|${ONTHEFLYFILTER_IPs})""${ADDWHITELIST}"|awk '!a[$0]++'|sed -E "s/(\s)*//g") ### Get console Peer's IP DON'T TOUCH!
 		##### BLACKLIST #####
