@@ -796,8 +796,8 @@ if ! [ "$SWITCH" = "$(echo -n "$SWITCH" | grep -oEi "(off|0|disable(d?))")" ]; t
 	if [ "$CHECKPORTS" = "$(echo -n "$CHECKPORTS" | grep -oEi "(yes|1|on|enable(d?))")" ]; then
 	ADDPORTS="$(echo '| grep -E "dport\=($PORTS)\b"')"
 	fi
-	#IPCONNECT=$(grep "$CONSOLE" "/proc/net/"$IPCON"_conntrack""${ADDPORTS}") ### IP connections stored here, called from memory
-	IPCONNECT=$(echo "$({ grep "$CONSOLE" "/proc/net/"$IPCON"_conntrack"||grep "$CONSOLE" "/proc/net/ip_conntrack"||grep "$CONSOLE" "/proc/net/nf_conntrack"; };)""${ADDPORTS}") ### IP connections stored here, called from memory
+	IPCONNECT=$(grep "$CONSOLE" "/proc/net/"$IPCON"_conntrack""${ADDPORTS}") ### IP connections stored here, called from memory
+	#IPCONNECT=$(echo "$({ grep "$CONSOLE" "/proc/net/"$IPCON"_conntrack"||grep "$CONSOLE" "/proc/net/ip_conntrack"||grep "$CONSOLE" "/proc/net/nf_conntrack"; };)""${ADDPORTS}") ### IP connections stored here, called from memory
 	}
 	getiplist
 	##### Check Ports #####
