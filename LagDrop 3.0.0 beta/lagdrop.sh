@@ -241,7 +241,7 @@ ONTHEFLYFILTER="amazonaws|akamaitechnologies|twitter|nintendowifi\.net|(nintendo
 #ONTHEFLYFILTER="klhjgdfshjvckxrsjrfkctyjztyflkutyjsrehxcvhjyutresdxfcgh"
 MSFT_SERVERS="(52\.(1((4[5-9])|([5-8][0-9])|(9[0-1]))))|(52\.(2(2[4-9]|[3-5][0-9])))|(52\.(9[6-9]|10[0-9]|11[1-5]))"
 IANA_IPs="(239\.255\.255\.250)|(10(\.[0-9]{1,3}){3})|(2(2[4-9]|3[0-9])(\.[0-9]{1,3}){3})|(255(\.([0-9]){1,3}){3})|(0\.)|(100\.((6[4-9])|[7-9][0-9]|1(([0-1][0-9])|(2[0-7]))))|(172\.((1[6-9])|(2[0-9])|(3[0-1])))"
-ONTHEFLYFILTER_IPs="${IANA_IPs}|${MSFT_SERVERS}|1\.0\.0\.1|1\.1\.1\.1" #Ignores these IPs, usually IANA reserved or something 
+ONTHEFLYFILTER_IPs="${IANA_IPs}|${MSFT_SERVERS}|1\.0\.0\.1|1\.1\.1\.1|127\.0\.0\.1" #Ignores these IPs, usually IANA reserved or something 
 ##### Filter #####
 ##### TWEAKS #####
 # create 42Kmi/tweak.txt to edit these values
@@ -539,6 +539,9 @@ pingavgfornull(){
 				3)
 					PINGFULLDECIMAL=$(echo -e "${MAGENTA}${PING_HIST_AVG_DECIMAL}${NC}")
 					;;
+				XXXXXXXXXX)
+					PINGFULLDECIMAL="$NULLTEXT"
+					;;
 			esac
 			ping_tr_results
 			else
@@ -704,9 +707,6 @@ if [ $PINGFULLDECIMAL = "$NULLTEXT" ] && [ TRAVGFULLDECIMAL = "$NULLTEXT" ]; the
 		#if [ "$(curl example.com)" != "" ]; then
 			if [ $SHOWLOCATION = 1 ]; then
 				pingavgfornull
-				if [ $PING_HIST_AVG_COLOR = "XXXXXXXXXX" ]; then 
-					PINGFULLDECIMAL="$NULLTEXT"
-				fi
 			fi
 		#fi
 			{
@@ -792,21 +792,29 @@ if ! [ "$SWITCH" = "$(echo -n "$SWITCH" | grep -oEi "(off|0|disable(d?))")" ]; t
 
 	##### Check Ports #####
 	getiplist(){
-	IPCON=$(if [ "${SHELLIS}" = "ash" ]; then echo "nf"; else echo "ip"; fi)
-	if [ "$CHECKPORTS" = "$(echo -n "$CHECKPORTS" | grep -oEi "(yes|1|on|enable(d?))")" ]; then
-		IPCONNECT=$(grep "$CONSOLE" "/proc/net/"$IPCON"_conntrack"| grep -E "dport\=($PORTS)\b") ### IP connections stored here, called from memory
-	else
-		IPCONNECT=$(grep "$CONSOLE" "/proc/net/"$IPCON"_conntrack") ### IP connections stored here, called from memory
-	fi
-	}
+		#IPCON=$(if [ "${SHELLIS}" = "ash" ]; then echo "nf"; else echo "ip"; fi)
+		if [ "$CHECKPORTS" = "$(echo -n "$CHECKPORTS" | grep -oEi "(yes|1|on|enable(d?))")" ]; then
+			ADDPORTS='|grep -E "dport\=($PORTS)\b"'
+		else
+			ADDPORTS=""
+		fi
+		#IPCONNECT=$(grep "$CONSOLE" "/proc/net/"$IPCON"_conntrack""${ADDPORTS}") ### IP connections stored here, called from memory
+		if [ -f "/proc/net/ip_conntrack" ]; then 
+			IPCONNECT_SOURCE='/proc/net/ip_conntrack'
+			else
+			IPCONNECT_SOURCE='/proc/net/nf_conntrack'	
+		fi
+		IPCONNECT=$(grep "$CONSOLE" "${IPCONNECT_SOURCE}""${ADDPORTS}") ### IP connections stored here, called from memory
+		}
 	getiplist
 	##### Check Ports #####
 	EXIST_LIST=$(iptables -nL LDACCEPT && iptables -nL LDREJECT && iptables -nL LDBAN && iptables -nL LDIGNORE|grep -Eo "([0-9]{1,3}\.){3}[0-9]{1,3}"|grep -v "${CONSOLE}")
 	IGNORE=$(echo $({ if { { { echo "$EXIST_LIST" && tail +1 ""$DIR"/42Kmi/${FILTERIGNORE}"; } ; }|grep -Eoq "([0-9]{1,3}\.?){4}"; } then echo "$({ { echo "$EXIST_LIST" && tail +1 ""$DIR"/42Kmi/${FILTERIGNORE}"; } ; }|grep -Eo "([0-9]{1,3}\.?){4}"|sort -u|grep -v "${CONSOLE}"|grep -v "127.0.0.1"|sed 's/\./\\\./g')"|sed -E 's/$/\|/g'; else echo "${ROUTER}"; fi; })|sed -E 's/\|$//g'|sed -E 's/\ //g')
 	if [ -f "$DIR"/42Kmi/whitelist.txt ] ; then
-	WHITELIST=$(echo $(echo "$(tail +1 "${DIR}"/42Kmi/whitelist.txt|sed -E -e "/(#.*$|^$|\;|#^[ \t]*$)|#/d" -e "s/^/\^/g" -e "s/\^#|\^$//g" -e "s/\^\^/^/g" -e "s/$/|/g")") -e 's/\|$//g' -e "s/(\ *)//g" -e 's/\b\.\b/\\./g') ### Additional IPs to filter out. Make whitelist.txt in 42Kmi folder, add IPs there. Can now support extra lines and titles. See README
-	ADDWHITELIST="| grep -Ev "$WHITELIST""
-	else ADDWHITELIST=""
+		WHITELIST=$(echo $(echo "$(tail +1 "${DIR}"/42Kmi/whitelist.txt|sed -E -e "/(#.*$|^$|\;|#^[ \t]*$)|#/d" -e "s/^/\^/g" -e "s/\^#|\^$//g" -e "s/\^\^/^/g" -e "s/$/|/g")") -e 's/\|$//g' -e "s/(\ *)//g" -e 's/\b\.\b/\\./g') ### Additional IPs to filter out. Make whitelist.txt in 42Kmi folder, add IPs there. Can now support extra lines and titles. See README
+		ADDWHITELIST="| grep -Ev "$WHITELIST""
+	else 
+		ADDWHITELIST=""
 	fi
 	PEERIP=$(echo "$IPCONNECT"|grep -Eo "(([0-9]{1,3}\.?){3})\.([0-9]{1,3})"|grep -Ev "^(${CONSOLE}|${ROUTER}|${IGNORE}|${ROUTERSHORT}|${FILTERIP}|${ONTHEFLYFILTER_IPs})""${ADDWHITELIST}"|awk '!a[$0]++'|sed -E "s/(\s)*//g") ### Get console Peer's IP DON'T TOUCH!
 		##### BLACKLIST #####
@@ -842,7 +850,7 @@ fi
 #####Decongest - Block all other connections#####
 decongest(){
 if [ "$DECONGEST" = "$(echo -n "$DECONGEST" | grep -oEi "(yes|1|on|enable(d?))")" ]; then
-		DECONGESTLIST=$(grep -v "${CONSOLE}" "/proc/net/"$IPCON"_conntrack"|grep -Eo "([0-9]{1,3}\.){3}[0-9]{1,3}"|awk '!a[$0]++'|grep -v "^${ROUTERSHORT}")
+		DECONGESTLIST=$(grep -v "${CONSOLE}" "${IPCONNECT_SOURCE}"|grep -Eo "([0-9]{1,3}\.){3}[0-9]{1,3}"|awk '!a[$0]++'|grep -v "^${ROUTERSHORT}")
 		for kta in $DECONGESTLIST; do
 		if ! { iptables -nL LDKTA|grep $kta; }; then
 			eval "iptables -A LDKTA -s $kta -j DROP "${WAITLOCK}" &> /dev/null"
