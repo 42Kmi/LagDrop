@@ -853,7 +853,7 @@ fi
 #####Decongest - Block all other connections#####
 decongest(){
 if [ "$DECONGEST" = "$(echo -n "$DECONGEST" | grep -oEi "(yes|1|on|enable(d?))")" ]; then
-		DECONGESTLIST=$(grep -v "${CONSOLE}" "${IPCONNECT_SOURCE}"|grep -Eo "([0-9]{1,3}\.){3}[0-9]{1,3}"|awk '!a[$0]++'|grep -v "^${ROUTERSHORT}")
+		DECONGESTLIST=$(grep -v "\b${CONSOLE}\b" "${IPCONNECT_SOURCE}"|grep -Eo "([0-9]{1,3}\.){3}[0-9]{1,3}"|awk '!a[$0]++'|grep -v "^${ROUTERSHORT}")
 		for kta in $DECONGESTLIST; do
 		if ! { iptables -nL LDKTA|grep $kta; }; then
 			eval "iptables -A LDKTA -s $kta -j DROP "${WAITLOCK}" &> /dev/null"
