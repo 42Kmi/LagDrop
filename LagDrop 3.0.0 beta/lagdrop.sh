@@ -151,9 +151,9 @@ if [ -f ""$DIR"/42Kmi/${GEOMEMFILE}" ]; then sed -E -i "/#$/d" ""$DIR"/42Kmi/${G
 CONSOLENAME="$1"
 ##### Get Static IP #####
 if [ "${SHELLIS}" = "ash" ]; then
-GETSTATIC=$(echo "$(tail +1 "/var/dhcp.leases"|grep -i "$CONSOLENAME"|grep -Eo "([0-9]{1,3}\.){3}([0-9]{1,3})"|sed -n 1p)") # for OpenWRT
+GETSTATIC=$"$(tail +1 "/var/dhcp.leases"|grep -i "$CONSOLENAME"|grep -Eo "\b([0-9]{1,3}\.){3}([0-9]{1,3})\b"|sed -n 1p)" # for OpenWRT
 else
-GETSTATIC=$(echo "$(tail +1 "/tmp/dnsmasq.conf"|grep -i "$CONSOLENAME"|grep -Eo "([0-9]{1,3}\.){3}([0-9]{1,3})")"|sed -n 1p) # for DD-WRT
+GETSTATIC="$(tail +1 "/tmp/dnsmasq.leases"|grep -i "$CONSOLENAME"|grep -Eo "\b([0-9]{1,3}\.){3}([0-9]{1,3})\b"|sed -n 1p)" # for DD-WRT
 fi
 ##### Get Static IP #####
 ##### Prepare LagDrop's IPTABLES Chains #####
@@ -559,12 +559,12 @@ meatandtatoes(){
 		#Do you believe in magic?
 		##### Whitelisting/ NSLookup #####
 		SERVERS="${ONTHEFLYFILTER}"
-		if ! { { echo "$EXIST_LIST"; }|grep -Eo "(([0-9]{1,3}\.?){3})\.([0-9]{1,3})"| tail +1 ""$DIR"/42Kmi/${FILTERIGNORE}"|grep -Eoq "^("$peer"|"$peerenc")#"; }; then
+		if ! { { echo "$EXIST_LIST"; }|grep -Eo "(([0-9]{1,3}\.?){3})\.([0-9]{1,3})"| tail +1 ""$DIR"/42Kmi/${FILTERIGNORE}"|grep -Eoq "^("$peer"|"$peerenc")$"; }; then
 			if { nslookup "$peer" localhost|grep -Ev "\b(${IGNORE})\b"|grep -Eoi "\b(${SERVERS})\b"; }; then
-			 eval "iptables -I LDIGNORE -p all -s $peer -d $CONSOLE -j ACCEPT "${WAITLOCK}"; $IGNORE"; if ! { grep -Eo "^(${peer}|${peerenc})" ""$DIR"/42Kmi/${FILTERIGNORE}"; }; then echo "$peerenc" >> ""$DIR"/42Kmi/${FILTERIGNORE}"; fi
+			 eval "iptables -I LDIGNORE -p all -s $peer -d $CONSOLE -j ACCEPT "${WAITLOCK}"; $IGNORE"; if ! { grep -Eo "^(${peer}|${peerenc})$" ""$DIR"/42Kmi/${FILTERIGNORE}"; }; then echo "$peerenc" >> ""$DIR"/42Kmi/${FILTERIGNORE}"; fi
 				else
 				WHOIS="$(curl -sk --connect-timeout 2 "https://rdap.arin.net/registry/ip/"$peer"")"
-				if { { { echo "$WHOIS"|sed -E "s/^\s*//g"|sed "s/\"//g"| sed -E "s/(\[|\]|\{|\}|\,)//g"|sed "s/\\n/,/g"; } && { curl -sk --connect-timeout 2 "http://lacnic.net/cgi-bin/lacnic/whois?lg=EN&query="$peer""|grep -Ei "^[a-z]"; }|sed  "s/],/]\\n/g"|sed -E "s/(\[|\]|\{|\})//g"|sed -E "s/(\")\,(\")/\1\\n\2/g"|sed -E '/^\"\"$/d'|sed 's/"//g'; }|grep -Eoi "^[a-z]{1,}\:.*$"|grep -Evi "^org(tech|abuse)"|grep -Ev "\b(${IGNORE})\b"|grep -Eoi "\b(${SERVERS})\b"; } 2>&1 >/dev/null; then eval "iptables -I LDIGNORE -p all -s $peer -d $CONSOLE -j ACCEPT "${WAITLOCK}"; $IGNORE"; if ! { grep -Eo "^(${peer}|${peerenc})" ""$DIR"/42Kmi/${FILTERIGNORE}"; }; then echo "$peerenc" >> ""$DIR"/42Kmi/${FILTERIGNORE}"; fi
+				if { { { echo "$WHOIS"|sed -E "s/^\s*//g"|sed "s/\"//g"| sed -E "s/(\[|\]|\{|\}|\,)//g"|sed "s/\\n/,/g"; } && { curl -sk --connect-timeout 2 "http://lacnic.net/cgi-bin/lacnic/whois?lg=EN&query="$peer""|grep -Ei "^[a-z]"; }|sed  "s/],/]\\n/g"|sed -E "s/(\[|\]|\{|\})//g"|sed -E "s/(\")\,(\")/\1\\n\2/g"|sed -E '/^\"\"$/d'|sed 's/"//g'; }|grep -Eoi "^[a-z]{1,}\:.*$"|grep -Evi "^org(tech|abuse)"|grep -Ev "\b(${IGNORE})\b"|grep -Eoi "\b(${SERVERS})\b"; } 2>&1 >/dev/null; then eval "iptables -I LDIGNORE -p all -s $peer -d $CONSOLE -j ACCEPT "${WAITLOCK}"; $IGNORE"; if ! { grep -Eo "^(${peer}|${peerenc})$" ""$DIR"/42Kmi/${FILTERIGNORE}"; }; then echo "$peerenc" >> ""$DIR"/42Kmi/${FILTERIGNORE}"; fi
 				fi
 			fi
 		fi
@@ -576,7 +576,7 @@ meatandtatoes(){
 		fi
 
 		##### Get Country #####
-		if ! { { echo "$EXIST_LIST"; }|grep -Eo "(([0-9]{1,3}\.?){3})\.([0-9]{1,3})"|tail +1 ""$DIR"/42Kmi/${FILTERIGNORE}"| grep -Eoq "^("$peer"|"$peerenc")#"; }; then
+		if ! { { echo "$EXIST_LIST"; }|grep -Eo "(([0-9]{1,3}\.?){3})\.([0-9]{1,3})"|tail +1 ""$DIR"/42Kmi/${FILTERIGNORE}"| grep -Eoq "^("$peer"|"$peerenc")$"; }; then
 		##### The Ping #####
 		theping(){
 		#Rapid Ping, New Ping Method
@@ -671,7 +671,7 @@ meatandtatoes(){
 		}
 		fi
 		##### TRACEROUTE #####
-		if ! { { echo "$EXIST_LIST"; }|grep -Eo "(([0-9]{1,3}\.?){3})\.([0-9]{1,3})"| tail +1 ""$DIR"/42Kmi/${FILTERIGNORE}"|grep -Eoq "^("$peer"|"$peerenc")#"; }; then
+		if ! { { echo "$EXIST_LIST"; }|grep -Eo "(([0-9]{1,3}\.?){3})\.([0-9]{1,3})"| tail +1 ""$DIR"/42Kmi/${FILTERIGNORE}"|grep -Eoq "^("$peer"|"$peerenc")$"; }; then
 		{ theping && thetraceroute; }
 		timestamps
 		fi
@@ -684,7 +684,7 @@ fi
 		ping_tr_results
 		
 ##### NULL/NO RESPONSE PEERS #####
-if ! { { echo "$EXIST_LIST"; }|grep -Eo "(([0-9]{1,3}\.?){3})\.([0-9]{1,3})"| tail +1 ""$DIR"/42Kmi/${FILTERIGNORE}"|grep -Eoq "^("$peer"|"$peerenc")#"; }; then
+if ! { { echo "$EXIST_LIST"; }|grep -Eo "(([0-9]{1,3}\.?){3})\.([0-9]{1,3})"| tail +1 ""$DIR"/42Kmi/${FILTERIGNORE}"|grep -Eoq "^("$peer"|"$peerenc")$"; }; then
 if [ $FORNULL = 1 ]; then
 if { [ $PINGFULLDECIMAL = "$PINGFULLDECIMAL" ] && [ $TRAVGFULLDECIMAL = "0ms" ]; }; then eval "iptables -A LDIGNORE -p all -s $peer -d $CONSOLE -j ACCEPT "${WAITLOCK}"; $IGNORE"; fi
 fi
@@ -702,7 +702,7 @@ if [ $PINGFULLDECIMAL = "$NULLTEXT" ] && [ TRAVGFULLDECIMAL = "$NULLTEXT" ]; the
 		##### Count Connected IPs #####
 		#Rest on Multiplayer
 		{
-		if ! { { { echo "$EXIST_LIST"; }; }|grep -Eo "(([0-9]{1,3}\.?){3})\.([0-9]{1,3})"| tail +1 ""$DIR"/42Kmi/${FILTERIGNORE}"|grep -Eoq "^("$peer"|"$peerenc")#"; }; then
+		if ! { { { echo "$EXIST_LIST"; }; }|grep -Eo "(([0-9]{1,3}\.?){3})\.([0-9]{1,3})"| tail +1 ""$DIR"/42Kmi/${FILTERIGNORE}"|grep -Eoq "^("$peer"|"$peerenc")$"; }; then
 		if ! { [ "$RESTONMULTIPLAYER" = "$(echo -n "$RESTONMULTIPLAYER" | grep -oEi "(yes|1|on|enable(d?))")" ] && [ "${IPCONNECTCOUNT}" -ge "${NUMBEROFPEERS}" ]; }; then
 		##### BLOCK ##### // 0 or 1=Ping, 2=TraceRoute, 3=Ping or TraceRoute, 4=Ping & TraceRoute
 		# Store ping histories for future approximating of null pings
@@ -845,6 +845,11 @@ if ! [ "$SWITCH" = "$(echo -n "$SWITCH" | grep -oEi "(off|0|disable(d?))")" ]; t
 			$PEERIP
 			cleanliness &> /dev/null &
 			bancountry &> /dev/null &
+			
+			#####
+			cleantable
+			cleanlog
+			#####
 	fi
 	done
 	}
@@ -929,7 +934,7 @@ if [ "$CLEARBLOCKED" = "$(echo -n "$CLEARBLOCKED" | grep -oEi "(yes|1|on|enable(
 		COUNTBLOCKED=$(tail +1 "/tmp/$RANDOMGET"|sed -E "s/.\[[0-9]{1}(\;[0-9]{2})?m//g"|grep -E "\b${RESPONSE3}\b"|wc -l)
 		if [ "${COUNTBLOCKED}" -gt "${CLEARLIMIT}" ]; then
 	clearreject(){
-		LINENUMBERREJECTED=$(iptables --line-number -nL LDREJECT|grep =E "\b${refused1}\b"|grep -Eo "^\s?[0-9]{1,}")
+		LINENUMBERREJECTED=$(iptables --line-number -nL LDREJECT|grep -E "\b${refused1}\b"|grep -Eo "^\s?[0-9]{1,}")
 		eval "iptables -D LDREJECT "$LINENUMBERREJECTED""
 		sed -i -E "s/((.\[[0-9]{1}(\;[0-9]{2})m)?${refused1}.*$)/$(echo -e "${BG_MAGENTA}")&/g" "/tmp/$RANDOMGET"; sleep 5 #Clear warning
 		eval "wait $!; sed -i -E "/\b${refused1}\b/d" "/tmp/$RANDOMGET""
