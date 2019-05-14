@@ -238,11 +238,11 @@ case "$1" in
 
 esac
 }
-ONTHEFLYFILTER="amazonaws|akamaitechnologies|twitter|nintendowifi\.net|(nintendo|xboxlive|sony|playstation)\.net|ps[2-9]|nflxvideo|netflix|easo\.ea\.com|\.ea\.com|\.1e100\.net|google|goog|Sony Online Entertainment|cloudfront\.net|facebook|fb-net|IANA|Cloudflare|BAD REQUEST|blizzard|NC Interactive|ncsoft|NCINT|RIOT(\s)?GAMES|RIOT|SQUARE ENIX|Valve Corporation|Ubisoft|not found|IANA-RESERVED" # Ignores if these words are found in whois requests
+ONTHEFLYFILTER="amazonaws|akamaitechnologies|AKAMAI|Akamai|twitter|nintendowifi\.net|(nintendo|xboxlive|sony|playstation)\.net|ps[2-9]|nflxvideo|netflix|easo\.ea\.com|\.ea\.com|\.1e100\.net|google|Google|GOOGLE|GOGL|goog|Sony Online Entertainment|cloudfront\.net|facebook|fb-net|IANA|Cloudflare|BAD REQUEST|blizzard|NC Interactive|ncsoft|NCINT|RIOT(\s)?GAMES|RIOT|SQUARE ENIX|Valve Corporation|Ubisoft|not found|IANA-RESERVED|\b(dns|ns|NS|DNS)(\.|\-)\b" # Ignores if these words are found in whois requests
 #ONTHEFLYFILTER="klhjgdfshjvckxrsjrfkctyjztyflkutyjsrehxcvhjyutresdxfcgh"
 MSFT_SERVERS="(52\.(1((4[5-9])|([5-8][0-9])|(9[0-1]))))|(52\.(2(2[4-9]|[3-5][0-9])))|(52\.(9[6-9]|10[0-9]|11[1-5]))"
 IANA_IPs="(239\.255\.255\.250)|(10(\.[0-9]{1,3}){3})|(2(2[4-9]|3[0-9])(\.[0-9]{1,3}){3})|(255(\.([0-9]){1,3}){3})|(0\.)|(100\.((6[4-9])|[7-9][0-9]|1(([0-1][0-9])|(2[0-7]))))|(172\.((1[6-9])|(2[0-9])|(3[0-1])))"
-ONTHEFLYFILTER_IPs="${IANA_IPs}|${MSFT_SERVERS}|1\.0\.0\.1|1\.1\.1\.1|127\.0\.0\.1" #Ignores these IPs, usually IANA reserved or something 
+ONTHEFLYFILTER_IPs="${IANA_IPs}|${MSFT_SERVERS}|1\.0\.0\.1|1\.1\.1\.1|127\.0\.0\.1|8\.8\.8\.8|8\.8\.4\.4" #Ignores these IPs, usually IANA reserved or something 
 ##### Filter #####
 ##### TWEAKS #####
 # create 42Kmi/tweak.txt to edit these values
@@ -270,13 +270,13 @@ getcountry(){
 	if echo "$GEOMEM"|grep -E "^("$peer"|"$peerenc")#"; then 
 	LDCOUNTRY=$(echo "$GEOMEM"|grep -E "^("$peer"|"$peerenc")#"|sed -n 1p|sed -E "s/^($peer|$peerenc)#//g")
 	else
-	LDCOUNTRY="$(echo $(curl -sk -A "$(echo $(dd bs=1 count=21 if=/dev/urandom 2>/dev/null)|hexdump -v -e '/1 "%02X"'|sed -e s/"0A$"//g)" "https://ipapi.co/"$peer"/json/"|grep -E "(city|region_code|\"country\"|continent_code)"|sed -E "s/^\s*?.*:\s*?//g"|sed -E "s/(\")//g")|sed -E "s/(,$|,?\s?(null))//g")"
+	LDCOUNTRY="$(echo $(curl --connect-timeout 2 -sk -A "$(echo $(dd bs=1 count=21 if=/dev/urandom 2>/dev/null)|hexdump -v -e '/1 "%02X"'|sed -e s/"0A$"//g)" "https://ipapi.co/"$peer"/json/"|grep -E "(city|region_code|\"country\"|continent_code)"|sed -E "s/^\s*?.*:\s*?//g"|sed -E "s/(\")//g")|sed -E "s/(,$|,?\s?(null))//g")"
 	wait $!
 	if [ -f "$DIR"/42Kmi/ipstack.txt ] ; then
 		if [ $LDCOUNTRY = "" ]; then
 		#Backup IP Locate by ipstack.com. Visit to get your API key.
 		IPStackKEY="$(tail +1 "$DIR"/42Kmi/ipstack.txt|sed -n 1p)"
-			LDCOUNTRY="$(echo $(curl -sk -A "$(echo $(dd bs=1 count=21 if=/dev/urandom 2>/dev/null)|hexdump -v -e '/1 "%02X"'|sed -e s/"0A$"//g)" "http://api.ipstack.com/"$peer"?access_key=$IPStackKEY&format=1"|grep -E "(\"city\"|\"region_code\"|\"country_code\"|\"continent_code\")"|grep -nE ".*"|sort -r|sed -E "s/^[0-9](\s*)?.*:(\s*)?//g"|sed -E "s/(\")//g")|sed -E "s/(,$|,?\s?(null(,\s)?))//g")" #sed -E "s/(,\s.{2}$)//g"
+			LDCOUNTRY="$(echo $(curl --connect-timeout 2 -sk -A "$(echo $(dd bs=1 count=21 if=/dev/urandom 2>/dev/null)|hexdump -v -e '/1 "%02X"'|sed -e s/"0A$"//g)" "http://api.ipstack.com/"$peer"?access_key=$IPStackKEY&format=1"|grep -E "(\"city\"|\"region_code\"|\"country_code\"|\"continent_code\")"|grep -nE ".*"|sort -r|sed -E "s/^[0-9](\s*)?.*:(\s*)?//g"|sed -E "s/(\")//g")|sed -E "s/(,$|,?\s?(null(,\s)?))//g")" #sed -E "s/(,\s.{2}$)//g"
 		fi
 	fi
 	location_corrections(){
@@ -558,13 +558,13 @@ meatandtatoes(){
 	borneopeer="$peer"
 		#Do you believe in magic?
 		##### Whitelisting/ NSLookup #####
-		SERVERS="$(echo -n "$ONTHEFLYFILTER")"
+		SERVERS="${ONTHEFLYFILTER}"
 		if ! { { echo "$EXIST_LIST"; }|grep -Eo "(([0-9]{1,3}\.?){3})\.([0-9]{1,3})"| tail +1 ""$DIR"/42Kmi/${FILTERIGNORE}"|grep -Eoq "^("$peer"|"$peerenc")#"; }; then
 			if { nslookup "$peer" localhost|grep -Ev "\b(${IGNORE})\b"|grep -Eoi "\b(${SERVERS})\b"; }; then
 			 eval "iptables -I LDIGNORE -p all -s $peer -d $CONSOLE -j ACCEPT "${WAITLOCK}"; $IGNORE"; if ! { grep -Eo "^(${peer}|${peerenc})" ""$DIR"/42Kmi/${FILTERIGNORE}"; }; then echo "$peerenc" >> ""$DIR"/42Kmi/${FILTERIGNORE}"; fi
 				else
-				WHOIS="$(curl -sk --connect-timeout 1 "https://rdap.arin.net/registry/ip/"$peer"")"
-				if { { { echo "$WHOIS"|sed -E "s/^\s*//g"|sed "s/\"//g"| sed -E "s/(\[|\]|\{|\}|\,)//g"|sed "s/\\n/,/g"; } && { curl -sk --connect-timeout 1 "http://lacnic.net/cgi-bin/lacnic/whois?lg=EN&query="$peer""|grep -Ei "^[a-z]"; }|sed  "s/],/]\\n/g"|sed -E "s/(\[|\]|\{|\})//g"|sed -E "s/(\")\,(\")/\1\\n\2/g"|sed -E '/^\"\"$/d'|sed 's/"//g'; }|grep -Eoi "^[a-z]{1,}\:.*$"|grep -Evi "^org(tech|abuse)"|grep -Ev "\b(${IGNORE})\b"|grep -Eoi "\b(${SERVERS})\b"; } 2>&1 >/dev/null; then eval "iptables -I LDIGNORE -p all -s $peer -d $CONSOLE -j ACCEPT "${WAITLOCK}"; $IGNORE"; if ! { grep -Eo "^(${peer}|${peerenc})" ""$DIR"/42Kmi/${FILTERIGNORE}"; }; then echo "$peerenc" >> ""$DIR"/42Kmi/${FILTERIGNORE}"; fi
+				WHOIS="$(curl -sk --connect-timeout 2 "https://rdap.arin.net/registry/ip/"$peer"")"
+				if { { { echo "$WHOIS"|sed -E "s/^\s*//g"|sed "s/\"//g"| sed -E "s/(\[|\]|\{|\}|\,)//g"|sed "s/\\n/,/g"; } && { curl -sk --connect-timeout 2 "http://lacnic.net/cgi-bin/lacnic/whois?lg=EN&query="$peer""|grep -Ei "^[a-z]"; }|sed  "s/],/]\\n/g"|sed -E "s/(\[|\]|\{|\})//g"|sed -E "s/(\")\,(\")/\1\\n\2/g"|sed -E '/^\"\"$/d'|sed 's/"//g'; }|grep -Eoi "^[a-z]{1,}\:.*$"|grep -Evi "^org(tech|abuse)"|grep -Ev "\b(${IGNORE})\b"|grep -Eoi "\b(${SERVERS})\b"; } 2>&1 >/dev/null; then eval "iptables -I LDIGNORE -p all -s $peer -d $CONSOLE -j ACCEPT "${WAITLOCK}"; $IGNORE"; if ! { grep -Eo "^(${peer}|${peerenc})" ""$DIR"/42Kmi/${FILTERIGNORE}"; }; then echo "$peerenc" >> ""$DIR"/42Kmi/${FILTERIGNORE}"; fi
 				fi
 			fi
 		fi
@@ -765,13 +765,13 @@ fi
 #=================
 #Executable processes, loops and stuff
 
-	#RESPONSE1="OK!!" #OK/GOOD
-	#RESPONSE2="Warn" #Pushing it...
-	#RESPONSE3="BLOCK" #BLOCKED
+	RESPONSE1="OK!!" #OK/GOOD
+	RESPONSE2="Warn" #Pushing it...
+	RESPONSE3="BLOCK" #BLOCKED
 
-	RESPONSE1="●●●●●●" #OK/GOOD
-	RESPONSE2="●●●●  " #Pushing it...
-	RESPONSE3="●●    " #BLOCKED
+	#RESPONSE1="●●●●●●" #OK/GOOD
+	#RESPONSE2="●●●●  " #Pushing it...
+	#RESPONSE3="●●    " #BLOCKED
 {
 lagdrop(){
 while "$@" &> /dev/null; do
@@ -884,12 +884,13 @@ then
 	LINENUMBERACCEPTED=$(iptables --line-number -nL LDACCEPT|grep -E "\b${allowed1}\b"|grep -Eo "^\s?[0-9]{1,}")
 	eval "iptables -D LDACCEPT "$LINENUMBERACCEPTED""
 	sed -i -E "s/((.\[[0-9]{1}(\;[0-9]{2})m)?${allowed1}.*$)/$(echo -e "${BG_MAGENTA}")&/g" "/tmp/$RANDOMGET"; sleep 5 #Clear warning
-	#eval "wait $!; sed -i -E "/\b${allowed1}\b/d" "/tmp/$RANDOMGET""
-	if ! { iptables -nL LDACCEPT| grep -Eo "\b${allowed1}\b"; }; then
-		eval "wait $!; sed -i -E "/\b${allowed1}\b/d" "/tmp/$RANDOMGET""
-	else 
-		sed -i -E "s/((.\[[0-9]{1}(\;[0-9]{2})m)?${allowed1}.*$)/&/g" "/tmp/$RANDOMGET"
-	fi
+	eval "wait $!; sed -i -E "/\b${allowed1}\b/d" "/tmp/$RANDOMGET""
+	wait $!; sed -i -E "/\b${allowed1}\b/d" "/tmp/$RANDOMGET"
+	#if ! { iptables -nL LDACCEPT| grep -Eo "\b${allowed1}\b"; }; then
+	#	eval "wait $!; sed -i -E "/\b${allowed1}\b/d" "/tmp/$RANDOMGET""
+	#elif { iptables -nL LDACCEPT| grep -Eo "\b${allowed1}\b"; }; then
+	#	sed -i -E "s/((.\[[0-9]{1}(\;[0-9]{2})m)?(${allowed1}.*$))/\4/g" "/tmp/$RANDOMGET"
+	#fi
 	}
 	clearallow_check(){
 	getiplist
@@ -931,12 +932,13 @@ if [ "$CLEARBLOCKED" = "$(echo -n "$CLEARBLOCKED" | grep -oEi "(yes|1|on|enable(
 		LINENUMBERREJECTED=$(iptables --line-number -nL LDREJECT|grep =E "\b${refused1}\b"|grep -Eo "^\s?[0-9]{1,}")
 		eval "iptables -D LDREJECT "$LINENUMBERREJECTED""
 		sed -i -E "s/((.\[[0-9]{1}(\;[0-9]{2})m)?${refused1}.*$)/$(echo -e "${BG_MAGENTA}")&/g" "/tmp/$RANDOMGET"; sleep 5 #Clear warning
-		#eval "wait $!; sed -i -E "/\b${refused1}\b/d" "/tmp/$RANDOMGET""
-		if ! { iptables -nL LDREJECT| grep -Eo "\b${allowed1}\b"; }; then
-			eval "wait $!; sed -i -E "/\b${refused1}\b/d" "/tmp/$RANDOMGET""
-		else 
-			sed -i -E "s/((.\[[0-9]{1}(\;[0-9]{2})m)?${refused1}.*$)/&/g" "/tmp/$RANDOMGET"
-		fi
+		eval "wait $!; sed -i -E "/\b${refused1}\b/d" "/tmp/$RANDOMGET""
+		wait $!; sed -i -E "/\b${refused1}\b/d" "/tmp/$RANDOMGET"
+		#if ! { iptables -nL LDREJECT| grep -Eo "\b${refused1}\b"; }; then
+		#	eval "wait $!; sed -i -E "/\b${refused1}\b/d" "/tmp/$RANDOMGET""
+		#elif { iptables -nL LDREJECT| grep -Eo "\b${refused1}\b"; }; then
+		#	sed -i -E "s/((.\[[0-9]{1}(\;[0-9]{2})m)?(${refused1}.*$))/\4/g" "/tmp/$RANDOMGET"
+		#fi
 
 	}
 	clearreject_check(){
