@@ -238,7 +238,7 @@ case "$1" in
 
 esac
 }
-ONTHEFLYFILTER="amazonaws|akamaitechnologies|AKAMAI|Akamai|twitter|nintendowifi\.net|(nintendo|xboxlive|sony|playstation)\.net|ps[2-9]|nflxvideo|netflix|easo\.ea\.com|\.ea\.com|\.1e100\.net|google|Google|GOOGLE|GOGL|goog|Sony Online Entertainment|cloudfront\.net|facebook|fb-net|IANA|Cloudflare|BAD REQUEST|blizzard|NC Interactive|ncsoft|NCINT|RIOT(\s)?GAMES|RIOT|SQUARE ENIX|Valve Corporation|Ubisoft|not found|IANA-RESERVED|\b(dns|ns|NS|DNS)(\.|\-)\b" # Ignores if these words are found in whois requests
+ONTHEFLYFILTER="amazonaws|amazon|akamaitechnologies|AKAMAI|Akamai|twitter|nintendowifi\.net|(nintendo|xboxlive|sony|playstation)\.net|ps[2-9]|nflxvideo|netflix|easo\.ea\.com|\.ea\.com|\.1e100\.net|GOGL|goog|Sony Online Entertainment|cloudfront\.net|facebook|fb-net|IANA|Cloudflare|BAD REQUEST|blizzard|NC Interactive|ncsoft|NCINT|RIOT(\s)?GAMES|RIOT|SQUARE ENIX|Valve Corporation|Ubisoft|not found|IANA-RESERVED|\b(dns|ns|NS|DNS)([0-9]{1,)?(\.|\-)\b" # Ignores if these words are found in whois requests
 #ONTHEFLYFILTER="klhjgdfshjvckxrsjrfkctyjztyflkutyjsrehxcvhjyutresdxfcgh"
 MSFT_SERVERS="(52\.(1((4[5-9])|([5-8][0-9])|(9[0-1]))))|(52\.(2(2[4-9]|[3-5][0-9])))|(52\.(9[6-9]|10[0-9]|11[1-5]))"
 IANA_IPs="(239\.255\.255\.250)|(10(\.[0-9]{1,3}){3})|(2(2[4-9]|3[0-9])(\.[0-9]{1,3}){3})|(255(\.([0-9]){1,3}){3})|(0\.)|(100\.((6[4-9])|[7-9][0-9]|1(([0-1][0-9])|(2[0-7]))))|(172\.((1[6-9])|(2[0-9])|(3[0-1])))"
@@ -270,13 +270,13 @@ getcountry(){
 	if echo "$GEOMEM"|grep -E "^("$peer"|"$peerenc")#"; then 
 	LDCOUNTRY=$(echo "$GEOMEM"|grep -E "^("$peer"|"$peerenc")#"|sed -n 1p|sed -E "s/^($peer|$peerenc)#//g")
 	else
-	LDCOUNTRY="$(echo $(curl --connect-timeout 2 -sk -A "$(echo $(dd bs=1 count=21 if=/dev/urandom 2>/dev/null)|hexdump -v -e '/1 "%02X"'|sed -e s/"0A$"//g)" "https://ipapi.co/"$peer"/json/"|grep -E "(city|region_code|\"country\"|continent_code)"|sed -E "s/^\s*?.*:\s*?//g"|sed -E "s/(\")//g")|sed -E "s/(,$|,?\s?(null))//g")"
+	LDCOUNTRY="$(echo $(curl --no-keepalive --no-buffer --connect-timeout ${CURL_TIMEOUT} -sk -A "$(echo $(dd bs=1 count=21 if=/dev/urandom 2>/dev/null)|hexdump -v -e '/1 "%02X"'|sed -e s/"0A$"//g)" "https://ipapi.co/"$peer"/json/"|grep -E "(city|region_code|\"country\"|continent_code)"|sed -E "s/^\s*?.*:\s*?//g"|sed -E "s/(\")//g")|sed -E "s/(,$|,?\s?(null))//g")"
 	wait $!
 	if [ -f "$DIR"/42Kmi/ipstack.txt ] ; then
 		if [ $LDCOUNTRY = "" ]; then
 		#Backup IP Locate by ipstack.com. Visit to get your API key.
 		IPStackKEY="$(tail +1 "$DIR"/42Kmi/ipstack.txt|sed -n 1p)"
-			LDCOUNTRY="$(echo $(curl --connect-timeout 2 -sk -A "$(echo $(dd bs=1 count=21 if=/dev/urandom 2>/dev/null)|hexdump -v -e '/1 "%02X"'|sed -e s/"0A$"//g)" "http://api.ipstack.com/"$peer"?access_key=$IPStackKEY&format=1"|grep -E "(\"city\"|\"region_code\"|\"country_code\"|\"continent_code\")"|grep -nE ".*"|sort -r|sed -E "s/^[0-9](\s*)?.*:(\s*)?//g"|sed -E "s/(\")//g")|sed -E "s/(,$|,?\s?(null(,\s)?))//g")" #sed -E "s/(,\s.{2}$)//g"
+			LDCOUNTRY="$(echo $(curl --no-keepalive --no-buffer --connect-timeout ${CURL_TIMEOUT} -sk -A "$(echo $(dd bs=1 count=21 if=/dev/urandom 2>/dev/null)|hexdump -v -e '/1 "%02X"'|sed -e s/"0A$"//g)" "http://api.ipstack.com/"$peer"?access_key=$IPStackKEY&format=1"|grep -E "(\"city\"|\"region_code\"|\"country_code\"|\"continent_code\")"|grep -nE ".*"|sort -r|sed -E "s/^[0-9](\s*)?.*:(\s*)?//g"|sed -E "s/(\")//g")|sed -E "s/(,$|,?\s?(null(,\s)?))//g")" #sed -E "s/(,\s.{2}$)//g"
 		fi
 	fi
 	location_corrections(){
@@ -563,8 +563,11 @@ meatandtatoes(){
 			if { nslookup "$peer" localhost|grep -Ev "\b(${IGNORE})\b"|grep -Eoi "\b(${SERVERS})\b"; }; then
 			 eval "iptables -I LDIGNORE -p all -s $peer -d $CONSOLE -j ACCEPT "${WAITLOCK}"; $IGNORE"; if ! { grep -Eo "^(${peer}|${peerenc})$" ""$DIR"/42Kmi/${FILTERIGNORE}"; }; then echo "$peerenc" >> ""$DIR"/42Kmi/${FILTERIGNORE}"; fi
 				else
-				WHOIS="$(curl -sk --connect-timeout 2 "https://rdap.arin.net/registry/ip/"$peer"")"
-				if { { { echo "$WHOIS"|sed -E "s/^\s*//g"|sed "s/\"//g"| sed -E "s/(\[|\]|\{|\}|\,)//g"|sed "s/\\n/,/g"; } && { curl -sk --connect-timeout 2 "http://lacnic.net/cgi-bin/lacnic/whois?lg=EN&query="$peer""|grep -Ei "^[a-z]"; }|sed  "s/],/]\\n/g"|sed -E "s/(\[|\]|\{|\})//g"|sed -E "s/(\")\,(\")/\1\\n\2/g"|sed -E '/^\"\"$/d'|sed 's/"//g'; }|grep -Eoi "^[a-z]{1,}\:.*$"|grep -Evi "^org(tech|abuse)"|grep -Ev "\b(${IGNORE})\b"|grep -Eoi "\b(${SERVERS})\b"; } 2>&1 >/dev/null; then eval "iptables -I LDIGNORE -p all -s $peer -d $CONSOLE -j ACCEPT "${WAITLOCK}"; $IGNORE"; if ! { grep -Eo "^(${peer}|${peerenc})$" ""$DIR"/42Kmi/${FILTERIGNORE}"; }; then echo "$peerenc" >> ""$DIR"/42Kmi/${FILTERIGNORE}"; fi
+				WHOIS="$(curl -sk --no-keepalive --no-buffer --connect-timeout ${CURL_TIMEOUT} "https://rdap.arin.net/registry/ip/"$peer"")"
+				WHOIS2="$(curl -sk --no-keepalive --no-buffer --connect-timeout ${CURL_TIMEOUT} "http://lacnic.net/cgi-bin/lacnic/whois?lg=EN&query="$peer"")"
+				if { { { echo "$WHOIS"|sed -E "s/^\s*//g"|sed "s/\"//g"| sed -E "s/(\[|\]|\{|\}|\,)//g"|sed "s/\\n/,/g"; }|sed  "s/],/]\\n/g"|sed -E "s/(\[|\]|\{|\})//g"|sed -E "s/(\")\,(\")/\1\\n\2/g"|sed -E '/^\"\"$/d'|sed 's/"//g'; }|grep -Eoi "^[a-z]{1,}\:.*$"|grep -Evi "^org(tech|abuse)"|grep -Ev "\b(${IGNORE})\b"|grep -Eoi "\b(${SERVERS})\b"; } 2>&1 >/dev/null; then eval "iptables -I LDIGNORE -p all -s $peer -d $CONSOLE -j ACCEPT "${WAITLOCK}"; $IGNORE"; if ! { grep -Eo "^(${peer}|${peerenc})$" ""$DIR"/42Kmi/${FILTERIGNORE}"; }; then echo "$peerenc" >> ""$DIR"/42Kmi/${FILTERIGNORE}"; fi
+				#Fallback
+				elif { { { echo "$WHOIS"|sed -E "s/^\s*//g"|sed "s/\"//g"| sed -E "s/(\[|\]|\{|\}|\,)//g"|sed "s/\\n/,/g"; }|sed  "s/],/]\\n/g"|sed -E "s/(\[|\]|\{|\})//g"|sed -E "s/(\")\,(\")/\1\\n\2/g"|sed -E '/^\"\"$/d'|sed 's/"//g'; }|grep -Eoi "^[a-z]{1,}\:.*$"|grep -Evi "^org(tech|abuse)"|grep -Ev "\b(${IGNORE})\b"|grep -Eoi "\b(${SERVERS})\b"; } 2>&1 >/dev/null; then eval "iptables -I LDIGNORE -p all -s $peer -d $CONSOLE -j ACCEPT "${WAITLOCK}"; $IGNORE"; if ! { grep -Eo "^(${peer}|${peerenc})$" ""$DIR"/42Kmi/${FILTERIGNORE}"; }; then echo "$peerenc" >> ""$DIR"/42Kmi/${FILTERIGNORE}"; fi
 				fi
 			fi
 		fi
@@ -783,6 +786,13 @@ SETTINGS=$(tail +1 "$DIR"/42Kmi/options_"$CONSOLENAME".txt|sed -E "s/#.*$//g"|se
 SMARTLINECOUNT=8 #5
 SMARTPERCENT=155
 SMART_AVG_COND=$(( SMARTLINECOUNT * 40 / 100 )) #2
+
+if [ $SHELLIS = "ash" ]; then
+CURL_TIMEOUT=10
+else
+CURL_TIMEOUT=3
+fi
+
 SIZE=$(echo "$SETTINGS"|sed -n 4p) ### Size of packets. Default is 1024
 MODE=$(echo "$SETTINGS"|sed -n 5p) ### 0 or 1=Ping, 2=TraceRoute, 3=Ping or TraceRoute, 4=Ping & TraceRoute. Default is 1.
 DECONGEST=$(echo "$SETTINGS"|sed -n 18p)
@@ -842,14 +852,10 @@ if ! [ "$SWITCH" = "$(echo -n "$SWITCH" | grep -oEi "(off|0|disable(d?))")" ]; t
 		else
 			{ meatandtatoes; }
 		fi
-			$PEERIP
-			cleanliness &> /dev/null &
-			bancountry &> /dev/null &
-			
-			#####
-			cleantable
-			cleanlog
-			#####
+		
+		$PEERIP
+		cleanliness &> /dev/null &
+		bancountry &> /dev/null &
 	fi
 	done
 	}
@@ -859,22 +865,22 @@ fi
 {
 #####Decongest - Block all other connections#####
 decongest(){
-if [ "$DECONGEST" = "$(echo -n "$DECONGEST" | grep -oEi "(yes|1|on|enable(d?))")" ]; then
-		DECONGESTLIST=$(grep -v "\b${CONSOLE}\b" "${IPCONNECT_SOURCE}"|grep -Eo "([0-9]{1,3}\.){3}[0-9]{1,3}"|awk '!a[$0]++'|grep -Ev "^${ROUTERSHORT}")
-		for kta in $DECONGESTLIST; do
-		if ! { iptables -nL LDKTA|grep $kta; }; then
-			eval "iptables -A LDKTA -s $kta -j DROP "${WAITLOCK}" &> /dev/null"
-		fi
-		done
+	if [ "$DECONGEST" = "$(echo -n "$DECONGEST" | grep -oEi "(yes|1|on|enable(d?))")" ]; then
+			DECONGESTLIST=$(grep -v "\b${CONSOLE}\b" "${IPCONNECT_SOURCE}"|grep -Eo "([0-9]{1,3}\.){3}[0-9]{1,3}"|awk '!a[$0]++'|grep -Ev "^${ROUTERSHORT}")
+			for kta in $DECONGESTLIST; do
+			if ! { iptables -nL LDKTA|grep $kta; }; then
+				eval "iptables -A LDKTA -s $kta -j DROP "${WAITLOCK}" &> /dev/null"
+			fi
+			done
 
-	else
-	iptables -F LDKTA
-		if { ping -q -c 1 -W 1 -s 1 "${CONSOLE}"|grep -q -F -w "100% packet loss"; }; then iptables -F LDKTA; fi
-fi
+		else
+		iptables -F LDKTA
+			if { ping -q -c 1 -W 1 -s 1 "${CONSOLE}"|grep -q -F -w "100% packet loss"; }; then iptables -F LDKTA; fi
+	fi
 }
 decongest &> /dev/null
-
 #####Decongest - Block all other connections#####
+
 ##### Clear Old #####
 #getiplist
 CLEARLIMIT=$(echo "$SETTINGS"|sed -n 13p)
@@ -993,61 +999,77 @@ done &> /dev/null &
 SENTINEL=$(echo "$SETTINGS"|sed -n 10p)
 {
 if [ "$SENTINEL" = "$(echo -n "$SENTINEL" | grep -oEi "(yes|1|on|enable(d?))")" ]; then
-	BYTELOSSLIMIT=900
+	BYTELOSSLIMIT=1
 	BYTEMODE=3
 	sentinel(){
-	#CONSOLE=$(echo "$SETTINGS"|sed -n 1p) ### Your console's IP address. Change this in the options.txt file
 	#Sentinel
 	#Checks against intrinsic/extrinsic peer lag by comparing difference in transmitted bytes at 2 or more time points
+	PACKET_OR_BYTE=1 #1 for packets, 2 for bytes
 	SENTINELDELAYBIG=3
 	SENTINELDELAYSMALL=1
 	STRIKEMAX=3
-	#SENTINELLIST=$(iptables -nL LDACCEPT|grep -Eo "([0-9]{1,3}\.){3}([0-9]{1,3})"|grep -v "$CONSOLE"|awk '!a[$0]++')
-	SENTINELLIST="$(tail +1 "/tmp/$RANDOMGET"|sed -E "s/.\[[0-9]{1}(\;[0-9]{2})?m//g"|sed -E "/(${RESPONSE3})/d"|grep -Eo "([0-9]{1,3}\.){3}([0-9]{1,3})")"
+	SENTINELLIST="$(tail +1 "/tmp/$RANDOMGET"|sed -E "s/.\[[0-9]{1}(\;[0-9]{2})?m//g"|sed -E "/\b(${RESPONSE3})\b/d"|grep -Eo "\b([0-9]{1,3}\.){3}([0-9]{1,3})\b")"
 	for ip in $SENTINELLIST; do
 	if { iptables -nL LDTEMPHOLD| grep -Eq "\b${ip}\b"; }; then
 	{
-	STRIKECOUNT="$(iptables -nL LDSENTSTRIKE|tail+3|grep -Ec "\b${ip}\b")"
-	LINENUMBERSTRIKEOUTBAN=$(iptables --line-number -nL LDSENTSTRIKE|grep -E "\b${ip}\b"|grep -Eo "^\s?[0-9]{1,}")
-	LINENUMBERSTRIKEOUTACCEPT=$(iptables --line-number -nL LDACCEPT|grep -E "\b${ip}\b"|grep -Eo "^\s?[0-9]{1,}")
-	BYTE_GET='iptables -xvnL LDACCEPT|tail +3|grep -E "\b${ip}\b"|awk '{printf $2}''
-		byte1=$("${BYTE_GET}")
-		sleep $SENTINELDELAYSMALL
-		byte2=$("${BYTE_GET}")
-		bytediffA=$(( byte2 - byte1 ))
-		sleep $SENTINELDELAYBIG
-		byte3=$("${BYTE_GET}")
-		sleep $SENTINELDELAYSMALL
-		byte4=$("${BYTE_GET}")
-		bytediffB=$(( byte4 - byte3 ))
+		STRIKECOUNT="$(iptables -nL LDSENTSTRIKE|tail+3|grep -Ec "\b${ip}\b")"
+		LINENUMBERSTRIKEOUTBAN=$(iptables --line-number -nL LDSENTSTRIKE|grep -E "\b${CONSOLE}\b"|grep -E "\b${ip}\b"|grep -Eo "^\s?[0-9]{1,}")
+		LINENUMBERSTRIKEOUTACCEPT=$(iptables --line-number -nL LDACCEPT|grep -E "\b${CONSOLE}\b"|grep -E "\b${ip}\b"|grep -Eo "^\s?[0-9]{1,}")
+		
+		case "$PACKET_OR_BYTE" in
+		1)
+			byte1="$(iptables -xvnL LDACCEPT|tail +3|grep -E "\b${CONSOLE}\b"|grep -E "\b${ip}\b"|awk '{printf $1}')"
+			sleep $SENTINELDELAYSMALL
+			byte2="$(iptables -xvnL LDACCEPT|tail +3|grep -E "\b${CONSOLE}\b"|grep -E "\b${ip}\b"|awk '{printf $1}')"
+			sleep $SENTINELDELAYBIG
+			byte3="$(iptables -xvnL LDACCEPT|tail +3|grep -E "\b${CONSOLE}\b"|grep -E "\b${ip}\b"|awk '{printf $1}')"
+			sleep $SENTINELDELAYSMALL
+			byte4="$(iptables -xvnL LDACCEPT|tail +3|grep -E "\b${CONSOLE}\b"|grep -E "\b${ip}\b"|awk '{printf $1}')"
+		;;
+		2)
+			byte1="$(iptables -xvnL LDACCEPT|tail +3|grep -E "\b${CONSOLE}\b"|grep -E "\b${ip}\b"|awk '{printf $2}')"
+			sleep $SENTINELDELAYSMALL
+			byte2="$(iptables -xvnL LDACCEPT|tail +3|grep -E "\b${CONSOLE}\b"|grep -E "\b${ip}\b"|awk '{printf $2}')"
+			sleep $SENTINELDELAYBIG
+			byte3="$(iptables -xvnL LDACCEPT|tail +3|grep -E "\b${CONSOLE}\b"|grep -E "\b${ip}\b"|awk '{printf $2}')"
+			sleep $SENTINELDELAYSMALL
+			byte4="$(iptables -xvnL LDACCEPT|tail +3|grep -E "\b${CONSOLE}\b"|grep -E "\b${ip}\b"|awk '{printf $2}')"
+		;;
+		esac
+
+		#bytediffA=$(( $byte2 - $byte1 ))
+		#bytediffB=$(( $byte4 - $byte3 ))
+		bytediffA=$(echo "$(( $byte2 - $byte1 ))"|sed "s/\-//g")
+		bytediffB=$(echo "$(( $byte4 - $byte3 ))"|sed "s/\-//g")
 		#Math
-		BYTEDIFF=$(( bytediffB - bytediffA ))
-		BYTEAVG=$(( BYTEDIFF / 2 ))
-		BYTEDIFFSQ=$(( BYTEDIFF * BYTEDIFF ))
-		BYTEXSQ=$(( $(( BYTEDIFFSQ * 1000 )) / BYTEAVG ))
+		#BYTEDIFF=$(( $bytediffB - $bytediffA ))
+		BYTEDIFF=$(echo "$(( $bytediffB - $bytediffA ))"|sed "s/\-//g")
+		BYTESUM=$(( $bytediffB + $bytediffA ))
+		BYTEAVG=$(( $BYTESUM / 2 ))
+		BYTEDIFFSQ=$(( $BYTEDIFF * $BYTEDIFF ))
+		BYTEXSQ=$(( $(( $BYTEDIFF ** 2 )) / $BYTEAVG ))
 	sentinelstrike(){
 	if [ "$(iptables -nL LDSENTSTRIKE|tail+3|grep -Ec "\b${ip}\b")" -ge $STRIKEMAX ]; then
 		if ! { iptables -nL LDBAN|grep -E "\b${ip}\b"; }; then
-		eval "iptables -A LDBAN -s $ip -d $CONSOLE -j REJECT ""${WAITLOCK}"""; wait "$!"
-		fi
-		sed -i -E "s/(\#)((.\[[0-9]{1}(\;[0-9]{2})m)?${ip})(.*$)/\1$(echo -e "${BG_RED}")\3 BANNED: SUSPECTED LAG SWITCH/g" "/tmp/$RANDOMGET"
-		if iptables -nL LDACCEPT|grep -E "\b${ip}\b"; then 
-			eval "iptables -D LDACCEPT ""$LINENUMBERSTRIKEOUTACCEPT"""
+			eval "iptables -A LDBAN -s $ip -d $CONSOLE -j REJECT ""${WAITLOCK}"""; wait "$!"
+			sed -i -E "s/(\#)((.\[[0-9]{1}(\;[0-9]{2})m)?${ip})(.*$)/\1$(echo -e "${BG_RED}")\3 BANNED: SUSPECTED LAG SWITCH/g" "/tmp/$RANDOMGET"
+			if { iptables -nL LDACCEPT|grep -E "\b${ip}\b"; }; then 
+				eval "iptables -D LDACCEPT ""$LINENUMBERSTRIKEOUTACCEPT"""
+			fi
 		fi
 		
+		else
 			#If thens for StrikeOut
 			if [ "$STRIKECOUNT" -gt $STRIKEMAX ]; then # Max strikes. You're OUT!
 				if ! { iptables -nL LDBAN|grep -E "\b${ip}\b"; }; then
-				eval "iptables -A LDBAN -s $ip -d $CONSOLE -j REJECT ""${WAITLOCK}"""; wait "$!"
+					eval "iptables -A LDBAN -s $ip -d $CONSOLE -j REJECT ""${WAITLOCK}"""; wait "$!"
 				fi
-				sed -i -E "s/(\#)(.[1\;[0-9]{2,3}m)?(${ip})(.*$)/\1$(echo -e "${BG_RED}")\3 BANNED: SUSPECTED LAG SWITCH/g" "/tmp/$RANDOMGET"
+					sed -i -E "s/(\#)(.[1\;[0-9]{2,3}m)?(${ip})(.*$)/\1$(echo -e "${BG_RED}")\3 BANNED: SUSPECTED LAG SWITCH/g" "/tmp/$RANDOMGET"
 				if iptables -nL LDACCEPT|grep -E "\b${ip}\b"; then 
 					eval "iptables -D LDACCEPT "$LINENUMBERSTRIKEOUTACCEPT""
-					#iptables -D LDACCEPT "$LINENUMBERSTRIKEOUTACCEPT"
 				fi
-				LINENUMBERSTRIKEOUTBAN=$(iptables --line-number -nL LDSENTSTRIKE|grep -E "\b${ip}\b"|grep -Eo "^\s?[0-9]{1,}")
+
 				eval "iptables -D LDSENTSTRIKE "$LINENUMBERSTRIKEOUTBAN"" 
-				#iptables -D LDSENTSTRIKE "$LINENUMBERSTRIKEOUTBAN"
 			elif [ "$STRIKECOUNT" -le $STRIKEMAX ]; then #Counting Strikes, marking in log
 				eval "iptables -A LDSENTSTRIKE -s $ip"
 				#iptables -A LDSENTSTRIKE -s "$ip"
@@ -1082,14 +1104,15 @@ if [ "$SENTINEL" = "$(echo -n "$SENTINEL" | grep -oEi "(yes|1|on|enable(d?))")" 
 	}
 	fi
 	$BYTEBLOCK
-	done #&
+	done &
 	sleep "${SENTINELDELAYBIG}"
 	}&
 	
-while "$@" &> /dev/null;do
-	{ sentinel &> /dev/null; }
+while "$@" &> /dev/null; do
+	#{ sentinel &> /dev/null; }
+	( sentinel & )
 	wait $!
-done &> /dev/null &
+done #&> /dev/null &
 fi
 } &
 ###### SENTINELS #####
