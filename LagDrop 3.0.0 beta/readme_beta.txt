@@ -18,6 +18,8 @@ Options: ending the line with following enables
 
 -l : Locate. Where your opponents are.
 
+-p : Populate. LagDrop will run to populate cache for more efficient operation but will not perform any filtering. Completely optional, and only needs to be run once if the you should choose.
+
 eg: /jffs/lagdrop.sh wiiu -s -l
 
 ==============================
