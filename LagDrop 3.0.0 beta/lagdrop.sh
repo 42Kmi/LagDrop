@@ -914,19 +914,14 @@ then
 	clearallow(){
 	LINENUMBERACCEPTED=$(iptables --line-number -nL LDACCEPT|grep -E "\b${allowed1}\b"|grep -Eo "^\s?[0-9]{1,}")
 	eval "iptables -D LDACCEPT "$LINENUMBERACCEPTED""
-	sed -i -E "s/((.\[[0-9]{1}(\;[0-9]{2})m)?${allowed1}.*$)/$(echo -e "${BG_MAGENTA}")&/g" "/tmp/$RANDOMGET"; sleep 5 #Clear warning
-	eval "wait $!; sed -i -E "/\b${allowed1}\b/d" "/tmp/$RANDOMGET""
+	sed -i -E "s/((.\[[0-9]{1}(\;[0-9]{2})m)?\b${allowed1}\b.*$)/$(echo -e "${BG_MAGENTA}")&/g" "/tmp/$RANDOMGET"; sleep 5 #Clear warning
+	eval "sed -i -E "/\b${allowed1}\b/d" "/tmp/$RANDOMGET""
 	sed -i -E "/\b(${allowed1})\b/d" "/tmp/$RANDOMGET"
-	#if ! { iptables -nL LDACCEPT| grep -Eo "\b${allowed1}\b"; }; then
-	#	eval "wait $!; sed -i -E "/\b${allowed1}\b/d" "/tmp/$RANDOMGET""
-	#elif { iptables -nL LDACCEPT| grep -Eo "\b${allowed1}\b"; }; then
-	#	sed -i -E "s/((.\[[0-9]{1}(\;[0-9]{2})m)?(${allowed1}.*$))/\4/g" "/tmp/$RANDOMGET"
-	#fi
 	}
 	clearallow_check(){
 	getiplist
-	if { echo "$IPCONNECT"|grep -Eq "\b${CONSOLE}\b"|grep -Eoq "\b${allowed1}\b"; }; then
-	eval "iptables -A LDTEMPHOLD -s ${allowed1} -d $CONSOLE"; else 
+	if ! { echo "$IPCONNECT"|grep -Eq "\b${CONSOLE}\b"|grep -Eoq "\b${allowed1}\b"; }; then
+	#eval "iptables -A LDTEMPHOLD -s ${allowed1} -d $CONSOLE"; else 
 		clearallow
 	fi
 	}
@@ -962,20 +957,14 @@ if [ "$CLEARBLOCKED" = "$(echo -n "$CLEARBLOCKED" | grep -oEi "(yes|1|on|enable(
 	clearreject(){
 		LINENUMBERREJECTED=$(iptables --line-number -nL LDREJECT|grep -E "\b${refused1}\b"|grep -Eo "^\s?[0-9]{1,}")
 		eval "iptables -D LDREJECT "$LINENUMBERREJECTED""
-		sed -i -E "s/((.\[[0-9]{1}(\;[0-9]{2})m)?${refused1}.*$)/$(echo -e "${BG_MAGENTA}")&/g" "/tmp/$RANDOMGET"; sleep 5 #Clear warning
-		eval "wait $!; sed -i -E "/\b${refused1}\b/d" "/tmp/$RANDOMGET""
+		sed -i -E "s/((.\[[0-9]{1}(\;[0-9]{2})m)?\b${refused1}\b.*$)/$(echo -e "${BG_MAGENTA}")&/g" "/tmp/$RANDOMGET"; sleep 5 #Clear warning
+		eval "sed -i -E "/\b${refused1}\b/d" "/tmp/$RANDOMGET""
 		sed -i -E "/\b(${refused1})\b/d" "/tmp/$RANDOMGET"
-		#if ! { iptables -nL LDREJECT| grep -Eo "\b${refused1}\b"; }; then
-		#	eval "wait $!; sed -i -E "/\b${refused1}\b/d" "/tmp/$RANDOMGET""
-		#elif { iptables -nL LDREJECT| grep -Eo "\b${refused1}\b"; }; then
-		#	sed -i -E "s/((.\[[0-9]{1}(\;[0-9]{2})m)?(${refused1}.*$))/\4/g" "/tmp/$RANDOMGET"
-		#fi
-
 	}
 	clearreject_check(){
 		getiplist
-			if { echo "$IPCONNECT"|grep -q "\b${CONSOLE}\b"|grep -Eoq "\b${refused1}\b"; }; then
-				eval "iptables -A LDTEMPHOLD -s ${refused1} -d $CONSOLE"; else 
+			if ! { echo "$IPCONNECT"|grep -q "\b${CONSOLE}\b"|grep -Eoq "\b${refused1}\b"; }; then
+				#eval "iptables -A LDTEMPHOLD -s ${refused1} -d $CONSOLE"; else 
 					clearreject
 			fi
 	}
