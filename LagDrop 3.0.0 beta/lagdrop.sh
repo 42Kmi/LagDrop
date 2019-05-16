@@ -1,9 +1,12 @@
 #!/bin/sh
 {
+POPULATE=""
 cleanall(){
 PROC="$(ps|grep -E "$(echo $(ps|grep "${0##*/}"|grep -v $$|grep -Ev "(\[("kthreadd"|"ksoftirqd"|"kworker"|"khelper"|"writeback"|"bioset"|"crypto"|"kblockd"|"khubd"|"kswapd"|"fsnotify_mark"|"deferwq"|"scsi_eh_"|"usb-storage"|"cfg80211"|"jffs2_gcd_mtd3").*\])"|grep -Ev "SW(.?)"|awk '{printf $3" "$4"|\n"}'|sort -u)|sed -E 's/.$//')"|grep -v $$|grep -v "rm"|grep -Eo "^(\s*)?[0-9]{1,}")"
 	misterclean(){
 	iptables -F LDKTA
+	sed -i -E "/#(.*)#(.*)$/d" ""$DIR"/42Kmi/${GEOMEMFILE}"
+	sed -i -E "/#(.*)#(.*)#$/d" ""$DIR"/42Kmi/${PINGMEM}"
 	kill -9 $(ps|grep "${0##*/}"|grep -Eo "^(\s*)?[0-9]{1,}"|grep -v $$)
 	for process in $PROC; do
 		{ rm -rf "/proc/$process" 2>&1 >/dev/null 2> /dev/null; } &
@@ -39,7 +42,9 @@ fi; break
 	;;
 	-l|--location) #Show peer location, via ipapi
 	SHOWLOCATION=1
-
+    ;;
+	-p|--populate) #with location enabled, fills caches for ping approximation. LagDrop doesn't filter
+	POPULATE=1
     ;;
 esac
 done
@@ -141,6 +146,7 @@ ROUTER=$(nvram get lan_ipaddr|grep -Eo "(([0-9]{1,3}\.?){3})\.([0-9]{1,3})") # F
 #WAN_Address=$(nvram get wan_ipaddr|grep -Eo "(([0-9]{1,3}\.?){3})\.([0-9]{1,3})") #DD-WRT
 fi
 ROUTERSHORT=$(echo "$ROUTER"|grep -Eo '(([0-9]{1,3}\.?){2})'|sed -E 's/\./\\./g'|sed -n 1p)
+ROUTERSHORT_POP=$(echo "$ROUTER"|grep -Eo '(([0-9]{1,3}\.?){2})'|sed -n 1p)
 ##### Get ROUTER'S IPs #####
 
 ##### Find Shell #####
@@ -159,19 +165,19 @@ fi
 ##### Prepare LagDrop's IPTABLES Chains #####
 maketables(){
 if ! { iptables -nL LDACCEPT|grep -E "([1-9])([0-9]{1,})? references" 2>&1 >/dev/null; }; then
-until { iptables -nL LDACCEPT|grep -E "([1-9])([0-9]{1,})? references"; }; do iptables -N LDACCEPT|iptables -P LDACCEPT ACCEPT|iptables -t filter -I FORWARD -j LDACCEPT; done &> /dev/null & break
+until { iptables -nL LDACCEPT|grep -E "([1-9])([0-9]{1,})? references"; }; do iptables -N LDACCEPT|iptables -P LDACCEPT ACCEPT|iptables -t filter -A FORWARD -j LDACCEPT; done &> /dev/null & break
 else break; fi &> /dev/null &
 
 if ! { iptables -nL LDREJECT|grep -E "([1-9])([0-9]{1,})? references" 2>&1 >/dev/null; }; then
-until { iptables -nL LDREJECT|grep -E "([1-9])([0-9]{1,})? references"; }; do iptables -N LDREJECT|iptables -P LDREJECT REJECT |iptables -t filter -I FORWARD -j LDREJECT; done &> /dev/null & break
+until { iptables -nL LDREJECT|grep -E "([1-9])([0-9]{1,})? references"; }; do iptables -N LDREJECT|iptables -P LDREJECT REJECT |iptables -t filter -A FORWARD -j LDREJECT; done &> /dev/null & break
 else break; fi &> /dev/null &
 
 if ! { iptables -nL LDBAN|grep -E "([1-9])([0-9]{1,})? references" 2>&1 >/dev/null; }; then
-until { iptables -nL LDBAN|grep -E "([1-9])([0-9]{1,})? references"; }; do iptables -N LDBAN|iptables -P LDBAN REJECT --reject-with icmp-host-prohibited|iptables -t filter -I FORWARD -j LDBAN; done &> /dev/null & break
+until { iptables -nL LDBAN|grep -E "([1-9])([0-9]{1,})? references"; }; do iptables -N LDBAN|iptables -P LDBAN REJECT --reject-with icmp-host-prohibited|iptables -t filter -A FORWARD -j LDBAN; done &> /dev/null & break
 else break; fi &> /dev/null &
 
 if ! { iptables -nL LDIGNORE|grep -E "([1-9])([0-9]{1,})? references" 2>&1 >/dev/null; }; then
-until { iptables -nL LDIGNORE|grep -E "([1-9])([0-9]{1,})? references"; }; do iptables -N LDIGNORE|iptables -P LDIGNORE ACCEPT|iptables -t filter -I FORWARD -j LDIGNORE; done &> /dev/null & break
+until { iptables -nL LDIGNORE|grep -E "([1-9])([0-9]{1,})? references"; }; do iptables -N LDIGNORE|iptables -P LDIGNORE ACCEPT|iptables -t filter -A FORWARD -j LDIGNORE; done &> /dev/null & break
 else break; fi &> /dev/null &
 
 if ! { iptables -nL LDTEMPHOLD|grep -E "([1-9])([0-9]{1,})? references" 2>&1 >/dev/null; }; then
@@ -179,13 +185,12 @@ until { iptables -nL LDTEMPHOLD|grep -E "([1-9])([0-9]{1,})? references"; }; do 
 else break; fi &> /dev/null & #Hold for clear
 
 if ! { iptables -nL LDKTA|grep -E "([1-9])([0-9]{1,})? references" 2>&1 >/dev/null; }; then
-until { iptables -nL LDKTA|grep -E "([1-9])([0-9]{1,})? references"; }; do iptables -N LDKTA|iptables -P LDKTA REJECT|iptables -t filter -I FORWARD -j LDKTA; done &> /dev/null & break
+until { iptables -nL LDKTA|grep -E "([1-9])([0-9]{1,})? references"; }; do iptables -N LDKTA|iptables -P LDKTA REJECT|iptables -t filter -A FORWARD -j LDKTA; done &> /dev/null & break
 else break; fi &> /dev/null & 
 #
 if ! { iptables -nL LDSENTSTRIKE|grep -E "([1-9])([0-9]{1,})? references" 2>&1 >/dev/null; }; then
-until { iptables -nL LDSENTSTRIKE|grep -E "([1-9])([0-9]{1,})? references"; }; do iptables -N LDSENTSTRIKE|iptables -P LDSENTSTRIKE ACCEPT|iptables -t filter -I FORWARD -j LDSENTSTRIKE; done &> /dev/null & break
+until { iptables -nL LDSENTSTRIKE|grep -E "([1-9])([0-9]{1,})? references"; }; do iptables -N LDSENTSTRIKE|iptables -P LDSENTSTRIKE ACCEPT|iptables -t filter -A FORWARD -j LDSENTSTRIKE; done &> /dev/null & break
 else break; fi &> /dev/null & #Hold for clear
-
 }
 maketables &> /dev/null &
 ##### Prepare LagDrop's IPTABLES Chains #####
@@ -238,7 +243,7 @@ case "$1" in
 
 esac
 }
-ONTHEFLYFILTER="amazonaws|amazon|akamaitechnologies|AKAMAI|Akamai|twitter|nintendowifi\.net|(nintendo|xboxlive|sony|playstation)\.net|ps[2-9]|nflxvideo|netflix|easo\.ea\.com|\.ea\.com|\.1e100\.net|GOGL|goog|Sony Online Entertainment|cloudfront\.net|facebook|fb-net|IANA|Cloudflare|BAD REQUEST|blizzard|NC Interactive|ncsoft|NCINT|RIOT(\s)?GAMES|RIOT|SQUARE ENIX|Valve Corporation|Ubisoft|not found|IANA-RESERVED|\b(dns|ns|NS|DNS)([0-9]{1,)?(\.|\-)\b" # Ignores if these words are found in whois requests
+ONTHEFLYFILTER="amazonaws|amazon|akamaitechnologies|AKAMAI|Akamai|twitter|nintendowifi\.net|(nintendo|xboxlive|sony|playstation)\.net|ps[2-9]|nflxvideo|netflix|easo\.ea\.com|\.ea\.com|\.1e100\.net|GOGL|goog|Sony Online Entertainment|cloudfront\.net|facebook|fb-net|IANA|Cloudflare|BAD REQUEST|blizzard|NC Interactive|ncsoft|NCINT|RIOT(\s)?GAMES|RIOT|SQUARE ENIX|Valve Corporation|Ubisoft|not found|IANA-RESERVED|\b(dns|ns|NS|DNS)([0-9]{1,)?(\.|\-)\b|network-abuse@google.com" # Ignores if these words are found in whois requests
 #ONTHEFLYFILTER="klhjgdfshjvckxrsjrfkctyjztyflkutyjsrehxcvhjyutresdxfcgh"
 MSFT_SERVERS="(52\.(1((4[5-9])|([5-8][0-9])|(9[0-1]))))|(52\.(2(2[4-9]|[3-5][0-9])))|(52\.(9[6-9]|10[0-9]|11[1-5]))"
 IANA_IPs="(239\.255\.255\.250)|(10(\.[0-9]{1,3}){3})|(2(2[4-9]|3[0-9])(\.[0-9]{1,3}){3})|(255(\.([0-9]){1,3}){3})|(0\.)|(100\.((6[4-9])|[7-9][0-9]|1(([0-1][0-9])|(2[0-7]))))|(172\.((1[6-9])|(2[0-9])|(3[0-1])))"
@@ -270,7 +275,10 @@ getcountry(){
 	if echo "$GEOMEM"|grep -E "^("$peer"|"$peerenc")#"; then 
 	LDCOUNTRY=$(echo "$GEOMEM"|grep -E "^("$peer"|"$peerenc")#"|sed -n 1p|sed -E "s/^($peer|$peerenc)#//g")
 	else
-	LDCOUNTRY="$(echo $(curl --no-keepalive --no-buffer --connect-timeout ${CURL_TIMEOUT} -sk -A "$(echo $(dd bs=1 count=21 if=/dev/urandom 2>/dev/null)|hexdump -v -e '/1 "%02X"'|sed -e s/"0A$"//g)" "https://ipapi.co/"$peer"/json/"|grep -E "(city|region_code|\"country\"|continent_code)"|sed -E "s/^\s*?.*:\s*?//g"|sed -E "s/(\")//g")|sed -E "s/(,$|,?\s?(null))//g")"
+	#LDCOUNTRY="$(echo $(curl --no-keepalive --no-buffer --connect-timeout ${CURL_TIMEOUT} -sk -A "$(echo $(dd bs=1 count=21 if=/dev/urandom 2>/dev/null)|hexdump -v -e '/1 "%02X"'|sed -e s/"0A$"//g)" "https://ipapi.co/"$peer"/json/"|grep -E "(city|region_code|\"country\"|continent_code)"|sed -E "s/^\s*?.*:\s*?//g"|sed -E "s/(\")//g")|sed -E "s/(,$|,?\s?(null))//g")"
+	LOCATION_DATA_STORE="$(curl --no-keepalive --no-buffer --connect-timeout ${CURL_TIMEOUT} -sk -A "$(echo $(dd bs=1 count=21 if=/dev/urandom 2>/dev/null)|hexdump -v -e '/1 "%02X"'|sed -e s/"0A$"//g)" "https://ipapi.co/"$peer"/json/")"
+	LDCOUNTRY="$(echo $(echo "$LOCATION_DATA_STORE"|grep -E "(city|region_code|\"country\"|continent_code)"|sed -E "s/^\s*?.*:\s*?//g"|sed -E "s/(\")//g")|sed "s/null/$(echo "$LOCATION_DATA_STORE"|grep "\"region\""|sed "s/.*://"|sed -E "s/(\"|,$|,?\s?(null))//g")/"|sed -E "s/(,$|,?\s?(null))//g")"
+
 	wait $!
 	if [ -f "$DIR"/42Kmi/ipstack.txt ] ; then
 		if [ $LDCOUNTRY = "" ]; then
@@ -479,10 +487,16 @@ ping_tr_results(){
 pingavgfornull(){
 	if [ $SHOWLOCATION = 1 ]; then
 	PING_HIST_AVG="" #Resets Ping history average to prevent unneeded multiple use
-		if ! { [ "${PINGFULL}" = "--" ] || [ "${PINGFULL}" = "0" ] || [ $PINGFULLDECIMAL = "0" ] || [ $PINGFULLDECIMAL = "--" ] || [ $PINGFULLDECIMAL = "\-\-" ]; }; then 
-		echo -e "${PINGFULLDECIMAL}#${LDCOUNTRY}#"|sed "s/ms#/#/g"|sed -E "s/.\[[0-9]{1}(\;[0-9]{2})?m//g" >> ""$DIR"/42Kmi/${PINGMEM}"
+		if [ $POPULATE = 1 ]; then
+			if ! { [ "${PINGFULL}" = "--" ] || [ "${PINGFULL}" = "0" ] || [ $PINGFULLDECIMAL = "0" ] || [ $PINGFULLDECIMAL = "--" ] || [ $PINGFULLDECIMAL = "\-\-" ]; } && ! { grep -F "$(echo -e "${PINGFULLDECIMAL}#${LDCOUNTRY}#"|sed "s/ms#/#/g")" ""$DIR"/42Kmi/${PINGMEM}"; }; then 
+			echo -e "${PINGFULLDECIMAL}#${LDCOUNTRY}#"|sed "s/ms#/#/g"|sed -E "s/.\[[0-9]{1}(\;[0-9]{2})?m//g" >> ""$DIR"/42Kmi/${PINGMEM}"
+			fi
+		else
+			if ! { [ "${PINGFULL}" = "--" ] || [ "${PINGFULL}" = "0" ] || [ $PINGFULLDECIMAL = "0" ] || [ $PINGFULLDECIMAL = "--" ] || [ $PINGFULLDECIMAL = "\-\-" ]; }; then 
+			echo -e "${PINGFULLDECIMAL}#${LDCOUNTRY}#"|sed "s/ms#/#/g"|sed -E "s/.\[[0-9]{1}(\;[0-9]{2})?m//g" >> ""$DIR"/42Kmi/${PINGMEM}"
+			fi
 		fi
-	
+		
 	PING_HIST_AVG_MIN=5 #Minimum number of similar regions to count before taking average
 	
 		if { [ "${PINGFULL}" = "--" ] || [ "${PINGFULL}" = "0" ] || [ $PINGFULLDECIMAL = "0" ] || [ $PINGFULLDECIMAL = "--" ] || [ $PINGFULLDECIMAL = "\-\-" ]; }; then
@@ -801,7 +815,11 @@ RESTONMULTIPLAYER=$(echo "$SETTINGS"|sed -n 16p)
 ##### SETTINGS & TWEAKS #####
 # Everything below depends on power switch
 if ! [ "$SWITCH" = "$(echo -n "$SWITCH" | grep -oEi "(off|0|disable(d?))")" ]; then
+	if [ $POPULATE = 1 ]; then 
+	CONSOLE="${ROUTERSHORT_POP}[0-9]{1,3}\.[0-9]{1,3}"
+	else
 	CONSOLE=$(echo "$SETTINGS"|sed -n 1p) ### Your console's IP address. Change this in the options.txt file
+	fi
 	#CONSOLE="$(echo -e "$CONSOLE"|tr "|" \\n)" ### Multiple IPs can work! Just separate with "|"
 	CHECKPORTS=$(echo "$SETTINGS"|sed -n 14p)
 	PORTS=$(echo "$SETTINGS"|sed -n 15p)
@@ -852,7 +870,9 @@ if ! [ "$SWITCH" = "$(echo -n "$SWITCH" | grep -oEi "(off|0|disable(d?))")" ]; t
 		else
 			{ meatandtatoes; }
 		fi
-		
+		if [ $POPULATE = 1 ]; then
+			IGNORE="${IGNORE}|${peer}"
+		fi
 		$PEERIP
 		cleanliness &> /dev/null &
 		bancountry &> /dev/null &
@@ -896,7 +916,7 @@ then
 	eval "iptables -D LDACCEPT "$LINENUMBERACCEPTED""
 	sed -i -E "s/((.\[[0-9]{1}(\;[0-9]{2})m)?${allowed1}.*$)/$(echo -e "${BG_MAGENTA}")&/g" "/tmp/$RANDOMGET"; sleep 5 #Clear warning
 	eval "wait $!; sed -i -E "/\b${allowed1}\b/d" "/tmp/$RANDOMGET""
-	wait $!; sed -i -E "/\b${allowed1}\b/d" "/tmp/$RANDOMGET"
+	sed -i -E "/\b(${allowed1})\b/d" "/tmp/$RANDOMGET"
 	#if ! { iptables -nL LDACCEPT| grep -Eo "\b${allowed1}\b"; }; then
 	#	eval "wait $!; sed -i -E "/\b${allowed1}\b/d" "/tmp/$RANDOMGET""
 	#elif { iptables -nL LDACCEPT| grep -Eo "\b${allowed1}\b"; }; then
@@ -944,7 +964,7 @@ if [ "$CLEARBLOCKED" = "$(echo -n "$CLEARBLOCKED" | grep -oEi "(yes|1|on|enable(
 		eval "iptables -D LDREJECT "$LINENUMBERREJECTED""
 		sed -i -E "s/((.\[[0-9]{1}(\;[0-9]{2})m)?${refused1}.*$)/$(echo -e "${BG_MAGENTA}")&/g" "/tmp/$RANDOMGET"; sleep 5 #Clear warning
 		eval "wait $!; sed -i -E "/\b${refused1}\b/d" "/tmp/$RANDOMGET""
-		wait $!; sed -i -E "/\b${refused1}\b/d" "/tmp/$RANDOMGET"
+		sed -i -E "/\b(${refused1})\b/d" "/tmp/$RANDOMGET"
 		#if ! { iptables -nL LDREJECT| grep -Eo "\b${refused1}\b"; }; then
 		#	eval "wait $!; sed -i -E "/\b${refused1}\b/d" "/tmp/$RANDOMGET""
 		#elif { iptables -nL LDREJECT| grep -Eo "\b${refused1}\b"; }; then
@@ -1166,6 +1186,14 @@ ACCEPTCOUNT=$(( TOTALCOUNT - BLOCKCOUNT ))
 fi
 ##### LogCounts #####
 
+##### Log Message #####
+if [ $POPULATE = 1 ]; then
+LOG_MESSAGE="${GREEN}Populating caches until LagDrop is restarted without -p flag.${NC}"
+else
+LOG_MESSAGE="Waiting for peers..."
+fi
+##### Log Message #####
+
 ##### BL/WL/TW? #####
 if [ -f "$DIR"/42Kmi/blacklist.txt ]; then BL="$(echo -e " BL")"; fi
 if [ -f "$DIR"/42Kmi/whitelist.txt ]; then WL="$(echo -e " ${WHITE}WL${NC}")"; fi
@@ -1193,7 +1221,7 @@ if [ $SHOWLOCATION = 1 ]; then LOCATION="$(echo " | LOCATE${BC}")"; LOCATECOL="$
 		done &
 		else
 			if [ ! -f "/tmp/$RANDOMGET" ] || [ ! -s "/tmp/$RANDOMGET" ]; then
-				echo "Waiting for peers..."; sleep
+				echo -e "$LOG_MESSAGE"; sleep
 			fi
 		fi
 		STALE_STASH=$(tail +1 "/tmp/$RANDOMGET")
@@ -1232,8 +1260,8 @@ fi 2> /dev/null
 
 specialcaserestart(){
 while : &> /dev/null; do
-	if { [ $({ iptables -nL LDACCEPT && iptables -nL LDREJECT && iptables -nL LDTEMPHOLD && iptables -nL LDIGNORE; } | grep -Ei "^(chain|target)") = "" ] || [ "$(tail +1 "/tmp/$RANDOMGET"|sed -E "s/.\[[0-9]{1}(\;[0-9]{2})?m//g"|grep -E ".*")" != "" ]; }; then
-	#cleanall; maketables; eval "$@"
+	#if { [ $({ iptables -nL LDACCEPT && iptables -nL LDREJECT && iptables -nL LDTEMPHOLD && iptables -nL LDIGNORE; } | grep -Ei "^(chain|target)") = "" ] || [ "$(tail +1 "/tmp/$RANDOMGET"|sed -E "s/.\[[0-9]{1}(\;[0-9]{2})?m//g"|grep -E ".*")" != "" ]; }; then
+	if { ! { iptables -nL LDACCEPT && iptables -nL LDREJECT && iptables -nL LDTEMPHOLD && iptables -nL LDIGNORE; } || [ "$(tail +1 "/tmp/$RANDOMGET"|sed -E "s/.\[[0-9]{1}(\;[0-9]{2})?m//g"|grep -E ".*")" != "" ]; }; then
 	maketables
 	fi
 kill $!
