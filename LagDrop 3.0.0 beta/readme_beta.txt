@@ -42,8 +42,26 @@ Additionally, an excel spreadsheet is provided for sorting and arranging the rec
 
 ==============================
 Thank you for your interest in beta testing!
-As part of the beta, we ask that you please run in Smart Mode and Locate mode.
+As part of the beta, we ask that you please run in Smart Mode and Locate mode. 
+
 Please test in other shell environments.
+
+Please test the Sentinel
+1
+==============================
+Sentinel - Detects inconsistencies in data transfer, blocks on suspected network tampering.
+
+Uses a strikes system, indicated by a change in background color of the peer's line in the log.
+
+Strike 1: Teal
+Strike 2: Green
+Strike 3: Yellow
+
+Banned: Red, with a ban message.
+
+
+
+==============================
 
 A more robust documentation is underway, but some of the details from the previous version are still applicable.
 Please send questions, comments, concerns, and testimonials! We would love to know how LagDrop helps improve your game!
