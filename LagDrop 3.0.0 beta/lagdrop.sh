@@ -485,25 +485,23 @@ cleanliness(){
 		##### Clean Sentinel #####
 	}
 	cleansentinel
-	
+	##### SENTINEL BANS #####
+	sentinel_bans(){
+		SENTINEL_BANS_LIST_GET=$(tail +1 "/tmp/$RANDOMGET"|sed -E "s/.\[[0-9]{1}(\;[0-9]{2})?m//g"|grep -E "${SENTINEL_BAN_MESSAGE}"|grep -Eo "\b([0-9]{1,3}\.){3}([0-9]{1,3})\b")
+
+		for ip in $SENTINEL_BANS_LIST_GET; do
+
+			if ! { iptables -nL LDBAN|grep -E "\b${ip}\b"; }; then
+				eval "iptables -A LDBAN -s $ip -d $CONSOLE -j REJECT "${WAITLOCK}""
+			fi 
+		done &
+	}
+	sentinel_bans &
+	##### SENTINEL BANS #####
 bantidy
 cleantable
 cleanlog
 }
-
-##### SENTINEL BANS #####
-sentinel_bans(){
-	SENTINEL_BANS_LIST_GET=$(tail +1 "/tmp/$RANDOMGET"|sed -E "s/.\[[0-9]{1}(\;[0-9]{2})?m//g"|grep -E "${SENTINEL_BAN_MESSAGE}"|grep -Eo "\b([0-9]{1,3}\.){3}([0-9]{1,3})\b")
-
-	for ip in $SENTINEL_BANS_LIST_GET; do
-
-		if ! { iptables -nL LDBAN|grep -E "\b${ip}\b"; }; then
-			eval "iptables -A LDBAN -s $ip -d $CONSOLE -j REJECT "${WAITLOCK}""
-		fi 
-	done &
-}
-sentinel_bans &
-##### SENTINEL BANS #####
 
 ping_tr_results(){
 	#PING-TR RESULTS
