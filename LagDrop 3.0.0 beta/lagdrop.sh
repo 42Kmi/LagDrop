@@ -2,12 +2,12 @@
 {
 POPULATE=""
 cleanall(){
-PROC="$(ps|grep -E "$(echo $(ps|grep "${0##*/}"|grep -v $$|grep -Ev "(\[("kthreadd"|"ksoftirqd"|"kworker"|"khelper"|"writeback"|"bioset"|"crypto"|"kblockd"|"khubd"|"kswapd"|"fsnotify_mark"|"deferwq"|"scsi_eh_"|"usb-storage"|"cfg80211"|"jffs2_gcd_mtd3").*\])"|grep -Ev "SW(.?)"|awk '{printf $3" "$4"|\n"}'|sort -u)|sed -E 's/.$//')"|grep -v $$|grep -v "rm"|grep -Eo "^(\s*)?[0-9]{1,}")"
+PROC="$(ps|grep -E "$(echo $(ps|grep "${0##*/}"|grep -Ev "^(\s)?($$)\b"|grep -Ev "(\[("kthreadd"|"ksoftirqd"|"kworker"|"khelper"|"writeback"|"bioset"|"crypto"|"kblockd"|"khubd"|"kswapd"|"fsnotify_mark"|"deferwq"|"scsi_eh_"|"usb-storage"|"cfg80211"|"jffs2_gcd_mtd3").*\])"|grep -Ev "SW(.?)"|awk '{printf $3" "$4"|\n"}'|sort -u)|sed -E 's/.$//')"|grep -Ev "\b($$)\b"|grep -v "rm"|grep -Eo "^(\s*)?[0-9]{1,}")"
 	misterclean(){
 	iptables -F LDKTA
-	sed -i -E "/#(.*)#(.*)$/d" ""$DIR"/42Kmi/${GEOMEMFILE}"
-	sed -i -E "/#(.*)#(.*)#$/d" ""$DIR"/42Kmi/${PINGMEM}"
-	kill -9 $(ps|grep "${0##*/}"|grep -Eo "^(\s*)?[0-9]{1,}"|grep -v $$)
+	sed -i -E "/#(.*)#(.*)$/d" ""$DIR"/42Kmi/${GEOMEMFILE}" #Deletes lines with 2 #
+	sed -i -E "/#(.*)#(.*)#$/d" ""$DIR"/42Kmi/${PINGMEM}" #Deletes lines with 3 #
+	kill -9 $(ps|grep "${0##*/}"|grep -Eo "^(\s*)?[0-9]{1,}\b"|grep -Ev "\b($$)\b")
 	for process in $PROC; do
 		{ rm -rf "/proc/$process" 2>&1 >/dev/null 2> /dev/null; } &
 	#rm "/tmp/$RANDOMGET"; iptables -nL LDACCEPT; iptables -nL LDREJECT; iptables -nL LDIGNORE; iptables -nL LDKTA #; iptables -nL LDBAN
@@ -64,7 +64,7 @@ Running LagDrop without argument will terminate all instances of the script.
 cleanall
 exit
 else
-kill -9 $(echo $(ps|grep "${0##*/}"|grep -v "$$"|grep -Eo "^(\s*)?[0-9]{1,}"))|: #Kill previous instances. Can't run in two places at same time.
+kill -9 $(echo $(ps|grep "${0##*/}"|grep -Ev "^(\s*)?($$)\b"|grep -Eo "^(\s*)?[0-9]{1,}\b"))|: #Kill previous instances. Can't run in two places at same time.
 ##### Kill if no argument #####
 
 ######################################################################################################
@@ -151,7 +151,7 @@ ROUTERSHORT_POP=$(echo "$ROUTER"|grep -Eo '(([0-9]{1,3}\.?){2})'|sed -n 1p)
 
 ##### Find Shell #####
 SCRIPTNAME="${0##*/}"
-DIR="${0%\/*.*}"
+DIR="${0%\/*}"
 if [ -f ""$DIR"/42Kmi/${GEOMEMFILE}" ]; then sed -E -i "/#$/d" ""$DIR"/42Kmi/${GEOMEMFILE}"; fi #Housekeeping
 ##### Make Files #####
 CONSOLENAME="$1"
@@ -1204,10 +1204,7 @@ fi 2> /dev/null
 #==========================================================================================================
 
 #42Kmi LagDrop Monitor
-spinner(){
-spinnertime=20000 #50000 #41666
-while "$@" 2> /dev/null;do
-{
+spin(){
 echo -e -n "${CLEARLINE}${RED}/\r${NC}" ; usleep $spinnertime
 echo -e -n "${CLEARLINE}${YELLOW}/\r${NC}" ; usleep $spinnertime
 echo -e -n "${CLEARLINE}${GREEN}/\r${NC}" ; usleep $spinnertime
@@ -1225,7 +1222,10 @@ echo -e -n "${CLEARLINE}${YELLOW}|\r${NC}" ; usleep $spinnertime
 echo -e -n "${CLEARLINE}${GREEN}|\r${NC}" ; usleep $spinnertime
 echo -e -n "${CLEARLINE}${BLUE}|\r${NC}" ; usleep $spinnertime
 }
-kill -9 $!
+spinner(){
+spinnertime=20000 #50000 #41666
+while "$@" 2> /dev/null;do
+spin;kill -9 $!
 done &
 }
 echo -e "$REFRESH"
@@ -1298,7 +1298,7 @@ while "$@" &> /dev/null; do
 	ASIZE=$(tail +1 "/tmp/$RANDOMGET"|wc -c)
 	if [[ "$ATIME" != "$LTIME" ]]; then
 		if [[ "$ASIZE" != "$LSIZE" ]]; then 
-			display
+			kill $!; display
 			LTIME=$ATIME && LSIZE=$ASIZE
 		fi
 	fi
@@ -1324,7 +1324,7 @@ while : &> /dev/null; do
 	if { ! { iptables -nL LDACCEPT && iptables -nL LDREJECT && iptables -nL LDTEMPHOLD && iptables -nL LDIGNORE; } || [ "$(tail +1 "/tmp/$RANDOMGET"|sed -E "s/.\[[0-9]{1}(\;[0-9]{2})?m//g"|grep -E ".*")" != "" ]; }; then
 	maketables
 	fi
-kill $!
+#kill $!
 done
 }
 specialcaserestart &
