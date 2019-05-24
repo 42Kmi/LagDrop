@@ -1,17 +1,18 @@
 #!/bin/sh
 {
 POPULATE=""
+MAKE_TWEAK=""
 cleanall(){
 PROC="$(ps|grep -E "$(echo $(ps|grep "${0##*/}"|grep -Ev "^(\s)?($$)\b"|grep -Ev "(\[("kthreadd"|"ksoftirqd"|"kworker"|"khelper"|"writeback"|"bioset"|"crypto"|"kblockd"|"khubd"|"kswapd"|"fsnotify_mark"|"deferwq"|"scsi_eh_"|"usb-storage"|"cfg80211"|"jffs2_gcd_mtd3").*\])"|grep -Ev "SW(.?)"|awk '{printf $3" "$4"|\n"}'|sort -u)|sed -E 's/.$//')"|grep -Ev "\b($$)\b"|grep -v "rm"|grep -Eo "^(\s*)?[0-9]{1,}")"
 	misterclean(){
 	iptables -F LDKTA
 	sed -i -E "/#(.*)#(.*)$/d" ""$DIR"/42Kmi/${GEOMEMFILE}" #Deletes lines with 2 #
 	sed -i -E "/#(.*)#(.*)#$/d" ""$DIR"/42Kmi/${PINGMEM}" #Deletes lines with 3 #
-	kill -9 $(ps|grep "${0##*/}"|grep -Eo "^(\s*)?[0-9]{1,}\b"|grep -Ev "\b($$)\b")
+	kill -9 $(ps|grep "${0##*/}"|grep -Eo "^(\s*)?[0-9]{1,}\b"|grep -Ev "\b($$)\b") &> /dev/null #&
 	for process in $PROC; do
-		{ rm -rf "/proc/$process" 2>&1 >/dev/null 2> /dev/null; } &
+		{ rm -rf "/proc/$process" 2>&1 >/dev/null 2> /dev/null; } &> /dev/null #&
 	#rm "/tmp/$RANDOMGET"; iptables -nL LDACCEPT; iptables -nL LDREJECT; iptables -nL LDIGNORE; iptables -nL LDKTA #; iptables -nL LDBAN
-	done &
+	done &> /dev/null #&
 	}
 n=0; while [[ $n -lt 10 ]]; do { misterclean; } ; n=$((n+1)); done
 wait $!
@@ -38,30 +39,111 @@ fi; break
     SMARTMODE=1
     SHOWSMART=1
     ;;
-    -b) # Block null ping results
-	;;
 	-l|--location) #Show peer location, via ipapi
 	SHOWLOCATION=1
     ;;
 	-p|--populate) #with location enabled, fills caches for ping approximation. LagDrop doesn't filter
 	POPULATE=1
     ;;
+	-t|--tweakmake) #Creates tweak.txt to customize normally fixed values.
+	MAKE_TWEAK=1
+    ;;
+	-c|--clear) #Clear tables and log
+	rm "/tmp/$RANDOMGET"; iptables -nL LDACCEPT; iptables -nL LDREJECT; iptables -nL LDIGNORE; iptables; kill -9 $$ 2>&1 >/dev/null &
+    ;;
 esac
 done
 ##### LINE OPTIONS #####
 
 #Header
+##### Colors & Escapes##### 
+NC="\033[0m"; RED="\033[1;31m"; GREEN="\033[1;32m"; YELLOW="\033[1;33m"; MARK="\033[1;37m"; GRAY="\033[1;30m"; BLUE="\033[1;34m"; MAGENTA="\033[1;35m"; DEFAULT="\033[1;39m"; BLACK="\033[1;30m"; CYAN="\033[1;36m"; LIGHTGRAY="\033[1;37m"; DARKGRAY="\033[1;90m"; LIGHTRED="\033[1;91m"; LIGHTGREEN="\033[1;92m"; LIGHTYELLOW="\033[1;93m"; LIGHTBLUE="\033[1;94m"; LIGHTMAGENTA="\033[1;95m"; LIGHTCYAN="\033[1;96m"; WHITE="\033[1;97m";HIDE="\033[8m";BOLD="\033[1m"
+SAVECURSOR="\033[s" #Save Cursor Position
+RESTORECURSOR="\033[u" #Restore Cursor Position
+REFRESHALL="\033[H\033[2J" # From Top and Left of screen
+REFRESH="\033[H\033[2J" # From cursor
+CLEARLINE="\033[K" #Clears line at cursor position and beyond
+CLEARSCROLLBACK="\033[H\033[3J" # Clears scrollback
+##### BG COLORS #####
+BG_BLACK="\033[1;40m"; BG_RED="\033[1;41m"; BG_GREEN="\033[1;42m"; BG_YELLOW="\033[1;43m"; BG_BLUE="\033[1;44m"; BG_MAGENTA="\033[1;45m"; BG_CYAN="\033[1;46m"; BG_WHITE="\033[1;47m"
+##### BG COLORS #####
+##### Colors & Escapes#####
+
+LOGO="
+                                                                           
+                           MM                                              
+                        MMMMM                             MMMMMMMMMMMMMM   
+          ${CYAN}         MMM${NC} MMMMMM                           MMMMMMMMMMMMMMMM   
+          ${CYAN}    M  MMMMM${NC} MMMMMM                  MMMMMMM MMMMMMMMMMMMMMMMM   
+          ${CYAN} MMMM KMMMMM${NC} MMMMMM               MMMMMMMMMM MMMMMMMMMMMMMMMMM   
+          ${CYAN}MMMMM KMMMMM${NC} MMMMMM            MMMMMMMMMMMMM MMMMMMMMMMMMMMMMM   
+          ${CYAN}MMMMM KMMMMM${NC} MMMMMM           MMMMMMMM  MMMM MMMMMMMM   MMMMMM   
+          ${CYAN}MMMMM KMMMMM${NC} MMMMMM         MMMMMMMM    MMMMMMMMMMMM             
+    MM\`   ${CYAN}MMMMM KMMMMM${NC} MMMMMM         MMMMMM      MMMMMMMMMMM     MMMMMM   
+   MMMMMM   ${CYAN}MMM KMMMMM${NC} MMMMMM        MMMMMMM     MMMMMMMMMMMM     MMMMMM   
+   MMMMMMMM  ${CYAN}MM KMMMMM${NC} MMMMMM        MMMMMMMM   MMMMMMMMMMMMMMM  MMMMMMM   
+   MMMMMMMMMM   ${CYAN}KMMMMM${NC} MMMMMMMM          MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM   
+   MMMMMMMMMMM   ${CYAN}MMMMM${NC} MMMMMMMMMMMMMMMMMM MMMMMMMMMMMMM MMMMMMMMMMMMMMMMM  
+   MMMMMMMMMMMMM  ${CYAN}MMMM${NC} MMMMMMMMMMMMMMMMMM MMMMMMMMMMMMM MMMMMMMMMMMMMMMMM  
+   MMMMMMMMMMMMMMM  ${CYAN}MM${NC}  MMMMMMMMMMMMMMMMM MMMMMMMM  MMM  MMMMMMM  MMMMMM   
+   MMMMMMMM MMMMMMM+                          \`MMMM            :dy         
+   MMMMMMM    MMMMMMM    MMMMMM MMMMMMMMMM MMMMMMMMMMMM MMMMMMMMMMMMMMMM   
+   MMMMMMM      MMMMMMd  MMMMMMMMMMMMMMMMM MMMMMMMMMMMM MMMMMMMMMMMMMMMMM  
+   MMMMMMM       MMMMMMM MMMMMMMMMMMMMMMMM MMMMMMMMMMMM MMMMMMMM   MMMMMM  
+   MMMMMMM        MMMMMM MMMMMMMMMMMMMMMMM MMMMMMMMMMMM MMMMMMM      MMMM  
+   MMMMMMMM       MMMMMMMMMMMMMMMMMMMMMMMM        MMMMM MMMMMMM      MMMM  
+   MMMMMMMM      MMMMMMMM MMMMMM    MMMMMM        :MMMM MMMMMMM      MMMM  
+   MMMMMMMMMMMMMMMMMMMMMM MMMMMM                   MMMM MMMMMMMM   MMMMMM  
+    MMMMMMMMMMMMMMMMMMMM MMMMMMM    MMMMMM        NMMMM MMMMMMMMMMMMMMMM   
+    MMMMMMMMMMMMMMMMMMM  MMMMMMM    MMMMMMMMy  oMMMMMMM MMMMMMMMMMMMMMMM   
+     MMMMMMMMMMMMMMMMM   MMMMMMM    MMMMMMMMMMMMMMMMMMM MMMMMMM            
+       MMMMMMMMMMMMM     MMMMMMM    MMMMMMMMMMMMMMMMMMM MMMMMMM            
+          +MMMMM         \`MMM        sMMMMMMMMMMMMMMMM   MMMMMM            
+                                                                           
+"
 VERSION="Ver 3.0.0 beta, #OneForAll"
 #export LC_ALL=C
+MESSAGE="$(echo -e "	${LOGO}
+
+Enter an identifier!! Eg: WIIU, XBOX, PS4, PC, etc.
+
+Usage: ./path_to/lagdrop.sh identifier -s -l
+
+### 42Kmi LagDrop "${VERSION}\ ###"
+
+Router-based Anti-Lag Dynamic Firewall for P2P online games.
+Supported identifiers load the appropriate filters for the console/device.
+Running LagDrop without argument will terminate all instances of the script.
+
+Identifiers:
+
+	${RED}Nintendo filters: Nintendo, Switch, Wii, WiiU, NDS, DS, 3DS, 2DS${NC}
+	
+	${BLUE}Playstation filters: PlayStation, PS3, PS4, PS2, PSX${NC}
+	
+	${GREEN}Xbox filters: Xbox, Xbox360, XBL, XboxOne, X1${NC}
+	
+	${YELLOW}No set filters: anything other than listed above${NC}
+
+Flags:
+
+	-l, --location \tDisplays peer's location; enables location-based banning
+		\tand ping approximation
+	
+	-p, --populate \tRuns LagDrop to fill caches without performing filtering.
+		 \tOnly run once (for ~1 hour). Do not run during regular LagDrop use.
+	
+	-s, --smart \tSmart mode: Ping, TR averages and adjusts limits for incoming peers.
+	
+	-t, --tweak \tCreates tweak.txt for more parameters customization.
+		 \tOptional, only run once
+
+42Kmi.com | LagDrop.com"
+)"
 ##### Kill if no argument #####
 if [ "$1" = "$(echo -n "$1" | grep -oEi "((\ ?){1,}|)")" ]; then
-echo "Enter an Argument!! Eg: WIIU, XBOX, PS4, PC, etc."
-echo -e "### 42Kmi LagDrop "${VERSION}\ ###"
-Router-based Anti-Lag Solution for P2P online games.
-Supported arguments load the appropriate filters for the console.
-Running LagDrop without argument will terminate all instances of the script.
-42Kmi.com | LagDrop.com"
-cleanall
+echo -e "${MESSAGE}"
+cleanall &> /dev/null &
 exit
 else
 kill -9 $(echo $(ps|grep "${0##*/}"|grep -Ev "^(\s*)?($$)\b"|grep -Eo "^(\s*)?[0-9]{1,}\b"))|: #Kill previous instances. Can't run in two places at same time.
@@ -94,19 +176,7 @@ kill -9 $(echo $(ps|grep "${0##*/}"|grep -Ev "^(\s*)?($$)\b"|grep -Eo "^(\s*)?[0
 
 ##### Special thanks to CharcoalBurst, robus9one, Deniz, Driphter, AverageJoeShmoe87 #####
 
-######Items only needed to initialize
-##### Colors & Escapes##### 
-NC="\033[0m"; RED="\033[1;31m"; GREEN="\033[1;32m"; YELLOW="\033[1;33m"; MARK="\033[1;37m"; GRAY="\033[1;30m"; BLUE="\033[1;34m"; MAGENTA="\033[1;35m"; DEFAULT="\033[1;39m"; BLACK="\033[1;30m"; CYAN="\033[1;36m"; LIGHTGRAY="\033[1;37m"; DARKGRAY="\033[1;90m"; LIGHTRED="\033[1;91m"; LIGHTGREEN="\033[1;92m"; LIGHTYELLOW="\033[1;93m"; LIGHTBLUE="\033[1;94m"; LIGHTMAGENTA="\033[1;95m"; LIGHTCYAN="\033[1;96m"; WHITE="\033[1;97m";HIDE="\033[8m";BOLD="\033[1m"
-SAVECURSOR="\033[s" #Save Cursor Position
-RESTORECURSOR="\033[u" #Restore Cursor Position
-REFRESHALL="\033[H\033[2J" # From Top and Left of screen
-REFRESH="\033[H\033[2J" # From cursor
-CLEARLINE="\033[K" #Clears line at cursor position and beyond
-CLEARSCROLLBACK="\033[H\033[3J" # Clears scrollback
-##### BG COLORS #####
-BG_BLACK="\033[1;40m"; BG_RED="\033[1;41m"; BG_GREEN="\033[1;42m"; BG_YELLOW="\033[1;43m"; BG_BLUE="\033[1;44m"; BG_MAGENTA="\033[1;45m"; BG_CYAN="\033[1;46m"; BG_WHITE="\033[1;47m"
-##### BG COLORS #####
-##### Colors & Escapes##### 
+######Items only needed to initialize 
 
 ##### Find Shell #####
 SHELLIS=$(if [ -f "/usr/bin/lua" ]; then echo "ash"; else echo "no"; fi)
@@ -216,14 +286,15 @@ RESTONMULTIPLAYER=NO
 NUMBEROFPEERS=
 DECONGEST=OFF
 SWITCH=ON
-;"> "$DIR"/42Kmi/options_"$CONSOLENAME".txt; fi ### Makes options file if it doesn't exist
+;" > "$DIR"/42Kmi/options_"$CONSOLENAME".txt; fi ### Makes options file if it doesn't exist
 ##### Make Options #####
 ##### Filter #####
 {
 case "$1" in
      "$(echo -n "$1" | grep -oEi "(nintendo|wiiu|wii|switch|[0-9]?ds|NSW)")") #Nintendo   
-		NINTENDO_SERVERS="(45\.55\.142\.122)|(45\.55)"
-        FILTERIP="^38\.112\.28\.9[6-9]|^60\.32\.179\.(1[6-9]|2[0-3])|^60\.36\.183\.15[2-9]|^64\.124\.44\.(4[8-9]|5[0-5])|^64\.125\.103\.|^65\.166\.10\.(10[4-9]|11[0-1])|^84\.37\.20\.(20[8-9]|21[0-5])|^84\.233\.128\.(6[4-9]|[7-9][0-9]|1[0-1][0-9]|12[0-7)|^84\.233\.202\.([0-2][0-9]|3[0-1])|^89\.202\.218([0-9]|1[0-5])|^125\.196\.255\.(19[6-9]|20[0-7])|^125\.199\.254\.(4[8-9]|5[0-9]|6[0-7])|^125\.206\.241\.(17[6-9]|18[0-9]|19[0-1])|^133\.205\.103\.(192[2-9]|20[0-7])|^192\.195\.204\.|^194\.121\.124\.(22[4-9]|23[0-1])|^194\.176\.154\.(16[8-9]|17[0-5])|^195\.10\.13\.(1[6-9]|[2-5][0-9]|6[0-3])|^195\.10\.13\.7[2-5]|^195\.27\.92\.(9[6-9]|1[0-1][0-9]|12[0-7])|^195\.27\.92\.(19[2-9]|20[0-7])|^195\.27\.195\.([0-9]|1[0-5])|^195\.73\.250\.(22[4-9]|23[0-1])|^195\.243\.236\.(13[6-9]|14[0-3])|^202\.232\.234\.(12[8-9]|13[0-9]|14[0-3])|^205\.166\.76\.|^206\.19\.110\.|^208\.186\.152\.|^210\.88\.88\.(17[6-9]|18[0-9]|19[0-1])|^210\.138\.40\.(2[4-9]|3[0-1])|^210\.151\.57\.(8[0-9]|9[0-5])|^210\.169\.213\.(3[2-9]|[4-5][0-9]|6[0-3])|^210\.172\.105\.(1[6-8][0-9]|19[0-1])|^210\.233\.54\.(3[2-9]|4[0-7])|^211\.8\.190\.(19[2-9]|2[0-1][0-9]|22[0-3])|^212\.100\.231\.6[0-1]|^213\.69\.144\.(1[6-8][0-9]|19[0-1])|^217\.161\.8\.2[4-7]|^219\.96\.82\.(17[6-9]|18[0-9]|19[0-1])|^220\.109\.217\.16[0-7]|^125\.199\.254\.50|^192\.195\.204\.40|^192\.195\.204\.176|^205\.166\.76\.176|^207\.38\.8\.15|^207\.38\.11\.1[2-4]|^207\.38\.11\.34|^207\.38\.11\.49|^209\.67\.106\.141|^207\.38\.(8|9|1[0-5])\.|^13\.32\.|^13\.54\.|^23\.20\.|^27\.0\.([0-3])\.|^34\.(19[2-9]|20[0-7])\.|^35\.154\.|^35\.(15[6-9])\.|^35\.(16[0-7])\.|^43\.250\.(19[2-3])\.|^46\.51\.(1[0-9][0-9]|20[0-7])\.|^46\.51\.(21[6-9]|2[2-9][0-9])\.|^46\.137\.|^50\.(1[6-9])\.|^50\.112\.|^52\.([0-9][0-9]|1[0-9][0-9]|2[0-1][0-9]|22[0-2])\.|^54\.([6-9][0-9]|14[4-9]|1[5-9][0-9]|2[0-5][0-9])\.|^67\.202\.([0-5][0-9]|6[0-3])\.|^72\.31\.(19[2-9]|2[0-1][0-9]|22[0-3])\.|^72\.44\.(3[2-9]|[4-5][0-9]|6[0-3])\.|^75\.101\.(12[8-9]|1[3-9]|2[0-9][0-9])\.|^79\.125\.([0-9][0-9]|1[0-1][0-9]|2[0-5][0-9])\.|^87\.238\.(8[0-7])\.|^96\.127\.([0-9][0-9]|1[0-1][0-9]|12[0-7])\.|^103\.4\.([8-9]|1[0-5])\.|^103\.8\.(17[2-5])\.|^103\.246\.(14[8-9]|15[0-1])\.|^107\.(2[0-3])\.|^122\.248\.(19[2-9]|2[0-5][0-9])\.|^172\.96\.97\.|^174\.129\.|^175\.41\.(1[2-8][0-9]|19[0-9]|2[0-5][0-9])|^176\.32\.([6-8][0-9]|9[0-9]|1[0-1][0-9]|12[0-5])|^176\.34\.|^177\.71\.|^177\.72\.(24[0-7])\.|^178\.236\.([0-9]|1[0-5])\.|^184\.7([2-3])\.|^184\.169\.(12[8-9]|1[3-9][0-9]|2[0-5]|[0-9])\.|^185\.48\.(12[0-3])\.|^185\.143\.16\.|^203\.83\.(22[0-3])\.|^204\.236\.(12[8-9]|1[3-9][0-9]|2[[0-5]|[0-9])\.|^204\.246\.(16[0-9]|17[0-1]|17[4-9]|1[8-9][0-9]|2[0-3][0-9]|24[0-5])\.|^205\.251\.(24[7-9]|25[0-5])\.|^207\.171\.(1[6-8][0-9]|19[0-1])\.|^216\.137\.(3[2-9]|[4-5][0-9]|6[0-3])\.|^216\.182\.(22[4-9]|23[0-9])\.|^202\.(3[2-5])\.|^198\.62\.122\.|^69\.25\.139\.(12[8-9]|1[3-9][0-9]|[1-2][0-9]{2})|^34\.(19[2-9]|2[0-9]{2})|^23\.2[0-3]\.|^13\.112\.35\.82|^163\.172\.141\.219|^45\.248\.48\.62|^(${NINTENDO_SERVERS})"
+		NINTENDO_SERVERS="(45\.55\.142\.122)|(45\.55)|(173\.255\.((19[2-9)|(2[0-9]{2}))\.)"
+		NIN_EXTRA="(95\.142\.154\.181)"
+        FILTERIP="^38\.112\.28\.9[6-9]|^60\.32\.179\.(1[6-9]|2[0-3])|^60\.36\.183\.15[2-9]|^64\.124\.44\.(4[8-9]|5[0-5])|^64\.125\.103\.|^65\.166\.10\.(10[4-9]|11[0-1])|^84\.37\.20\.(20[8-9]|21[0-5])|^84\.233\.128\.(6[4-9]|[7-9][0-9]|1[0-1][0-9]|12[0-7)|^84\.233\.202\.([0-2][0-9]|3[0-1])|^89\.202\.218([0-9]|1[0-5])|^125\.196\.255\.(19[6-9]|20[0-7])|^125\.199\.254\.(4[8-9]|5[0-9]|6[0-7])|^125\.206\.241\.(17[6-9]|18[0-9]|19[0-1])|^133\.205\.103\.(192[2-9]|20[0-7])|^192\.195\.204\.|^194\.121\.124\.(22[4-9]|23[0-1])|^194\.176\.154\.(16[8-9]|17[0-5])|^195\.10\.13\.(1[6-9]|[2-5][0-9]|6[0-3])|^195\.10\.13\.7[2-5]|^195\.27\.92\.(9[6-9]|1[0-1][0-9]|12[0-7])|^195\.27\.92\.(19[2-9]|20[0-7])|^195\.27\.195\.([0-9]|1[0-5])|^195\.73\.250\.(22[4-9]|23[0-1])|^195\.243\.236\.(13[6-9]|14[0-3])|^202\.232\.234\.(12[8-9]|13[0-9]|14[0-3])|^205\.166\.76\.|^206\.19\.110\.|^208\.186\.152\.|^210\.88\.88\.(17[6-9]|18[0-9]|19[0-1])|^210\.138\.40\.(2[4-9]|3[0-1])|^210\.151\.57\.(8[0-9]|9[0-5])|^210\.169\.213\.(3[2-9]|[4-5][0-9]|6[0-3])|^210\.172\.105\.(1[6-8][0-9]|19[0-1])|^210\.233\.54\.(3[2-9]|4[0-7])|^211\.8\.190\.(19[2-9]|2[0-1][0-9]|22[0-3])|^212\.100\.231\.6[0-1]|^213\.69\.144\.(1[6-8][0-9]|19[0-1])|^217\.161\.8\.2[4-7]|^219\.96\.82\.(17[6-9]|18[0-9]|19[0-1])|^220\.109\.217\.16[0-7]|^125\.199\.254\.50|^192\.195\.204\.40|^192\.195\.204\.176|^205\.166\.76\.176|^207\.38\.8\.15|^207\.38\.11\.1[2-4]|^207\.38\.11\.34|^207\.38\.11\.49|^209\.67\.106\.141|^207\.38\.(8|9|1[0-5])\.|^13\.32\.|^13\.54\.|^23\.20\.|^27\.0\.([0-3])\.|^34\.(19[2-9]|20[0-7])\.|^35\.154\.|^35\.(15[6-9])\.|^35\.(16[0-7])\.|^43\.250\.(19[2-3])\.|^46\.51\.(1[0-9][0-9]|20[0-7])\.|^46\.51\.(21[6-9]|2[2-9][0-9])\.|^46\.137\.|^50\.(1[6-9])\.|^50\.112\.|^52\.([0-9][0-9]|1[0-9][0-9]|2[0-1][0-9]|22[0-2])\.|^54\.([6-9][0-9]|14[4-9]|1[5-9][0-9]|2[0-5][0-9])\.|^67\.202\.([0-5][0-9]|6[0-3])\.|^72\.31\.(19[2-9]|2[0-1][0-9]|22[0-3])\.|^72\.44\.(3[2-9]|[4-5][0-9]|6[0-3])\.|^75\.101\.(12[8-9]|1[3-9]|2[0-9][0-9])\.|^79\.125\.([0-9][0-9]|1[0-1][0-9]|2[0-5][0-9])\.|^87\.238\.(8[0-7])\.|^96\.127\.([0-9][0-9]|1[0-1][0-9]|12[0-7])\.|^103\.4\.([8-9]|1[0-5])\.|^103\.8\.(17[2-5])\.|^103\.246\.(14[8-9]|15[0-1])\.|^107\.(2[0-3])\.|^122\.248\.(19[2-9]|2[0-5][0-9])\.|^172\.96\.97\.|^174\.129\.|^175\.41\.(1[2-8][0-9]|19[0-9]|2[0-5][0-9])|^176\.32\.([6-8][0-9]|9[0-9]|1[0-1][0-9]|12[0-5])|^176\.34\.|^177\.71\.|^177\.72\.(24[0-7])\.|^178\.236\.([0-9]|1[0-5])\.|^184\.7([2-3])\.|^184\.169\.(12[8-9]|1[3-9][0-9]|2[0-5]|[0-9])\.|^185\.48\.(12[0-3])\.|^185\.143\.16\.|^203\.83\.(22[0-3])\.|^204\.236\.(12[8-9]|1[3-9][0-9]|2[[0-5]|[0-9])\.|^204\.246\.(16[0-9]|17[0-1]|17[4-9]|1[8-9][0-9]|2[0-3][0-9]|24[0-5])\.|^205\.251\.(24[7-9]|25[0-5])\.|^207\.171\.(1[6-8][0-9]|19[0-1])\.|^216\.137\.(3[2-9]|[4-5][0-9]|6[0-3])\.|^216\.182\.(22[4-9]|23[0-9])\.|^202\.(3[2-5])\.|^198\.62\.122\.|^69\.25\.139\.(12[8-9]|1[3-9][0-9]|[1-2][0-9]{2})|^34\.(19[2-9]|2[0-9]{2})|^23\.2[0-3]\.|^13\.112\.35\.82|^163\.172\.141\.219|^45\.248\.48\.62|^(${NINTENDO_SERVERS}|${NIN_EXTRA})"
 		LOADEDFILTER="${RED}Nintendo${NC}"
 
           ;;
@@ -246,23 +317,43 @@ esac
 ONTHEFLYFILTER="amazonaws|akamaitechnologies|Akamai|twitter|nintendowifi\.net|(nintendo|xboxlive|sony|playstation)\.net|ps[2-9]|nflxvideo|netflix|easo\.ea\.com|\.ea\.com|\.1e100\.net|GOGL|goog|Sony Online Entertainment|cloudfront\.net|facebook|fb-net|IANA|Cloudflare|BAD REQUEST|blizzard|NC Interactive|ncsoft|NCINT|RIOT(\s)?GAMES|RIOT|SQUARE ENIX|Valve Corporation|Ubisoft|not found|IANA-RESERVED|\b(dns|ns|NS|DNS)([0-9]{1,}?(\.|\-))\b|google\.com" # Ignores if these words are found in whois requests
 #ONTHEFLYFILTER="klhjgdfshjvckxrsjrfkctyjztyflkutyjsrehxcvhjyutresdxfcgh"
 MSFT_SERVERS="(52\.(1((4[5-9])|([5-8][0-9])|(9[0-1]))))|(52\.(2(2[4-9]|[3-5][0-9])))|(52\.(9[6-9]|10[0-9]|11[1-5]))"
+LINODE="(173\.255\.((19[2-9)|(2[0-9]{2}))\.)"
 IANA_IPs="(239\.255\.255\.250)|(10(\.[0-9]{1,3}){3})|(2(2[4-9]|3[0-9])(\.[0-9]{1,3}){3})|(255(\.([0-9]){1,3}){3})|(0\.)|(100\.((6[4-9])|[7-9][0-9]|1(([0-1][0-9])|(2[0-7]))))|(172\.((1[6-9])|(2[0-9])|(3[0-1])))"
-ONTHEFLYFILTER_IPs="${IANA_IPs}|${MSFT_SERVERS}|1\.0\.0\.1|1\.1\.1\.1|127\.0\.0\.1|8\.8\.8\.8|8\.8\.4\.4" #Ignores these IPs, usually IANA reserved or something 
+ONTHEFLYFILTER_IPs="${IANA_IPs}|${MSFT_SERVERS}|${LINODE}|1\.0\.0\.1|1\.1\.1\.1|127\.0\.0\.1|8\.8\.8\.8|8\.8\.4\.4" #Ignores these IPs, usually IANA reserved or something 
 ##### Filter #####
 ##### TWEAKS #####
 # create 42Kmi/tweak.txt to edit these values
+if [ $MAKE_TWEAK = 1 ]; then
+if [ ! -f "$DIR"/42Kmi/tweak.txt ]; then
+echo -e "TWEAK_PINGRESOLUTION=5 #Number of pings sent
+TWEAK_TRGETCOUNT=20 #Total number of Traceroute runs
+TWEAK_SMARTLINECOUNT=8 #Number of lines before averaging
+TWEAK_SMARTPERCENT=155 #Percentage of average before using average
+TWEAK_SMART_AVG_COND =2 #Number of items that must be higher than average before using average
+TWEAK_SENTMODE=3 #0 or 1=Difference, 2=X^2, 3=Difference or X^2, 4=Difference & X^
+TWEAK_SENTLOSSLIMIT=1 #Number before Sentinel takes action
+TWEAK_PACKET_OR_BYTE=1 #Sentinel calculates by packet (1) or bytes (2)
+TWEAK_SENTINELDELAYBIG=2 #Interval to record difference between differences
+TWEAK_SENTINELDELAYSMALL=1 #Interval to record difference
+TWEAK_STRIKEMAX=3 #Number of strikes before Sentinel bans peer
+TWEAK_ABS_VAL=0 #0 to disable absolute value in Sentinel calculation, 1 to enable"|sed -E "s/^(\s)*//g" > "$DIR"/42Kmi/tweak.txt
+fi
+fi
+
 if [ -f "$DIR"/42Kmi/tweak.txt ] ; then
-TWEAKSETTINGS=$(tail +1 "$DIR"/42Kmi/tweak.txt|sed -E "s/#.*$//g"|sed -E "/(^#.*#$|^$|\;|#^[ \t]*$)|#/d"|sed -E 's/^.*=//g') #Settings stored here, called from memory
-TWEAKPINGRESOLUTION=$(echo "$TWEAKSETTINGS"|sed -n 1p)
-TWEAKTRGETCOUNT=$(echo "$TWEAKSETTINGS"|sed -n 2p)
-TWEAKPACKETMODE=$(echo "$TWEAKSETTINGS"|sed -n 3p)
-TWEAKPACKETINTERVAL=$(echo "$TWEAKSETTINGS"|sed -n 4p)
-TWEAKSENTMODE=$(echo "$TWEAKSETTINGS"|sed -n 5p)
-TWEAKSENTLIMIT=$(echo "$TWEAKSETTINGS"|sed -n 6p)
-TWEAKSENTRUN=$(echo "$TWEAKSETTINGS"|sed -n 7p)
-TWEAKSENTRES=$(echo "$TWEAKSETTINGS"|sed -n 8p)
-TWEAKSENTINTERVAL=$(echo "$TWEAKSETTINGS"|sed -n 9p)
-TWEAKSENTINELXSQMODE=$(echo "$TWEAKSETTINGS"|sed -n 10p)
+TWEAK_SETTINGS=$(tail +1 "$DIR"/42Kmi/tweak.txt|sed -E "s/#.*$//g"|sed -E "/(^#.*#$|^$|\;|#^[ \t]*$)|#/d"|sed -E 's/^.*=//g') #Settings stored here, called from memory
+TWEAK_PINGRESOLUTION=$(echo "$TWEAK_SETTINGS"|sed -n 1p)
+TWEAK_TRGETCOUNT=$(echo "$TWEAKSETTINGS"|sed -n 2p)
+TWEAK_SMARTLINECOUNT=$(echo "$TWEAKSETTINGS"|sed -n 3p)
+TWEAK_SMARTPERCENT=$(echo "$TWEAKSETTINGS"|sed -n 4p)
+TWEAK_SMART_AVG_COND =$(echo "$TWEAKSETTINGS"|sed -n 5p)
+TWEAK_SENTMODE=$(echo "$TWEAKSETTINGS"|sed -n 6p)
+TWEAK_SENTLOSSLIMIT=$(echo "$TWEAKSETTINGS"|sed -n 7p)
+TWEAK_PACKET_OR_BYTE=$(echo "$TWEAKSETTINGS"|sed -n 8p)
+TWEAK_SENTINELDELAYBIG=$(echo "$TWEAKSETTINGS"|sed -n 9p)
+TWEAK_SENTINELDELAYSMALL=$(echo "$TWEAKSETTINGS"|sed -n 10p)
+TWEAK_STRIKEMAX=$(echo "$TWEAKSETTINGS"|sed -n 11p)
+TWEAK_ABS_VAL=$(echo "$TWEAKSETTINGS"|sed -n 12p)
 fi 
 ##### TWEAKS #####
 ##### Get Country via ipapi.co #####
@@ -309,7 +400,7 @@ getcountry(){
 			"$(echo "${LDCOUNTRY}"|grep -Eo "^Research Triangle Park, US, NA")")
 				LDCOUNTRY="Research Triangle Park, NC, US, NA"
 				;;
-			"$(echo "${LDCOUNTRY}"|grep -Eo "^Newcastle\, US\, NA")")
+			"$(echo "${LDCOUNTRY}"|grep -Eo "^(Newcastle\, US\, NA)|(Newcastle\, Washington\, US\, NA)")")
 				LDCOUNTRY="Newcastle, WA, US, NA"
 				;;
 			"$(echo "${LDCOUNTRY}"|grep -Eo "^Maplewood\, US\, NA")")
@@ -655,7 +746,7 @@ meatandtatoes(){
 			if echo "$LIMIT"| grep -Eo "\.([0-9]{3})$"; then LIMIT="$(echo "$LIMIT"|sed -E "s/\.//g")"; else LIMIT="$(( LIMIT * 1000 ))"; fi
 			fi
 			COUNT=$(echo "$SETTINGS"|sed -n 3p) ### How many packets to send. Default is 5
-			if [ -f "$DIR"/42Kmi/tweak.txt ] ; then PINGRESOLUTION="${TWEAKPINGRESOLUTION}"; else PINGRESOLUTION=5; fi
+			if [ -f "$DIR"/42Kmi/tweak.txt ] ; then PINGRESOLUTION="${TWEAK_PINGRESOLUTION}"; else PINGRESOLUTION=5; fi
 			#PINGGET=$(echo $(echo "$(n=0; while [[ $n -lt "${COUNT}" ]]; do { ping -q -c "${PINGRESOLUTION}" -W 1 -s "${SIZE}" "${peer}" & } ; n=$((n+1)); done )"|grep -Eo "\/([0-9]{1,}\.[0-9]{1,})\/"|sed -E 's/(\/|\.)//g'|sed -E 's/(^|\b)(0){1,}//g'|sed -E 's/$/+/g')|sed -E 's/\+$//g') &> /dev/null
 			PINGGET=$(echo $(echo "$(n=0; while [[ $n -lt "${COUNT}" ]]; do { ping -c "${PINGRESOLUTION}" -W 1 -s "${SIZE}" "${peer}" & } ; n=$((n+1)); done )"|grep -Eo "time=(.*)$"|sed -E 's/( ms|\.|time=)//g'|sed -E 's/(^|\b)(0){1,}//g'|sed -E 's/$/+/g')|sed -E 's/\+$//g') &> /dev/null
 			wait $!
@@ -701,7 +792,7 @@ meatandtatoes(){
 			if echo "$TRACELIMIT"| grep -Eo "\.([0-9]{3})$"; then TRACELIMIT="$TRACELIMIT"; else TRACELIMIT="$(( TRACELIMIT * 1000 ))"; fi
 			fi
 			##### PARAMETERS #####
-			if [ -f "$DIR"/42Kmi/tweak.txt ] ; then TRGETCOUNT="${TWEAKTRGETCOUNT}"; else TRGETCOUNT=20; fi
+			if [ -f "$DIR"/42Kmi/tweak.txt ] ; then TRGETCOUNT="${TWEAK_TRGETCOUNT}"; else TRGETCOUNT=20; fi
 			MXP=$(( TTL * PROBES * TRGETCOUNT ))
 			#New TraceRoute
 			TRGET=$(echo $(echo "$(n=0; while [[ $n -lt "${TTL}" ]]; do { traceroute -Fn -m "${TRGETCOUNT}" -q "${PROBES}" -w 1 "${peer}" "${SIZE}" & } ; n=$((n+1)); done )"|grep -Eo "([0-9]{1,}\.[0-9]{3}\ ms)"|sed -E 's/(\/|\.|\ ms)//g'|sed -E 's/(^|\b)(0){1,}//g'|sed -E 's/$/+/g')|sed -E 's/\+$//g') &> /dev/null
@@ -831,9 +922,9 @@ wait $!
 #magic Happens Here
 ##### SETTINGS & TWEAKS #####
 SETTINGS=$(tail +1 "$DIR"/42Kmi/options_"$CONSOLENAME".txt|sed -E "s/#.*$//g"|sed -E "/(^#.*#$|^$|\;|#^[ \t]*$)|#/d"|sed -E 's/^.*=//g') #Settings stored here, called from memory
-SMARTLINECOUNT=8 #5
-SMARTPERCENT=155
-SMART_AVG_COND=$(( SMARTLINECOUNT * 40 / 100 )) #2
+if [ -f "$DIR"/42Kmi/tweak.txt ] ; then SMARTLINECOUNT=$TWEAK_SMARTLINECOUNT; else SMARTLINECOUNT=8; fi #5
+if [ -f "$DIR"/42Kmi/tweak.txt ] ; then SMARTPERCENT=$TWEAK_SMARTPERCENT; else SMARTPERCENT=155; fi #155
+if [ -f "$DIR"/42Kmi/tweak.txt ] ; then SMART_AVG_COND=$TWEAK_SMART_AVG_COND; else SMART_AVG_COND=$(( SMARTLINECOUNT * 40 / 100 )); fi #2
 
 if [ $SHELLIS = "ash" ]; then
 CURL_TIMEOUT=10
@@ -1042,19 +1133,19 @@ SENTINEL=$(echo "$SETTINGS"|sed -n 10p)
 {
 if [ "$SENTINEL" = "$(echo -n "$SENTINEL" | grep -oEi "(yes|1|on|enable(d?))")" ]; then
 
-	BYTELOSSLIMIT=1 #1
-	BYTEMODE=3 #0 or 1=Difference, 2=X^2, 3=Difference or X^2, 4=Difference & X^
+	if [ -f "$DIR"/42Kmi/tweak.txt ] ; then SENTMODE=$TWEAK_SENTMODE; else SENTMODE=3; fi #0 or 1=Difference, 2=X^2, 3=Difference or X^2, 4=Difference & X^
+	if [ -f "$DIR"/42Kmi/tweak.txt ] ; then SENTLOSSLIMIT=$TWEAK_SENTLOSSLIMIT; else SENTLOSSLIMIT=1; fi #1 Number before Sentinel takes action
 	sentinel(){
 	while "$@" &> /dev/null; do
 	
 	#Sentinel: Checks against intrinsic/extrinsic peer lag by comparing difference in transmitted packets or bytes at 2 time points
 	
-	PACKET_OR_BYTE=1 #1 for packets, 2 for bytes
-	SENTINELDELAYBIG=2
-	SENTINELDELAYSMALL=1
-	STRIKEMAX=3
+	if [ -f "$DIR"/42Kmi/tweak.txt ] ; then PACKET_OR_BYTE=$TWEAK_PACKET_OR_BYTE; else PACKET_OR_BYTE=1; fi #1 for packets, 2 for bytes
+	if [ -f "$DIR"/42Kmi/tweak.txt ] ; then SENTINELDELAYBIG=$TWEAK_SENTINELDELAYBIG; else SENTINELDELAYBIG=2; fi
+	if [ -f "$DIR"/42Kmi/tweak.txt ] ; then SENTINELDELAYSMALL=$TWEAK_SENTINELDELAYSMALL; else SENTINELDELAYSMALL=1;fi
+	if [ -f "$DIR"/42Kmi/tweak.txt ] ; then STRIKEMAX=$TWEAK_STRIKEMAX; else STRIKEMAX=3; fi
 	
-	ABS_VAL=0 #Set to 1 to use absolute values instead.
+	if [ -f "$DIR"/42Kmi/tweak.txt ] ; then ABS_VAL=$TWEAK_ABS_VAL; else ABS_VAL=0; fi #Set to 1 to use absolute values instead.
 	
 	if [ $PACKET_OR_BYTE = 2 ]; then
 		DIFF_MIN=500 #Minimum difference between small time delay
@@ -1165,18 +1256,18 @@ if [ "$SENTINEL" = "$(echo -n "$SENTINEL" | grep -oEi "(yes|1|on|enable(d?))")" 
 		##### SENTINELS #####
 
 		##### PACKETBLOCK ##### // 0 or 1=Difference, 2=X^2, 3=Difference or X^2, 4=Difference & X^2
-				case "${BYTEMODE}" in
-					"$(echo -n "${BYTEMODE}" | grep -oEiv "([234])")") # Difference only
-						BYTEBLOCK=$({ if [ "${BYTEDIFF}" -gt "${BYTELOSSLIMIT}" ]; then sentinelstrike; fi; } &)
+				case "${SENTMODE}" in
+					"$(echo -n "${SENTMODE}" | grep -oEiv "([234])")") # Difference only
+						BYTEBLOCK=$({ if [ "${BYTEDIFF}" -gt "${SENTLOSSLIMIT}" ]; then sentinelstrike; fi; } &)
 						;;
-					"$(echo -n "${BYTEMODE}" | grep -oEi "([2])")") #X^2 only
-						BYTEBLOCK=$({ if [ "${BYTEXSQ}" -gt "${BYTELOSSLIMIT}" ]; then sentinelstrike; fi; } &)
+					"$(echo -n "${SENTMODE}" | grep -oEi "([2])")") #X^2 only
+						BYTEBLOCK=$({ if [ "${BYTEXSQ}" -gt "${SENTLOSSLIMIT}" ]; then sentinelstrike; fi; } &)
 						;;
-					"$(echo -n "${BYTEMODE}" | grep -oEi "([3])")") #Difference or X^2
-						BYTEBLOCK=$({ if [ "${BYTEDIFF}" -gt "${BYTELOSSLIMIT}" ] || [ "${BYTEXSQ}" -gt "${BYTELOSSLIMIT}" ]; then sentinelstrike; fi; } &) 
+					"$(echo -n "${SENTMODE}" | grep -oEi "([3])")") #Difference or X^2
+						BYTEBLOCK=$({ if [ "${BYTEDIFF}" -gt "${SENTLOSSLIMIT}" ] || [ "${BYTEXSQ}" -gt "${SENTLOSSLIMIT}" ]; then sentinelstrike; fi; } &) 
 						;; 
-					"$(echo -n "${BYTEMODE}" | grep -oEi "([4])")") #Difference AND X^2
-						BYTEBLOCK=$({ if [ "${BYTEDIFF}" -gt "${BYTELOSSLIMIT}" ] && [ "${BYTEXSQ}" -gt "${BYTELOSSLIMIT}" ]; then sentinelstrike; fi; } &) 
+					"$(echo -n "${SENTMODE}" | grep -oEi "([4])")") #Difference AND X^2
+						BYTEBLOCK=$({ if [ "${BYTEDIFF}" -gt "${SENTLOSSLIMIT}" ] && [ "${BYTEXSQ}" -gt "${SENTLOSSLIMIT}" ]; then sentinelstrike; fi; } &) 
 						;;
 				esac
 	}

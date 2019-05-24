@@ -20,6 +20,8 @@ Options: ending the line with following enables
 
 -p : Populate. LagDrop will run to populate cache for more efficient operation but will not perform any filtering. Completely optional, and only needs to be run once if the you should choose.
 
+-t : Creates tweak.txt to adjust additional parameters.
+
 eg: /jffs/lagdrop.sh wiiu -s -l
 
 ==============================
