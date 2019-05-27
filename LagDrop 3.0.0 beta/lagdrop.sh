@@ -318,8 +318,9 @@ ONTHEFLYFILTER="amazonaws|akamaitechnologies|Akamai|twitter|nintendowifi\.net|(n
 #ONTHEFLYFILTER="klhjgdfshjvckxrsjrfkctyjztyflkutyjsrehxcvhjyutresdxfcgh"
 MSFT_SERVERS="(52\.(1((4[5-9])|([5-8][0-9])|(9[0-1]))))|(52\.(2(2[4-9]|[3-5][0-9])))|(52\.(9[6-9]|10[0-9]|11[1-5]))"
 LINODE="(173\.255\.((19[2-9)|(2[0-9]{2}))\.)"
+CLOUDFLARE="162\.15[89]\."
 IANA_IPs="(239\.255\.255\.250)|(10(\.[0-9]{1,3}){3})|(2(2[4-9]|3[0-9])(\.[0-9]{1,3}){3})|(255(\.([0-9]){1,3}){3})|(0\.)|(100\.((6[4-9])|[7-9][0-9]|1(([0-1][0-9])|(2[0-7]))))|(172\.((1[6-9])|(2[0-9])|(3[0-1])))"
-ONTHEFLYFILTER_IPs="${IANA_IPs}|${MSFT_SERVERS}|${LINODE}|1\.0\.0\.1|1\.1\.1\.1|127\.0\.0\.1|8\.8\.8\.8|8\.8\.4\.4" #Ignores these IPs, usually IANA reserved or something 
+ONTHEFLYFILTER_IPs="${IANA_IPs}|${MSFT_SERVERS}|${LINODE}|${CLOUDFLARE}|1\.0\.0\.1|1\.1\.1\.1|127\.0\.0\.1|8\.8\.8\.8|8\.8\.4\.4" #Ignores these IPs, usually IANA reserved or something 
 ##### Filter #####
 ##### TWEAKS #####
 # create 42Kmi/tweak.txt to edit these values
@@ -329,7 +330,7 @@ echo -e "TWEAK_PINGRESOLUTION=5 #Number of pings sent
 TWEAK_TRGETCOUNT=20 #Total number of Traceroute runs
 TWEAK_SMARTLINECOUNT=8 #Number of lines before averaging
 TWEAK_SMARTPERCENT=155 #Percentage of average before using average
-TWEAK_SMART_AVG_COND =2 #Number of items that must be higher than average before using average
+TWEAK_SMART_AVG_COND=2 #Number of items that must be higher than average before using average
 TWEAK_SENTMODE=3 #0 or 1=Difference, 2=X^2, 3=Difference or X^2, 4=Difference & X^
 TWEAK_SENTLOSSLIMIT=1 #Number before Sentinel takes action
 TWEAK_PACKET_OR_BYTE=1 #Sentinel calculates by packet (1) or bytes (2)
@@ -341,19 +342,19 @@ fi
 fi
 
 if [ -f "$DIR"/42Kmi/tweak.txt ] ; then
-TWEAK_SETTINGS=$(tail +1 "$DIR"/42Kmi/tweak.txt|sed -E "s/#.*$//g"|sed -E "/(^#.*#$|^$|\;|#^[ \t]*$)|#/d"|sed -E 's/^.*=//g') #Settings stored here, called from memory
+TWEAK_SETTINGS=$(tail +1 "$DIR"/42Kmi/tweak.txt|sed -E "s/(\s*)?#.*$//g"|sed -E "/(^#.*#$|^$|\;|#^[ \t]*$)|#/d"|sed -E 's/^.*=//g') #Settings stored here, called from memory
 TWEAK_PINGRESOLUTION=$(echo "$TWEAK_SETTINGS"|sed -n 1p)
-TWEAK_TRGETCOUNT=$(echo "$TWEAKSETTINGS"|sed -n 2p)
-TWEAK_SMARTLINECOUNT=$(echo "$TWEAKSETTINGS"|sed -n 3p)
-TWEAK_SMARTPERCENT=$(echo "$TWEAKSETTINGS"|sed -n 4p)
-TWEAK_SMART_AVG_COND =$(echo "$TWEAKSETTINGS"|sed -n 5p)
-TWEAK_SENTMODE=$(echo "$TWEAKSETTINGS"|sed -n 6p)
-TWEAK_SENTLOSSLIMIT=$(echo "$TWEAKSETTINGS"|sed -n 7p)
-TWEAK_PACKET_OR_BYTE=$(echo "$TWEAKSETTINGS"|sed -n 8p)
-TWEAK_SENTINELDELAYBIG=$(echo "$TWEAKSETTINGS"|sed -n 9p)
-TWEAK_SENTINELDELAYSMALL=$(echo "$TWEAKSETTINGS"|sed -n 10p)
-TWEAK_STRIKEMAX=$(echo "$TWEAKSETTINGS"|sed -n 11p)
-TWEAK_ABS_VAL=$(echo "$TWEAKSETTINGS"|sed -n 12p)
+TWEAK_TRGETCOUNT=$(echo "$TWEAK_SETTINGS"|sed -n 2p)
+TWEAK_SMARTLINECOUNT=$(echo "$TWEAK_SETTINGS"|sed -n 3p)
+TWEAK_SMARTPERCENT=$(echo "$TWEAK_SETTINGS"|sed -n 4p)
+TWEAK_SMART_AVG_COND=$(echo "$TWEAK_SETTINGS"|sed -n 5p)
+TWEAK_SENTMODE=$(echo "$TWEAK_SETTINGS"|sed -n 6p)
+TWEAK_SENTLOSSLIMIT=$(echo "$TWEAK_SETTINGS"|sed -n 7p)
+TWEAK_PACKET_OR_BYTE=$(echo "$TWEAK_SETTINGS"|sed -n 8p)
+TWEAK_SENTINELDELAYBIG=$(echo "$TWEAK_SETTINGS"|sed -n 9p)
+TWEAK_SENTINELDELAYSMALL=$(echo "$TWEAK_SETTINGS"|sed -n 10p)
+TWEAK_STRIKEMAX=$(echo "$TWEAK_SETTINGS"|sed -n 11p)
+TWEAK_ABS_VAL=$(echo "$TWEAK_SETTINGS"|sed -n 12p)
 fi 
 ##### TWEAKS #####
 ##### Get Country via ipapi.co #####
@@ -1385,6 +1386,7 @@ monitor(){
 ##### New Monitor Display #####
 display
 while "$@" &> /dev/null; do
+	sed -i -E "/\"\"/d" "/tmp/$RANDOMGET"
 	ATIME=$(date +%s -r "/tmp/$RANDOMGET")
 	ASIZE=$(tail +1 "/tmp/$RANDOMGET"|wc -c)
 	if [[ "$ATIME" != "$LTIME" ]]; then
