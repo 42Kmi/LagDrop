@@ -135,10 +135,10 @@ Strike 3: Yellow
 Banned: Red, with a ban message.
 ```
 
-##Clearing
+## Clearing
 When enabled, LagDrop clears entries once the minimum to clear limit is met. Cleared items have a magenta background before removal from the log.
 
-##Regional banning
+## Regional banning
 When Location flag (-l) is enabled, regional banning becomes available. Create a file bancountry.txt and you can enter lines in the format City, Region, Country to block connecting to peers from those regions. When enabled, peers may briefly appear in log before removal with a red background.
 
 Written "CC" format for Country only; "RR, CC" format for Region by Country; "(RR|GG), CC" format for multiple regions by country. Eg:
@@ -147,7 +147,7 @@ City_name, RR, CC
 ```
 Most regions and countries will use their region/country 2-letter abbreviations. RegEx is accepted. Priority is given to later characters to ephasize ban priority (country > region > city)
 
-##Ping Approximation
+## Ping Approximation
 Some peers may return a null ping time, "--", meaning that their router does not allow random pings. LagDrop can approximate a ping time for those peers, which is determined by averages of city > region > country > continent. These ping times will appear colored in the terminal: City = green, province = yellow, country = cyan, continent = magenta. Uncolored ping times is the actual ping time for that peer.
 
 ## whitelist.txt and blacklist.txt files
