@@ -30,6 +30,10 @@ What to expect in 3.0.0
 
 [Discuss LagDrop at 42Kmi.com](http://42kmi.com/Forum-42Kmi-LagDrop)
 
+[@42Kmi on Twitter](http://twitter/42Kmi) [@LagDrop on Twitter](http://twitter/LagDrop)
+
+[Join our Discord Server](https://discord.gg/SgH2HMa) [Help Channel](https://discord.gg/ckEs3Ua)
+
 
 ![FriendCode](https://i.imgur.com/FDSfaK0.jpg)
 Down to play if I'm free from studying!
