@@ -268,7 +268,7 @@ maketables &> /dev/null &
 if [ ! -d "$DIR"/42Kmi ] ; then mkdir -p "$DIR"/42Kmi ; fi
 if [ ! -d "$DIR"/42Kmi/$SUBFOLDER ] ; then mkdir -p "$DIR"/42Kmi/$SUBFOLDER ; fi
 if [ ! -f "$DIR"/42Kmi/options_"$CONSOLENAME".txt ] ; then echo -en "$CONSOLENAME=$GETSTATIC
-PINGLIMIT=150
+PINGLIMIT=100
 COUNT=15
 SIZE=1365
 MODE=5
@@ -368,7 +368,7 @@ getcountry(){
 	LDCOUNTRY=$(echo "$GEOMEM"|grep -E "^("$peer"|"$peerenc")#"|sed -n 1p|sed -E "s/^($peer|$peerenc)#//g")
 	else
 	LOCATION_DATA_STORE="$(curl --no-keepalive --no-buffer --connect-timeout ${CURL_TIMEOUT} -sk -A "$(echo $(dd bs=1 count=21 if=/dev/urandom 2>/dev/null)|hexdump -v -e '/1 "%02X"'|sed -e s/"0A$"//g)" "https://ipapi.co/"$peer"/json/")"
-	LDCOUNTRY="$(echo $(echo "$LOCATION_DATA_STORE"|grep -E "(city|region_code|\"country\"|continent_code)"|sed -E "s/^\s*?.*:\s*?//g"|sed -E "s/(\")//g")|sed "s/null/$(echo "$LOCATION_DATA_STORE"|grep "\"region\""|sed "s/.*://"|sed -E "s/(\"|,$|,?\s?(null))//g")/"|sed -E "s/(,$|,?\s?(null))//g")"
+	LDCOUNTRY="$(echo $(echo "$LOCATION_DATA_STORE"|grep -E "(city|region_code|\"country\"|continent_code)"|sed -E "s/^\s*?.*:\s*?//g"|sed -E "s/(\")//g")|sed "s/null/$(echo "$LOCATION_DATA_STORE"|grep "\"region\""|sed "s/.*://"|sed -E "s/(\"|,$|,?\s?(null))|(^(\s)*)//g")/"|sed -E "s/(,$|,?\s?(null))//g")"
 
 	wait $!
 	if [ -f "$DIR"/42Kmi/ipstack.txt ] ; then
@@ -577,10 +577,10 @@ cleanliness(){
 	cleansentinel
 	##### SENTINEL BANS #####
 	sentinel_bans(){
-		SENTINEL_BANS_LIST_GET=$(tail +1 "/tmp/$RANDOMGET"|sed -E "s/.\[[0-9]{1}(\;[0-9]{2})?m//g"|grep -E "${SENTINEL_BAN_MESSAGE}"|grep -Eo "\b([0-9]{1,3}\.){3}([0-9]{1,3})\b")
-
+		SENTINEL_BANS_LIST_GET=$(tail +1 "/tmp/$RANDOMGET"|sed -E "s/.\[[0-9]{1}(\;[0-9]{2})?m//g"|grep -Ev "(${RESPONSE1}|${RESPONSE2}|${RESPONSE3}})"|grep -E "${SENTINEL_BAN_MESSAGE}"|grep -Eo "\b([0-9]{1,3}\.){3}([0-9]{1,3})\b")
+    
 		for ip in $SENTINEL_BANS_LIST_GET; do
-
+    
 			if ! { iptables -nL LDBAN|grep -Eq "\b${ip}\b"; }; then
 				eval "iptables -A LDBAN -s $ip -d $CONSOLE -j REJECT "${WAITLOCK}""
 			fi 
@@ -1414,9 +1414,12 @@ fi 2> /dev/null
 
 specialcaserestart(){
 while : &> /dev/null; do
-	if { ! { iptables -nL LDACCEPT && iptables -nL LDREJECT && iptables -nL LDTEMPHOLD && iptables -nL LDIGNORE 2>&1 >/dev/null; } || [ "$(tail +1 "/tmp/$RANDOMGET"|sed -E "s/.\[[0-9]{1}(\;[0-9]{2})?m//g"|grep -Eq ".*")" != "" ]; }; then
-	maketables
-	fi
+	#if { ! { iptables -nL LDACCEPT && iptables -nL LDREJECT && iptables -nL LDTEMPHOLD && iptables -nL LDIGNORE 2>&1 >/dev/null; } || [ "$(tail +1 "/tmp/$RANDOMGET"|sed -E "s/.\[[0-9]{1}(\;[0-9]{2})?m//g"|grep -Eq ".*")" != "" ]; }; then
+	#maketables
+	#fi
+	for tablename in LDACCEPT LDREJECT LDTEMPHOLD LDIGNORE LDBAN; do
+		if ! { iptables -nL $tablename &> /dev/null }; then maketables; fi
+	done &> /dev/null
 #kill $!
 done
 }
