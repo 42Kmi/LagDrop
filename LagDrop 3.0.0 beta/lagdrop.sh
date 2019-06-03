@@ -990,9 +990,9 @@ if ! [ "$SWITCH" = "$(echo -n "$SWITCH" | grep -oEi "(off|0|disable(d?))")" ]; t
 	#peerenc="$(echo -n "$peer"|openssl enc -rc4-40 -nosalt -k "42KmiLagDrop")"
 		PEERIP="${PEERIP//$peer/\b}"
 		LDSIMULLIMIT=8
-		if [[ $(printf "$PEERIP"|wc -l) <= $LDSIMULLIMIT ]] && [[ $(printf "$PEERIP"|wc -l) > 0 ]]; then
+		if [ $(echo "$PEERIP"|wc -l) -le $LDSIMULLIMIT ] && [ $(echo "$PEERIP"|wc -l) -gt 0 ]; then
 			wait $!
-			{ meatandtatoes; } &
+			( meatandtatoes; ) &
 		else
 			{ meatandtatoes; }
 		fi
@@ -1227,7 +1227,7 @@ if [ "$SENTINEL" = "$(echo -n "$SENTINEL" | grep -oEi "(yes|1|on|enable(d?))")" 
 						0)
 							# Strike 1
 							if [ "$STRIKECOUNT" = 0 ] || [ "$STRIKECOUNT" = "" ] || [ "$STRIKECOUNT" -lt 1 ]; then
-								sed -i -E "s/#(${ip})\b/#$(echo -e "${BG_CYAN}")\1/g" "/tmp/$RANDOMGET"
+								sed -i -E "s/#(${ip})\b/#$(echo -e "${BG_CYAN}")\1%/g" "/tmp/$RANDOMGET"
 								eval "iptables -A LDSENTSTRIKE -s $ip"
 							fi
 						;;
@@ -1235,7 +1235,7 @@ if [ "$SENTINEL" = "$(echo -n "$SENTINEL" | grep -oEi "(yes|1|on|enable(d?))")" 
 						1)
 							# Strike 2
 							if [ "$STRIKECOUNT" = 1 ]; then
-								sed -i -E "s/#(.\[[0-9]{1}\;[0-9]{2}m)(${ip})\b/#$(echo -e "${BG_GREEN}")\2/g" "/tmp/$RANDOMGET"
+								sed -i -E "s/#(.\[[0-9]{1}\;[0-9]{2}m)(${ip})\b/#$(echo -e "${BG_GREEN}")\2%/g" "/tmp/$RANDOMGET"
 								eval "iptables -A LDSENTSTRIKE -s $ip"
 							fi
 						;;
@@ -1243,7 +1243,7 @@ if [ "$SENTINEL" = "$(echo -n "$SENTINEL" | grep -oEi "(yes|1|on|enable(d?))")" 
 						2)
 							# Strike 3
 							if [ "$STRIKECOUNT" = 2 ]; then
-								sed -i -E "s/#(.\[[0-9]{1}\;[0-9]{2}m)(${ip})\b/#$(echo -e "${BG_YELLOW}")\2/g" "/tmp/$RANDOMGET"
+								sed -i -E "s/#(.\[[0-9]{1}\;[0-9]{2}m)(${ip})\b/#$(echo -e "${BG_YELLOW}")\2%/g" "/tmp/$RANDOMGET"
 								eval "iptables -A LDSENTSTRIKE -s $ip"
 							fi
 						;;
@@ -1370,7 +1370,7 @@ if [ $SHOWLOCATION = 1 ]; then LOCATION="$(echo " | LOCATE${BC}")"; LOCATECOL="$
 
 		for line in "$LOG"; do
 		wait $!
-			echo -e "$line"|sed -E "s/(#){2,}/#/"|tr "#" "\t"|sed -E "/^\s*$/d"|sed '/txt/d'|sort -n|sed -E "s/^\"([0-9]{1,})\"/"$(if [ $(( $(date +%s) - \1 )) -le $NOTFRESH ]; then echo -e ${YELLOW}; else echo -e ${BLUE}; fi)"/g"|sed -E "s/(([0-9]{4,})(\-([0-9]{1,2})){2}.([0-9]{1,2}\:?){3})/\1$(echo -e ${NC})/g"|sed -E 's/\.[0-9]{1,3}\.[0-9]{1,3}\./.xx.xx./g'|sed -E "s/([0-9])ms/\1/g" |grep -nE ".*"|sed -E "s/^([0-9]{1,}):/\1.$(echo -e "${HIDE}") $(echo -e "${NC}")/g"|sed -E "s/[0-9]{4,}(-[0-9]{2}){2}\s//g"|sed -E "s/\, \, /, /g"|sed -E "s/\, 0(null)?0\,/,/g"|sed -E "s/^([1-9]\.)/ &/g"
+			echo -e "$line"|sed -E "s/%//g"|sed -E "s/(#){2,}/#/"|tr "#" "\t"|sed -E "/^\s*$/d"|sed '/txt/d'|sort -n|sed -E "s/^\"([0-9]{1,})\"/"$(if [ $(( $(date +%s) - \1 )) -le $NOTFRESH ]; then echo -e ${YELLOW}; else echo -e ${BLUE}; fi)"/g"|sed -E "s/(([0-9]{4,})(\-([0-9]{1,2})){2}.([0-9]{1,2}\:?){3})/\1$(echo -e ${NC})/g"|sed -E 's/\.[0-9]{1,3}\.[0-9]{1,3}\./.xx.xx./g'|sed -E "s/([0-9])ms/\1/g" |grep -nE ".*"|sed -E "s/^([0-9]{1,}):/\1.$(echo -e "${HIDE}") $(echo -e "${NC}")/g"|sed -E "s/[0-9]{4,}(-[0-9]{2}){2}\s//g"|sed -E "s/\, \, /, /g"|sed -E "s/\, 0(null)?0\,/,/g"|sed -E "s/^([1-9]\.)/ &/g"
 		done &
 		else
 			if [ ! -f "/tmp/$RANDOMGET" ] || [ ! -s "/tmp/$RANDOMGET" ]; then
