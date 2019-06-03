@@ -239,11 +239,11 @@ until { iptables -nL LDACCEPT|grep -Eoq "([1-9])([0-9]{1,})? references"; }; do 
 else break; fi &> /dev/null &
 
 if ! { iptables -nL LDREJECT|grep -Eoq "([1-9])([0-9]{1,})? references" 2>&1 >/dev/null; }; then
-until { iptables -nL LDREJECT|grep -Eoq "([1-9])([0-9]{1,})? references"; }; do iptables -N LDREJECT|iptables -P LDREJECT REJECT |iptables -t filter -A FORWARD -j LDREJECT; done &> /dev/null & break
+until { iptables -nL LDREJECT|grep -Eoq "([1-9])([0-9]{1,})? references"; }; do iptables -N LDREJECT|iptables -P LDREJECT REJECT |iptables -t filter -I FORWARD -j LDREJECT; done &> /dev/null & break
 else break; fi &> /dev/null &
 
 if ! { iptables -nL LDBAN|grep -Eoq "([1-9])([0-9]{1,})? references" 2>&1 >/dev/null; }; then
-until { iptables -nL LDBAN|grep -Eoq "([1-9])([0-9]{1,})? references"; }; do iptables -N LDBAN|iptables -P LDBAN REJECT --reject-with icmp-host-prohibited|iptables -t filter -A FORWARD -j LDBAN; done &> /dev/null & break
+until { iptables -nL LDBAN|grep -Eoq "([1-9])([0-9]{1,})? references"; }; do iptables -N LDBAN|iptables -P LDBAN REJECT --reject-with icmp-host-prohibited|iptables -t filter -I FORWARD -j LDBAN; done &> /dev/null & break
 else break; fi &> /dev/null &
 
 if ! { iptables -nL LDIGNORE|grep -Eoq "([1-9])([0-9]{1,})? references" 2>&1 >/dev/null; }; then
@@ -456,7 +456,7 @@ getcountry(){
 			BANCOUNTRYIP=$(tail +1 "/tmp/$RANDOMGET"| grep -Ei "($BANCOUNTRY).\[.*$"|grep -Eo "([0-9]{1,3}\.){3}[0-9]{1,3}""${ADDWHITELIST}")
 			for ip in $BANCOUNTRYIP; do
 				if ! { iptables -nL LDBAN|grep -Eq "\b${ip}\b"; }; then
-				eval "iptables -A LDBAN -s $ip -d $CONSOLE -j REJECT --reject-with icmp-host-prohibited "${WAITLOCK}""; wait $!
+				eval "iptables -I LDBAN -s $ip -d $CONSOLE -j REJECT --reject-with icmp-host-prohibited "${WAITLOCK}""; wait $!
 				fi
 				TABLENAMES=$(echo -e "LDACCEPT|LDREJECT|LDTEMPHOLD"|tr "|" "\\n")
 				for tablename in $TABLENAMES; do
@@ -582,7 +582,7 @@ cleanliness(){
 		for ip in $SENTINEL_BANS_LIST_GET; do
     
 			if ! { iptables -nL LDBAN|grep -Eq "\b${ip}\b"; }; then
-				eval "iptables -A LDBAN -s $ip -d $CONSOLE -j REJECT "${WAITLOCK}""
+				eval "iptables -I LDBAN -s $ip -d $CONSOLE -j REJECT "${WAITLOCK}""
 			fi 
 		done &
 	}
@@ -836,7 +836,7 @@ if [ $FORNULL = 1 ] && { [ $PINGFULLDECIMAL = "$PINGFULLDECIMAL" ] || [ $PINGFUL
 #if [ $FORNULLTR = 1 ] && { [ $TRFULLDECIMAL = "$TRFULLDECIMAL" ] || [ $TRFULLDECIMAL = "0" ]; }; then TRFULLDECIMAL="$NULLTEXT"; fi
 if [ $FORNULLTR = 1 ] && { [ $TRAVGFULLDECIMAL = "$TRAVGFULLDECIMAL" ] || [ $TRAVGFULLDECIMAL = "0" ]; }; then TRAVGFULLDECIMAL="$NULLTEXT"; fi
 ##### NULL/NO RESPONSE PEERS #####
-if [ $PINGFULLDECIMAL = "$NULLTEXT" ] && [ TRAVGFULLDECIMAL = "$NULLTEXT" ]; then eval "iptables -A LDBAN -p all -s $peer -d $CONSOLE -j REJECT "${WAITLOCK}""; fi
+if [ $PINGFULLDECIMAL = "$NULLTEXT" ] && [ TRAVGFULLDECIMAL = "$NULLTEXT" ]; then eval "iptables -I LDBAN -p all -s $peer -d $CONSOLE -j REJECT "${WAITLOCK}""; fi
 		##### Count Connected IPs #####
 		NUMBEROFPEERS=$(echo "$SETTINGS"|sed -n 17p)
 		OMIT=$("$WHITELIST" && "$BLACKLIST"|sed -E 's/\^//g')
@@ -856,23 +856,23 @@ if [ $PINGFULLDECIMAL = "$NULLTEXT" ] && [ TRAVGFULLDECIMAL = "$NULLTEXT" ]; the
 			{
 			case "${MODE}" in
 				 "$(echo -n "${MODE}" | grep -oEiv "([2345])")") #0 or 1=Ping Only
-					  BLOCK=$({ if [ "${PINGFULL}" -gt "${LIMIT}" ]; then { eval "iptables -A LDREJECT -s $peer -d $CONSOLE -j $ACTION1 "${WAITLOCK}";" && if ! { tail +1 /tmp/$RANDOMGET| grep -Fo "$peer"; }; then echo -e "\"$EPOCH\"$DATETIME#"$borneopeer"#"$PINGFULLDECIMAL"#"$TRAVGFULLDECIMAL"#"$RESULT"#"$SHOWSMARTLOG"#"$SHOWSMARTLOGTR"#"$LDCOUNTRY_toLog"#" >> /tmp/$RANDOMGET;fi; }; else { eval "iptables -A LDACCEPT -p all -s $peer -d $CONSOLE -j ACCEPT "${WAITLOCK}"" && if ! { tail +1 /tmp/$RANDOMGET| grep -Fo "$peer"; }; then echo -e "\"$EPOCH\"$DATETIME#"$borneopeer"#"$PINGFULLDECIMAL"#"$TRAVGFULLDECIMAL"#"$RESULT"#"$SHOWSMARTLOG"#"$SHOWSMARTLOGTR"#"$LDCOUNTRY_toLog"#" >> /tmp/$RANDOMGET;fi; } fi; } &)
+					  BLOCK=$({ if [ "${PINGFULL}" -gt "${LIMIT}" ]; then { eval "iptables -I LDREJECT -s $peer -d $CONSOLE -j $ACTION1 "${WAITLOCK}";" && if ! { tail +1 /tmp/$RANDOMGET| grep -Fo "$peer"; }; then echo -e "\"$EPOCH\"$DATETIME#"$borneopeer"#"$PINGFULLDECIMAL"#"$TRAVGFULLDECIMAL"#"$RESULT"#"$SHOWSMARTLOG"#"$SHOWSMARTLOGTR"#"$LDCOUNTRY_toLog"#" >> /tmp/$RANDOMGET;fi; }; else { eval "iptables -A LDACCEPT -p all -s $peer -d $CONSOLE -j ACCEPT "${WAITLOCK}"" && if ! { tail +1 /tmp/$RANDOMGET| grep -Fo "$peer"; }; then echo -e "\"$EPOCH\"$DATETIME#"$borneopeer"#"$PINGFULLDECIMAL"#"$TRAVGFULLDECIMAL"#"$RESULT"#"$SHOWSMARTLOG"#"$SHOWSMARTLOGTR"#"$LDCOUNTRY_toLog"#" >> /tmp/$RANDOMGET;fi; } fi; } &)
 					  ;;
 				 "$(echo -n "${MODE}" | grep -oEi "([2])")") #2=TraceRoute Only
-					  BLOCK=$({ if [ "${TRAVGFULL}" -gt "${TRACELIMIT}" ]; then { eval "iptables -A LDREJECT -s $peer -d $CONSOLE -j $ACTION1 "${WAITLOCK}";" && if ! { tail +1 /tmp/$RANDOMGET| grep -Fo "$peer"; }; then echo -e "\"$EPOCH\"$DATETIME#"$borneopeer"#"$PINGFULLDECIMAL"#"$TRAVGFULLDECIMAL"#"$RESULT"#"$SHOWSMARTLOG"#"$SHOWSMARTLOGTR"#"$LDCOUNTRY_toLog"#" >> /tmp/$RANDOMGET;fi; }; else { eval "iptables -A LDACCEPT -p all -s $peer -d $CONSOLE -j ACCEPT "${WAITLOCK}"" && if ! { tail +1 /tmp/$RANDOMGET| grep -Fo "$peer"; }; then echo -e "\"$EPOCH\"$DATETIME#"$borneopeer"#"$PINGFULLDECIMAL"#"$TRAVGFULLDECIMAL"#"$RESULT"#"$SHOWSMARTLOG"#"$SHOWSMARTLOGTR"#"$LDCOUNTRY_toLog"#" >> /tmp/$RANDOMGET;fi; } fi; } &)
+					  BLOCK=$({ if [ "${TRAVGFULL}" -gt "${TRACELIMIT}" ]; then { eval "iptables -I LDREJECT -s $peer -d $CONSOLE -j $ACTION1 "${WAITLOCK}";" && if ! { tail +1 /tmp/$RANDOMGET| grep -Fo "$peer"; }; then echo -e "\"$EPOCH\"$DATETIME#"$borneopeer"#"$PINGFULLDECIMAL"#"$TRAVGFULLDECIMAL"#"$RESULT"#"$SHOWSMARTLOG"#"$SHOWSMARTLOGTR"#"$LDCOUNTRY_toLog"#" >> /tmp/$RANDOMGET;fi; }; else { eval "iptables -A LDACCEPT -p all -s $peer -d $CONSOLE -j ACCEPT "${WAITLOCK}"" && if ! { tail +1 /tmp/$RANDOMGET| grep -Fo "$peer"; }; then echo -e "\"$EPOCH\"$DATETIME#"$borneopeer"#"$PINGFULLDECIMAL"#"$TRAVGFULLDECIMAL"#"$RESULT"#"$SHOWSMARTLOG"#"$SHOWSMARTLOGTR"#"$LDCOUNTRY_toLog"#" >> /tmp/$RANDOMGET;fi; } fi; } &)
 					  ;;
 				 "$(echo -n "${MODE}" | grep -oEi "([3])")") #3=Ping OR TraceRoute
-					  BLOCK=$({ if [ "${PINGFULL}" -gt "${LIMIT}" ] || [ "${TRAVGFULL}" -gt "${TRACELIMIT}" ]; then { eval "iptables -A LDREJECT -s $peer -d $CONSOLE -j $ACTION1 "${WAITLOCK}";" && if ! { tail +1 /tmp/$RANDOMGET| grep -Fo "$peer"; }; then echo -e "\"$EPOCH\"$DATETIME#"$borneopeer"#"$PINGFULLDECIMAL"#"$TRAVGFULLDECIMAL"#"$RESULT"#"$SHOWSMARTLOG"#"$SHOWSMARTLOGTR"#"$LDCOUNTRY_toLog"#" >> /tmp/$RANDOMGET;fi; }; else { eval "iptables -A LDACCEPT -p all -s $peer -d $CONSOLE -j ACCEPT "${WAITLOCK}"" && if ! { tail +1 /tmp/$RANDOMGET| grep -Fo "$peer"; }; then echo -e "\"$EPOCH\"$DATETIME#"$borneopeer"#"$PINGFULLDECIMAL"#"$TRAVGFULLDECIMAL"#"$RESULT"#"$SHOWSMARTLOG"#"$SHOWSMARTLOGTR"#"$LDCOUNTRY_toLog"#" >> /tmp/$RANDOMGET;fi; } fi; } &)
+					  BLOCK=$({ if [ "${PINGFULL}" -gt "${LIMIT}" ] || [ "${TRAVGFULL}" -gt "${TRACELIMIT}" ]; then { eval "iptables -I LDREJECT -s $peer -d $CONSOLE -j $ACTION1 "${WAITLOCK}";" && if ! { tail +1 /tmp/$RANDOMGET| grep -Fo "$peer"; }; then echo -e "\"$EPOCH\"$DATETIME#"$borneopeer"#"$PINGFULLDECIMAL"#"$TRAVGFULLDECIMAL"#"$RESULT"#"$SHOWSMARTLOG"#"$SHOWSMARTLOGTR"#"$LDCOUNTRY_toLog"#" >> /tmp/$RANDOMGET;fi; }; else { eval "iptables -A LDACCEPT -p all -s $peer -d $CONSOLE -j ACCEPT "${WAITLOCK}"" && if ! { tail +1 /tmp/$RANDOMGET| grep -Fo "$peer"; }; then echo -e "\"$EPOCH\"$DATETIME#"$borneopeer"#"$PINGFULLDECIMAL"#"$TRAVGFULLDECIMAL"#"$RESULT"#"$SHOWSMARTLOG"#"$SHOWSMARTLOGTR"#"$LDCOUNTRY_toLog"#" >> /tmp/$RANDOMGET;fi; } fi; } &)
 					  ;; 
 				 "$(echo -n "${MODE}" | grep -oEi "([4])")") #4=Ping AND TraceRoute
 					  #LIMIT="$(( $LIMIT + 5000 ))" #Fuzzy. Lenient for ping times X ms above limit
-					  BLOCK=$({ if  { [ "${PINGFULL}" -le "$(( ${LIMIT} + 5000 ))" ] && [ "${TRAVGFULL}" -gt "${TRACELIMIT}" ]; }; then { eval "iptables -A LDACCEPT -p all -s $peer -d $CONSOLE -j ACCEPT "${WAITLOCK}"" && if ! { tail +1 /tmp/$RANDOMGET| grep -Fo "$peer"; }; then echo -e "\"$EPOCH\"$DATETIME#"$borneopeer"#"$PINGFULLDECIMAL"#"$TRAVGFULLDECIMAL"#"${YELLOW}${RESPONSE2}${NC}"#"$SHOWSMARTLOG"#"$SHOWSMARTLOGTR"#"$LDCOUNTRY_toLog"#" >> /tmp/$RANDOMGET; fi; }; elif { [ "${PINGFULL}" -gt "$(( ${LIMIT} + 5000 ))" ] && [ "${TRAVGFULL}" -gt "${TRACELIMIT}" ]; } || { [ "${PINGFULL}" -gt "$(( ${LIMIT} + 5000 ))" ] && [ "${TRAVGFULL}" -le "${TRACELIMIT}" ]; } || { [ "${PINGFULL}" -lt "1000" ] && [ "${TRAVGFULL}" -gt "${TRACELIMIT}" ]; }; then { eval "iptables -A LDREJECT -s $peer -d $CONSOLE -j $ACTION1 "${WAITLOCK}";" && if ! { tail +1 /tmp/$RANDOMGET| grep -Fo "$peer"; }; then echo -e "\"$EPOCH\"$DATETIME#"$borneopeer"#"$PINGFULLDECIMAL"#"$TRAVGFULLDECIMAL"#"${RED}${RESPONSE3}${NC}"#"$SHOWSMARTLOG"#"$SHOWSMARTLOGTR"#"$LDCOUNTRY_toLog"#" >> /tmp/$RANDOMGET;fi; }; else { eval "iptables -A LDACCEPT -p all -s $peer -d $CONSOLE -j ACCEPT "${WAITLOCK}"" && if ! { tail +1 /tmp/$RANDOMGET| grep -Fo "$peer"; }; then echo -e "\"$EPOCH\"$DATETIME#"$borneopeer"#"$PINGFULLDECIMAL"#"$TRAVGFULLDECIMAL"#"$RESULT"#"$SHOWSMARTLOG"#"$SHOWSMARTLOGTR"#"$LDCOUNTRY_toLog"#" >> /tmp/$RANDOMGET; fi; } fi; } &)
+					  BLOCK=$({ if  { [ "${PINGFULL}" -le "$(( ${LIMIT} + 5000 ))" ] && [ "${TRAVGFULL}" -gt "${TRACELIMIT}" ]; }; then { eval "iptables -A LDACCEPT -p all -s $peer -d $CONSOLE -j ACCEPT "${WAITLOCK}"" && if ! { tail +1 /tmp/$RANDOMGET| grep -Fo "$peer"; }; then echo -e "\"$EPOCH\"$DATETIME#"$borneopeer"#"$PINGFULLDECIMAL"#"$TRAVGFULLDECIMAL"#"${YELLOW}${RESPONSE2}${NC}"#"$SHOWSMARTLOG"#"$SHOWSMARTLOGTR"#"$LDCOUNTRY_toLog"#" >> /tmp/$RANDOMGET; fi; }; elif { [ "${PINGFULL}" -gt "$(( ${LIMIT} + 5000 ))" ] && [ "${TRAVGFULL}" -gt "${TRACELIMIT}" ]; } || { [ "${PINGFULL}" -gt "$(( ${LIMIT} + 5000 ))" ] && [ "${TRAVGFULL}" -le "${TRACELIMIT}" ]; } || { [ "${PINGFULL}" -lt "1000" ] && [ "${TRAVGFULL}" -gt "${TRACELIMIT}" ]; }; then { eval "iptables -I LDREJECT -s $peer -d $CONSOLE -j $ACTION1 "${WAITLOCK}";" && if ! { tail +1 /tmp/$RANDOMGET| grep -Fo "$peer"; }; then echo -e "\"$EPOCH\"$DATETIME#"$borneopeer"#"$PINGFULLDECIMAL"#"$TRAVGFULLDECIMAL"#"${RED}${RESPONSE3}${NC}"#"$SHOWSMARTLOG"#"$SHOWSMARTLOGTR"#"$LDCOUNTRY_toLog"#" >> /tmp/$RANDOMGET;fi; }; else { eval "iptables -A LDACCEPT -p all -s $peer -d $CONSOLE -j ACCEPT "${WAITLOCK}"" && if ! { tail +1 /tmp/$RANDOMGET| grep -Fo "$peer"; }; then echo -e "\"$EPOCH\"$DATETIME#"$borneopeer"#"$PINGFULLDECIMAL"#"$TRAVGFULLDECIMAL"#"$RESULT"#"$SHOWSMARTLOG"#"$SHOWSMARTLOGTR"#"$LDCOUNTRY_toLog"#" >> /tmp/$RANDOMGET; fi; } fi; } &)
 					  ;;
 				 "$(echo -n "${MODE}" | grep -oEi "([5])")") #4=TraceRoute if Ping is null
 				if [ "${PINGFULL}" = "--" ] || [ "${PINGFULL}" = "0" ] || [ $PINGFULLDECIMAL = "0" ] || [ $PINGFULLDECIMAL = "--" ] || [ $PINGFULLDECIMAL = "\-\-" ]; then
-					BLOCK=$({ if [ "${TRAVGFULL}" -gt "${TRACELIMIT}" ]; then { eval "iptables -A LDREJECT -s $peer -d $CONSOLE -j $ACTION1 "${WAITLOCK}";" && if ! { tail +1 /tmp/$RANDOMGET| grep -Fo "$peer"; }; then echo -e "\"$EPOCH\"$DATETIME#"$borneopeer"#"$PINGFULLDECIMAL"#"$TRAVGFULLDECIMAL"#"$RESULT"#"$SHOWSMARTLOG"#"$SHOWSMARTLOGTR"#"$LDCOUNTRY_toLog"#" >> /tmp/$RANDOMGET;fi; }; else { eval "iptables -A LDACCEPT -p all -s $peer -d $CONSOLE -j ACCEPT "${WAITLOCK}"" && if ! { tail +1 /tmp/$RANDOMGET| grep -Fo "$peer"; }; then echo -e "\"$EPOCH\"$DATETIME#"$borneopeer"#"$PINGFULLDECIMAL"#"$TRAVGFULLDECIMAL"#"$RESULT"#"$SHOWSMARTLOG"#"$SHOWSMARTLOGTR"#"$LDCOUNTRY_toLog"#" >> /tmp/$RANDOMGET;fi; } fi; } &)
+					BLOCK=$({ if [ "${TRAVGFULL}" -gt "${TRACELIMIT}" ]; then { eval "iptables -I LDREJECT -s $peer -d $CONSOLE -j $ACTION1 "${WAITLOCK}";" && if ! { tail +1 /tmp/$RANDOMGET| grep -Fo "$peer"; }; then echo -e "\"$EPOCH\"$DATETIME#"$borneopeer"#"$PINGFULLDECIMAL"#"$TRAVGFULLDECIMAL"#"$RESULT"#"$SHOWSMARTLOG"#"$SHOWSMARTLOGTR"#"$LDCOUNTRY_toLog"#" >> /tmp/$RANDOMGET;fi; }; else { eval "iptables -A LDACCEPT -p all -s $peer -d $CONSOLE -j ACCEPT "${WAITLOCK}"" && if ! { tail +1 /tmp/$RANDOMGET| grep -Fo "$peer"; }; then echo -e "\"$EPOCH\"$DATETIME#"$borneopeer"#"$PINGFULLDECIMAL"#"$TRAVGFULLDECIMAL"#"$RESULT"#"$SHOWSMARTLOG"#"$SHOWSMARTLOGTR"#"$LDCOUNTRY_toLog"#" >> /tmp/$RANDOMGET;fi; } fi; } &)
 				else 
-					BLOCK=$({ if  { [ "${PINGFULL}" -le "$(( ${LIMIT} + 5000 ))" ] && [ "${TRAVGFULL}" -gt "${TRACELIMIT}" ]; }; then { eval "iptables -A LDACCEPT -p all -s $peer -d $CONSOLE -j ACCEPT "${WAITLOCK}"" && if ! { tail +1 /tmp/$RANDOMGET| grep -Fo "$peer"; }; then echo -e "\"$EPOCH\"$DATETIME#"$borneopeer"#"$PINGFULLDECIMAL"#"$TRAVGFULLDECIMAL"#"${YELLOW}${RESPONSE2}${NC}"#"$SHOWSMARTLOG"#"$SHOWSMARTLOGTR"#"$LDCOUNTRY_toLog"#" >> /tmp/$RANDOMGET; fi; }; elif { [ "${PINGFULL}" -gt "$(( ${LIMIT} + 5000 ))" ] && [ "${TRAVGFULL}" -gt "${TRACELIMIT}" ]; } || { [ "${PINGFULL}" -gt "$(( ${LIMIT} + 5000 ))" ] && [ "${TRAVGFULL}" -le "${TRACELIMIT}" ]; } || { [ "${PINGFULL}" -lt "1000" ] && [ "${TRAVGFULL}" -gt "${TRACELIMIT}" ]; }; then { eval "iptables -A LDREJECT -s $peer -d $CONSOLE -j $ACTION1 "${WAITLOCK}";" && if ! { tail +1 /tmp/$RANDOMGET| grep -Fo "$peer"; }; then echo -e "\"$EPOCH\"$DATETIME#"$borneopeer"#"$PINGFULLDECIMAL"#"$TRAVGFULLDECIMAL"#"${RED}${RESPONSE3}${NC}"#"$SHOWSMARTLOG"#"$SHOWSMARTLOGTR"#"$LDCOUNTRY_toLog"#" >> /tmp/$RANDOMGET;fi; }; else { eval "iptables -A LDACCEPT -p all -s $peer -d $CONSOLE -j ACCEPT "${WAITLOCK}"" && if ! { tail +1 /tmp/$RANDOMGET| grep -Fo "$peer"; }; then echo -e "\"$EPOCH\"$DATETIME#"$borneopeer"#"$PINGFULLDECIMAL"#"$TRAVGFULLDECIMAL"#"$RESULT"#"$SHOWSMARTLOG"#"$SHOWSMARTLOGTR"#"$LDCOUNTRY_toLog"#" >> /tmp/$RANDOMGET; fi; } fi; } &)
+					BLOCK=$({ if  { [ "${PINGFULL}" -le "$(( ${LIMIT} + 5000 ))" ] && [ "${TRAVGFULL}" -gt "${TRACELIMIT}" ]; }; then { eval "iptables -A LDACCEPT -p all -s $peer -d $CONSOLE -j ACCEPT "${WAITLOCK}"" && if ! { tail +1 /tmp/$RANDOMGET| grep -Fo "$peer"; }; then echo -e "\"$EPOCH\"$DATETIME#"$borneopeer"#"$PINGFULLDECIMAL"#"$TRAVGFULLDECIMAL"#"${YELLOW}${RESPONSE2}${NC}"#"$SHOWSMARTLOG"#"$SHOWSMARTLOGTR"#"$LDCOUNTRY_toLog"#" >> /tmp/$RANDOMGET; fi; }; elif { [ "${PINGFULL}" -gt "$(( ${LIMIT} + 5000 ))" ] && [ "${TRAVGFULL}" -gt "${TRACELIMIT}" ]; } || { [ "${PINGFULL}" -gt "$(( ${LIMIT} + 5000 ))" ] && [ "${TRAVGFULL}" -le "${TRACELIMIT}" ]; } || { [ "${PINGFULL}" -lt "1000" ] && [ "${TRAVGFULL}" -gt "${TRACELIMIT}" ]; }; then { eval "iptables -I LDREJECT -s $peer -d $CONSOLE -j $ACTION1 "${WAITLOCK}";" && if ! { tail +1 /tmp/$RANDOMGET| grep -Fo "$peer"; }; then echo -e "\"$EPOCH\"$DATETIME#"$borneopeer"#"$PINGFULLDECIMAL"#"$TRAVGFULLDECIMAL"#"${RED}${RESPONSE3}${NC}"#"$SHOWSMARTLOG"#"$SHOWSMARTLOGTR"#"$LDCOUNTRY_toLog"#" >> /tmp/$RANDOMGET;fi; }; else { eval "iptables -A LDACCEPT -p all -s $peer -d $CONSOLE -j ACCEPT "${WAITLOCK}"" && if ! { tail +1 /tmp/$RANDOMGET| grep -Fo "$peer"; }; then echo -e "\"$EPOCH\"$DATETIME#"$borneopeer"#"$PINGFULLDECIMAL"#"$TRAVGFULLDECIMAL"#"$RESULT"#"$SHOWSMARTLOG"#"$SHOWSMARTLOGTR"#"$LDCOUNTRY_toLog"#" >> /tmp/$RANDOMGET; fi; } fi; } &)
 				 fi
 					  ;;
 
@@ -979,7 +979,7 @@ if ! [ "$SWITCH" = "$(echo -n "$SWITCH" | grep -oEi "(off|0|disable(d?))")" ]; t
 		if [ -f "$DIR"/42Kmi/blacklist.txt ] ; then
 		###*******Convert to for-loop!!!!!!!
 		BLACKLIST=$(echo $(echo "$(tail +1 "${DIR}"/42Kmi/blacklist.txt|sed -E -e "/(#.*$|^$|\;|#^[ \t]*$)|#/d" -e "s/^/\^/g" -e "s/\^#|\^$//g" -e "s/\^\^/^/g" -e "s/$/|/g")") -e 's/\|$//g' -e "s/(\ *)//g" -e 's/\b\.\b/\\./g') ### Permananent ban. If encountered, automatically blocked.
-			if { echo "${BLACKLIST}" |grep -E "\b${peer}\b"; }; then eval "iptables -A LDBAN -s $peer -d $CONSOLE -j $ACTION1 "${WAITLOCK}";"; fi &
+			if { echo "${BLACKLIST}" |grep -E "\b${peer}\b"; }; then eval "iptables -I LDBAN -s $peer -d $CONSOLE -j $ACTION1 "${WAITLOCK}";"; fi &
 		fi
 		##### BLACKLIST #####
 	if ! { ping -q -c 1 -W 1 -s 1 "${CONSOLE}"|grep -q -F -w "100% packet loss"; } &> /dev/null; then
@@ -1211,7 +1211,7 @@ if [ "$SENTINEL" = "$(echo -n "$SENTINEL" | grep -oEi "(yes|1|on|enable(d?))")" 
 		
 				
 			if ! { iptables -nL LDBAN|grep -Eq "\b${ip}\b"; }; then
-				eval "iptables -A LDBAN -s $ip -d $CONSOLE -j REJECT --reject-with icmp-host-prohibited "${WAITLOCK}""; wait $!
+				eval "iptables -I LDBAN -s $ip -d $CONSOLE -j REJECT --reject-with icmp-host-prohibited "${WAITLOCK}""; wait $!
 				sed -i -E "s/#(.\[[0-9]{1}\;[0-9]{2}m)(${ip})(.*$)/$(echo -e "#${BG_RED}")\2 ${SENTINEL_BAN_MESSAGE} @ $(date +"%X") $(echo -e "${NC}")/g" "/tmp/$RANDOMGET"
 			fi
 			if { iptables -nL LDACCEPT|grep -Eq "\b${ip}\b"; }; then 
@@ -1414,9 +1414,6 @@ fi 2> /dev/null
 
 specialcaserestart(){
 while : &> /dev/null; do
-	#if { ! { iptables -nL LDACCEPT && iptables -nL LDREJECT && iptables -nL LDTEMPHOLD && iptables -nL LDIGNORE 2>&1 >/dev/null; } || [ "$(tail +1 "/tmp/$RANDOMGET"|sed -E "s/.\[[0-9]{1}(\;[0-9]{2})?m//g"|grep -Eq ".*")" != "" ]; }; then
-	#maketables
-	#fi
 	for tablename in LDACCEPT LDREJECT LDTEMPHOLD LDIGNORE LDBAN; do
 		if ! { iptables -nL $tablename &> /dev/null }; then maketables; fi
 	done &> /dev/null
