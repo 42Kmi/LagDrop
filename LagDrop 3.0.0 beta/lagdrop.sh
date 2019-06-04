@@ -54,7 +54,9 @@ fi; break
 esac
 done
 ##### LINE OPTIONS #####
-
+SMARTMODE=1
+SHOWSMART=1
+SHOWLOCATION=1
 #Header
 ##### Colors & Escapes##### 
 NC="\033[0m"; RED="\033[1;31m"; GREEN="\033[1;32m"; YELLOW="\033[1;33m"; MARK="\033[1;37m"; GRAY="\033[1;30m"; BLUE="\033[1;34m"; MAGENTA="\033[1;35m"; DEFAULT="\033[1;39m"; BLACK="\033[1;30m"; CYAN="\033[1;36m"; LIGHTGRAY="\033[1;37m"; DARKGRAY="\033[1;90m"; LIGHTRED="\033[1;91m"; LIGHTGREEN="\033[1;92m"; LIGHTYELLOW="\033[1;93m"; LIGHTBLUE="\033[1;94m"; LIGHTMAGENTA="\033[1;95m"; LIGHTCYAN="\033[1;96m"; WHITE="\033[1;97m";HIDE="\033[8m";BOLD="\033[1m"
@@ -970,7 +972,7 @@ if ! [ "$SWITCH" = "$(echo -n "$SWITCH" | grep -oEi "(off|0|disable(d?))")" ]; t
 	EXIST_LIST=$(echo $({ iptables -nL LDACCEPT && iptables -nL LDREJECT && iptables -nL LDBAN && iptables -nL LDIGNORE && iptables -nL LDKTA; }|grep -Eo "([0-9]{1,3}\.){3}[0-9]{1,3}"|grep -v "${CONSOLE}")|sed -E "s/\s/|/g"|sed -E "s/\|$//g")
 	IGNORE=$(echo $({ if { { { echo "$EXIST_LIST" && tail +1 ""$DIR"/42Kmi/${FILTERIGNORE}"; } ; }|grep -Eoq "([0-9]{1,3}\.?){4}"; } then echo "$({ { echo "$EXIST_LIST" && tail +1 ""$DIR"/42Kmi/${FILTERIGNORE}"; } ; }|grep -Eo "([0-9]{1,3}\.?){4}"|sort -u|grep -v "${CONSOLE}"|grep -v "127.0.0.1"|sed 's/\./\\\./g')"|sed -E 's/$/\|/g'; else echo "${ROUTER}"; fi; })|sed -E 's/\|$//g'|sed -E 's/\ //g')
 	if [ -f "$DIR"/42Kmi/whitelist.txt ] ; then
-		WHITELIST=$(echo $(echo "$(tail +1 "${DIR}"/42Kmi/whitelist.txt|sed -E -e "/(#.*$|^$|\;|#^[ \t]*$)|#/d" -e "s/^/\^/g" -e "s/\^#|\^$//g" -e "s/\^\^/^/g" -e "s/$/|/g")") -e 's/\|$//g' -e "s/(\ *)//g" -e 's/\b\.\b/\\./g') ### Additional IPs to filter out. Make whitelist.txt in 42Kmi folder, add IPs there. Can now support extra lines and titles. See README
+		WHITELIST=$(echo $(echo "$(tail +1 "${DIR}"/42Kmi/whitelist.txt|sed -E -e "/(#.*$|^$|\;|#^[ \t]*$)|#/d" -e "s/^/\^/g" -e "s/\^#|\^$//g" -e "s/\^\^/^/g" -e "s/$/|/g")")|sed -e 's/\|$//g' -e "s/(\ *)//g" -e 's/\b\.\b/\\./g') ### Additional IPs to filter out. Make whitelist.txt in 42Kmi folder, add IPs there. Can now support extra lines and titles. See README
 		ADDWHITELIST="| grep -Ev "$WHITELIST""
 	else 
 		ADDWHITELIST=""
@@ -979,7 +981,8 @@ if ! [ "$SWITCH" = "$(echo -n "$SWITCH" | grep -oEi "(off|0|disable(d?))")" ]; t
 		##### BLACKLIST #####
 		if [ -f "$DIR"/42Kmi/blacklist.txt ] ; then
 		###*******Convert to for-loop!!!!!!!
-		BLACKLIST=$(echo $(echo "$(tail +1 "${DIR}"/42Kmi/blacklist.txt|sed -E -e "/(#.*$|^$|\;|#^[ \t]*$)|#/d" -e "s/^/\^/g" -e "s/\^#|\^$//g" -e "s/\^\^/^/g" -e "s/$/|/g")") -e 's/\|$//g' -e "s/(\ *)//g" -e 's/\b\.\b/\\./g') ### Permananent ban. If encountered, automatically blocked.
+		#BLACKLIST=$(echo $(echo "$(tail +1 "${DIR}"/42Kmi/blacklist.txt|sed -E -e "/(#.*$|^$|\;|#^[ \t]*$)|#/d" -e "s/^/\^/g" -e "s/\^#|\^$//g" -e "s/\^\^/^/g" -e "s/$/|/g")")| sed -e 's/\|$//g' -e "s/(\ *)//g" -e 's/\b\.\b/\\./g') ### Permananent ban. If encountered, automatically blocked.
+		BLACKLIST=$(echo $(echo "$(tail +1 "${DIR}"/42Kmi/blacklist.txt|sed -E -e "/(#.*$|^$|\;|#^[ \t]*$)|#/d" -e "s/^/\^/g" -e "s/\^#|\^$//g" -e "s/\^\^/^/g" -e "s/$/|/g")")| sed -e 's/\|$//g') ### Permananent ban. If encountered, automatically blocked.
 			if { echo "${BLACKLIST}" |grep -E "\b${peer}\b"; }; then eval "iptables -I LDBAN -s $peer -d $CONSOLE -j $ACTION1 "${WAITLOCK}";"; fi &
 		fi
 		##### BLACKLIST #####
@@ -991,7 +994,8 @@ if ! [ "$SWITCH" = "$(echo -n "$SWITCH" | grep -oEi "(off|0|disable(d?))")" ]; t
 	#peerenc="$(echo -n "$peer"|openssl enc -rc4-40 -nosalt -k "42KmiLagDrop")"
 		PEERIP="${PEERIP//$peer/\b}"
 		LDSIMULLIMIT=8
-		if [[ $(printf "$PEERIP"|wc -l) <= $LDSIMULLIMIT ]] && [[ $(printf "$PEERIP"|wc -l) > 0 ]]; then
+		#if [[ $(printf "$PEERIP"|wc -l) <= $LDSIMULLIMIT ]] && [[ $(printf "$PEERIP"|wc -l) > 0 ]]; then
+		if [ $(printf "$PEERIP"|wc -l) -le $LDSIMULLIMIT ] && [ $(printf "$PEERIP"|wc -l) -gt 1 ]; then
 			wait $!
 			{ meatandtatoes; } &
 		else
@@ -1150,7 +1154,7 @@ if [ "$SENTINEL" = "$(echo -n "$SENTINEL" | grep -oEi "(yes|1|on|enable(d?))")" 
 	if [ -f "$DIR"/42Kmi/tweak.txt ] ; then ABS_VAL=$TWEAK_ABS_VAL; else ABS_VAL=0; fi #Set to 1 to use absolute values instead.
 	
 	if [ $PACKET_OR_BYTE = 2 ]; then
-		DIFF_MIN=500 #Minimum difference between small time delay
+		DIFF_MIN=400 #Minimum difference between small time delay
 	else
 		DIFF_MIN=2 #5 #Minimum difference between small time delay
 	fi
