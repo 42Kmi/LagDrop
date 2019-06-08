@@ -435,12 +435,12 @@ BANCOUNTRY="" #Reinitialize
 	LDCOUNTRYCHECK="$(echo $LDCOUNTRY|sed -E "s/.{4}$//g")"
 	CONTINENT="$(echo $LDCOUNTRY|sed -E "s/.{4}$//g")"
 	fi
-	# Ban IP
-	if { echo "$LDCOUNTRYCHECK"|grep -Ei "($BANCOUNTRY)"; }; then
-		if ! { iptables -nL LDBAN|grep -Eq "\b${peer}\b"; }; then
-				eval "iptables -I LDBAN -s $peer -d $CONSOLE -j REJECT --reject-with icmp-host-prohibited "${WAITLOCK}""; wait $!
-		fi
-	fi
+	## Ban IP
+	#if { echo "$LDCOUNTRYCHECK"|grep -Ei "($BANCOUNTRY)"; }; then
+	#	if ! { iptables -nL LDBAN|grep -Eq "\b${peer}\b"; }; then
+	#			eval "iptables -I LDBAN -s $peer -d $CONSOLE -j REJECT --reject-with icmp-host-prohibited "${WAITLOCK}""; wait $!
+	#	fi
+	#fi
 	if echo "$LDCOUNTRY"|grep -E "AF$"; then
 		LDCOUNTRY_toLog="${GREEN}$(echo "$LDCOUNTRY"|sed -E "s/.{4}$//g")${NC}"
 		elif echo "$LDCOUNTRY"|grep -E "AN$"; then
@@ -1173,25 +1173,43 @@ if [ "$SENTINEL" = "$(echo -n "$SENTINEL" | grep -oEi "(yes|1|on|enable(d?))")" 
 		SENTMODE=$TWEAK_SENTMODE
 		SENTLOSSLIMIT=$TWEAK_SENTLOSSLIMIT
 	else
-		PACKET_OR_BYTE=1 #1 for packets, 2 for bytes
+		PACKET_OR_BYTE=2 #1 for packets, 2 for bytes
 		SENTINELDELAYBIG=2
 		SENTINELDELAYSMALL=1
 		STRIKEMAX=3
-		ABS_VAL=0 #Set to 1 to use absolute values instead.
+		ABS_VAL=1 #Set to 1 to use absolute values instead.
 		SENTMODE=3 #0 or 1=Difference, 2=X^2, 3=Difference or X^2, 4=Difference & X^2
 		if [ $PACKET_OR_BYTE = 2 ]; then
 			SENTLOSSLIMIT=13000 #‭1048576 #13000 #Number before Sentinel takes action. Don't change
 		else
-			SENTLOSSLIMIT=1 #1 Number before Sentinel takes action
+			SENTLOSSLIMIT=110 #820 #110 #105 is Mario Kart 8 small average. #150 #1 Number before Sentinel takes action
 		fi
 	fi
 	
 	if [ $PACKET_OR_BYTE = 2 ]; then
-		DIFF_MIN=10485 #12000 #‭1048576 #524288‬ #30000 #Minimum difference between small time delay (must be greater than to count)
-		CHI_LIMIT=50000 #20000
+		#Values for Bytes
+		#DIFF_MIN=10485 #12000 #‭1048576 #524288‬ #30000 #Minimum difference between small time delay (must be greater than to count)
+		#CHI_LIMIT=50000 #20000
+		if [ $bytediffA_new != 0 ] && [ $bytediffA_old != 0 ]; then
+			if [ $bytediffA_new -ge 40800 ] && [ $bytediffA_old -ge 40800 ]; then
+				DIFF_MIN=40800 #Mario Kart 8 #Minimum difference between small time delay (must be greater than to count)
+				CHI_LIMIT=3000 #33 is Mario Kart 8 reasonable small average. #80 #$SENTLOSSLIMIT
+			else
+				DIFF_MIN=12000 #Smash Bros. for Wii U #Minimum difference between small time delay (must be greater than to count)
+				CHI_LIMIT=100 #800 #Smash Bros. for Wii U #$SENTLOSSLIMIT
+			fi
+		fi
 	else
-		DIFF_MIN=2 #5 #Minimum difference between small time delay (must be greater than to count)
-		CHI_LIMIT=$SENTLOSSLIMIT
+		if [ $bytediffA_new != 0 ] && [ $bytediffA_old != 0 ]; then
+			#Values for Packets
+			if [ $bytediffA_new -ge 170 ] && [ $bytediffA_old -ge 170 ]; then
+				DIFF_MIN=170 #Mario Kart 8 #Minimum difference between small time delay (must be greater than to count)
+				CHI_LIMIT=40 #33 is Mario Kart 8 reasonable small average. #80 #$SENTLOSSLIMIT
+			else
+				DIFF_MIN=50 #36 #Smash Bros. for Wii U #Minimum difference between small time delay (must be greater than to count)
+				CHI_LIMIT=15 #Smash Bros. for Wii U #$SENTLOSSLIMIT
+			fi
+		fi
 	fi
 	
 	SENTINELLIST="$(tail +1 "/tmp/$RANDOMGET"|sed -E "s/.\[[0-9]{1}(\;[0-9]{2})?m//g"|sed -E "/\b(${RESPONSE3})\b/d"|grep -Eo "\b([0-9]{1,3}\.){3}([0-9]{1,3})\b")"
@@ -1219,40 +1237,25 @@ if [ "$SENTINEL" = "$(echo -n "$SENTINEL" | grep -oEi "(yes|1|on|enable(d?))")" 
 			byte1="$(iptables -xvnL LDACCEPT|tail +3|grep -E "\b${CONSOLE}\b"|grep -E "\b${ip}\b"|awk '{printf $1}')"
 			sleep $SENTINELDELAYSMALL
 			byte2="$(iptables -xvnL LDACCEPT|tail +3|grep -E "\b${CONSOLE}\b"|grep -E "\b${ip}\b"|awk '{printf $1}')"
-			#sleep $SENTINELDELAYBIG
-			#byte3="$(iptables -xvnL LDACCEPT|tail +3|grep -E "\b${CONSOLE}\b"|grep -E "\b${ip}\b"|awk '{printf $1}')"
-			#sleep $SENTINELDELAYSMALL
-			#byte4="$(iptables -xvnL LDACCEPT|tail +3|grep -E "\b${CONSOLE}\b"|grep -E "\b${ip}\b"|awk '{printf $1}')"
 		;;
 		2)
 			byte1="$(iptables -xvnL LDACCEPT|tail +3|grep -E "\b${CONSOLE}\b"|grep -E "\b${ip}\b"|awk '{printf $2}')"
 			sleep $SENTINELDELAYSMALL
 			byte2="$(iptables -xvnL LDACCEPT|tail +3|grep -E "\b${CONSOLE}\b"|grep -E "\b${ip}\b"|awk '{printf $2}')"
-			#sleep $SENTINELDELAYBIG
-			#byte3="$(iptables -xvnL LDACCEPT|tail +3|grep -E "\b${CONSOLE}\b"|grep -E "\b${ip}\b"|awk '{printf $2}')"
-			#sleep $SENTINELDELAYSMALL
-			#byte4="$(iptables -xvnL LDACCEPT|tail +3|grep -E "\b${CONSOLE}\b"|grep -E "\b${ip}\b"|awk '{printf $2}')"
 		;;
 		esac
 
 		#Math
 		case "$ABS_VAL" in
 			*|0)
-				#bytediffA=$(( $byte2 - $byte1 )) #New
 				bytediffA_new=$(( (( $byte2 - $byte1 )) / $SENTINELDELAYSMALL )) #New
-				#bytediffB=$(( $byte4 - $byte3 ))
-				#BYTEDIFF=$(( $bytediffB - $bytediffA ))
 				BYTEDIFF=$(( $bytediffA_new - $bytediffA_old ))
 			;;
 			1)
-				#bytediffA=$(echo "$(( $byte2 - $byte1 ))"|sed "s/\-//g")
 				bytediffA_new=$(echo "$(( $byte2 - $byte1 ))"|sed "s/\-//g")
-				#bytediffB=$(echo "$(( $byte4 - $byte3 ))"|sed "s/\-//g")
-				#BYTEDIFF=$(echo "$(( $bytediffB - $bytediffA ))"|sed "s/\-//g")
 				BYTEDIFF=$(echo "$(( $bytediffB - $bytediffA_new ))"|sed "s/\-//g")
 			;;
 		esac
-		#BYTESUM=$(( $bytediffB + $bytediffA ))
 		BYTESUM=$(( $bytediffA_new + $bytediffA_old ))
 		BYTEAVG=$(( $BYTESUM / 2 ))
 		if [ $BYTEAVG = 0 ]; then BYTEAVG=1; fi
@@ -1300,6 +1303,14 @@ if [ "$SENTINEL" = "$(echo -n "$SENTINEL" | grep -oEi "(yes|1|on|enable(d?))")" 
 								eval "iptables -A LDSENTSTRIKE -s $ip"
 							fi
 						;;
+						
+						*)
+							# Strike 4 and beyond
+							if [ "$STRIKECOUNT" = 3 ]; then
+								sed -i -E "s/#(.\[[0-9]{1}\;[0-9]{2}m)(${ip})\b/#$(echo -e "${BG_BLUE}")\2/g" "/tmp/$RANDOMGET"
+								eval "iptables -A LDSENTSTRIKE -s $ip"
+							fi
+						;;
 
 					esac && sed -i -E "s/^.*${ip}\b.*$/&‡/g" "/tmp/$RANDOMGET" #Adds mark for strikes
 					wait
@@ -1309,7 +1320,7 @@ if [ "$SENTINEL" = "$(echo -n "$SENTINEL" | grep -oEi "(yes|1|on|enable(d?))")" 
 	}
 
 		##### SENTINELS #####
-
+		
 		##### PACKETBLOCK ##### // 0 or 1=Difference, 2=X^2, 3=Difference or X^2, 4=Difference & X^2
 				case "${SENTMODE}" in
 					"$(echo -n "${SENTMODE}" | grep -oEiv "([234])")") # Difference only
@@ -1426,8 +1437,17 @@ if [ $SHOWLOCATION = 1 ]; then LOCATION="$(echo " | LOCATE${BC}")"; LOCATECOL="$
 
 		for line in "$LOG"; do
 		wait $!
+			#Count strikes as numbers, if I can get it to work!
+			#if { echo "$line" | grep -Eoq "‡$"; }; then
+			#	STRIKE_MARK_COUNT="$(echo -n "$line"|grep -Eo "(‡*)$"|sed "s/‡/‡\n/g"|wc -l)"
+			#	#corrections
+			#	STRIKE_MARK_COUNT=$(( $STRIKE_MARK_COUNT - 1 ))
+			#	#sed -E "s/(‡*)$/${STRIKE_MARK_COUNT}/g"
+			#fi
 			echo -e "$line"|sed -E "s/(#){2,}/#/"|tr "#" "\t"|sed -E "/^\s*$/d"|sed '/txt/d'|sort -n|sed -E "s/^\"([0-9]{1,})\"/"$(if [ $(( $(date +%s) - \1 )) -le $NOTFRESH ]; then echo -e ${YELLOW}; else echo -e ${BLUE}; fi)"/g"|sed -E "s/(([0-9]{4,})(\-([0-9]{1,2})){2}.([0-9]{1,2}\:?){3})/\1$(echo -e ${NC})/g"|sed -E 's/\.[0-9]{1,3}\.[0-9]{1,3}\./.xx.xx./g'|sed -E "s/([0-9])ms/\1/g" |grep -nE ".*"|sed -E "s/^([0-9]{1,}):/\1.$(echo -e "${HIDE}") $(echo -e "${NC}")/g"|sed -E "s/[0-9]{4,}(-[0-9]{2}){2}\s//g"|sed -E "s/\, \, /, /g"|sed -E "s/\, 0(null)?0\,/,/g"|sed -E "s/^([1-9]\.)/ &/g"
+
 		done &
+		
 		else
 			if [ ! -f "/tmp/$RANDOMGET" ] || [ ! -s "/tmp/$RANDOMGET" ]; then
 				echo -e "$LOG_MESSAGE"; sleep
