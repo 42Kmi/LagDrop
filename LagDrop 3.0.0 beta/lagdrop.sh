@@ -292,7 +292,7 @@ SWITCH=ON
 {
 case "$1" in
      "$(echo -n "$1" | grep -oEi "(nintendo|wiiu|wii|switch|[0-9]?ds|NSW)")") #Nintendo   
-		NINTENDO_SERVERS="(45\.55\.142\.122)|(45\.55)|(173\.255\.((19[2-9)|(2[0-9]{2}))\.)"
+		NINTENDO_SERVERS="(45\.55\.142\.122)|(45\.55)|(173\.255\.((19[2-9)|(2[0-9]{2}))\.)|184\.30\.108\.110"
 		NIN_EXTRA="(95\.142\.154\.181)"
 		#FILTERIP="^(${NINTENDO_SERVERS}|${NIN_EXTRA})"
  		FILTERIP="^38\.112\.28\.9[6-9]|^60\.32\.179\.(1[6-9]|2[0-3])|^60\.36\.183\.15[2-9]|^64\.124\.44\.(4[8-9]|5[0-5])|^64\.125\.103\.|^65\.166\.10\.(10[4-9]|11[0-1])|^84\.37\.20\.(20[8-9]|21[0-5])|^84\.233\.128\.(6[4-9]|[7-9][0-9]|1[0-1][0-9]|12[0-7)|^84\.233\.202\.([0-2][0-9]|3[0-1])|^89\.202\.218([0-9]|1[0-5])|^125\.196\.255\.(19[6-9]|20[0-7])|^125\.199\.254\.(4[8-9]|5[0-9]|6[0-7])|^125\.206\.241\.(17[6-9]|18[0-9]|19[0-1])|^133\.205\.103\.(192[2-9]|20[0-7])|^192\.195\.204\.|^194\.121\.124\.(22[4-9]|23[0-1])|^194\.176\.154\.(16[8-9]|17[0-5])|^195\.10\.13\.(1[6-9]|[2-5][0-9]|6[0-3])|^195\.10\.13\.7[2-5]|^195\.27\.92\.(9[6-9]|1[0-1][0-9]|12[0-7])|^195\.27\.92\.(19[2-9]|20[0-7])|^195\.27\.195\.([0-9]|1[0-5])|^195\.73\.250\.(22[4-9]|23[0-1])|^195\.243\.236\.(13[6-9]|14[0-3])|^202\.232\.234\.(12[8-9]|13[0-9]|14[0-3])|^205\.166\.76\.|^206\.19\.110\.|^208\.186\.152\.|^210\.88\.88\.(17[6-9]|18[0-9]|19[0-1])|^210\.138\.40\.(2[4-9]|3[0-1])|^210\.151\.57\.(8[0-9]|9[0-5])|^210\.169\.213\.(3[2-9]|[4-5][0-9]|6[0-3])|^210\.172\.105\.(1[6-8][0-9]|19[0-1])|^210\.233\.54\.(3[2-9]|4[0-7])|^211\.8\.190\.(19[2-9]|2[0-1][0-9]|22[0-3])|^212\.100\.231\.6[0-1]|^213\.69\.144\.(1[6-8][0-9]|19[0-1])|^217\.161\.8\.2[4-7]|^219\.96\.82\.(17[6-9]|18[0-9]|19[0-1])|^220\.109\.217\.16[0-7]|^125\.199\.254\.50|^192\.195\.204\.40|^192\.195\.204\.176|^205\.166\.76\.176|^207\.38\.8\.15|^207\.38\.11\.1[2-4]|^207\.38\.11\.34|^207\.38\.11\.49|^209\.67\.106\.141|^207\.38\.(8|9|1[0-5])\.|^13\.32\.|^13\.54\.|^23\.20\.|^27\.0\.([0-3])\.|^34\.(19[2-9]|20[0-7])\.|^35\.154\.|^35\.(15[6-9])\.|^35\.(16[0-7])\.|^43\.250\.(19[2-3])\.|^46\.51\.(1[0-9][0-9]|20[0-7])\.|^46\.51\.(21[6-9]|2[2-9][0-9])\.|^46\.137\.|^50\.(1[6-9])\.|^50\.112\.|^52\.([0-9][0-9]|1[0-9][0-9]|2[0-1][0-9]|22[0-2])\.|^54\.([6-9][0-9]|14[4-9]|1[5-9][0-9]|2[0-5][0-9])\.|^67\.202\.([0-5][0-9]|6[0-3])\.|^72\.31\.(19[2-9]|2[0-1][0-9]|22[0-3])\.|^72\.44\.(3[2-9]|[4-5][0-9]|6[0-3])\.|^75\.101\.(12[8-9]|1[3-9]|2[0-9][0-9])\.|^79\.125\.([0-9][0-9]|1[0-1][0-9]|2[0-5][0-9])\.|^87\.238\.(8[0-7])\.|^96\.127\.([0-9][0-9]|1[0-1][0-9]|12[0-7])\.|^103\.4\.([8-9]|1[0-5])\.|^103\.8\.(17[2-5])\.|^103\.246\.(14[8-9]|15[0-1])\.|^107\.(2[0-3])\.|^122\.248\.(19[2-9]|2[0-5][0-9])\.|^172\.96\.97\.|^174\.129\.|^175\.41\.(1[2-8][0-9]|19[0-9]|2[0-5][0-9])|^176\.32\.([6-8][0-9]|9[0-9]|1[0-1][0-9]|12[0-5])|^176\.34\.|^177\.71\.|^177\.72\.(24[0-7])\.|^178\.236\.([0-9]|1[0-5])\.|^184\.7([2-3])\.|^184\.169\.(12[8-9]|1[3-9][0-9]|2[0-5]|[0-9])\.|^185\.48\.(12[0-3])\.|^185\.143\.16\.|^203\.83\.(22[0-3])\.|^204\.236\.(12[8-9]|1[3-9][0-9]|2[[0-5]|[0-9])\.|^204\.246\.(16[0-9]|17[0-1]|17[4-9]|1[8-9][0-9]|2[0-3][0-9]|24[0-5])\.|^205\.251\.(24[7-9]|25[0-5])\.|^207\.171\.(1[6-8][0-9]|19[0-1])\.|^216\.137\.(3[2-9]|[4-5][0-9]|6[0-3])\.|^216\.182\.(22[4-9]|23[0-9])\.|^202\.(3[2-5])\.|^198\.62\.122\.|^69\.25\.139\.(12[8-9]|1[3-9][0-9]|[1-2][0-9]{2})|^34\.(19[2-9]|2[0-9]{2})|^23\.2[0-3]\.|^13\.112\.35\.82|^163\.172\.141\.219|^45\.248\.48\.62|^(${NINTENDO_SERVERS}|${NIN_EXTRA})"
@@ -317,28 +317,29 @@ esac
 }
 ONTHEFLYFILTER="amazonaws|akamaitechnologies|Akamai|twitter|nintendowifi\.net|(nintendo|xboxlive|sony|playstation)\.net|ps[2-9]|nflxvideo|netflix|easo\.ea\.com|\.ea\.com|\.1e100\.net|GOGL|goog|Sony Online Entertainment|cloudfront\.net|facebook|fb-net|IANA|Cloudflare|BAD REQUEST|blizzard|NC Interactive|ncsoft|NCINT|RIOT(\s)?GAMES|RIOT|SQUARE ENIX|Valve Corporation|Ubisoft|not found|IANA-RESERVED|\b(dns|ns|NS|DNS)([0-9]{1,}?(\.|\-))\b|google\.com|LINODE" # Ignores if these words are found in whois requests
 #ONTHEFLYFILTER="klhjgdfshjvckxrsjrfkctyjztyflkutyjsrehxcvhjyutresdxfcgh"
+AMAZON_SERVERS="(13\.(2(4[89]|5[01]))\.)"
 MSFT_SERVERS="(52\.(1((4[5-9])|([5-8][0-9])|(9[0-1]))))|(52\.(2(2[4-9]|[3-5][0-9])))|(52\.(9[6-9]|10[0-9]|11[1-5]))"
 LINODE="(173\.255\.((19[2-9])|(2[0-9]{2})\.))"
 CLOUDFLARE="162\.15[89]\."
 IANA_IPs="(239\.255\.255\.250)|(10(\.[0-9]{1,3}){3})|(2(2[4-9]|3[0-9])(\.[0-9]{1,3}){3})|(255(\.([0-9]){1,3}){3})|(0\.)|(100\.((6[4-9])|[7-9][0-9]|1(([0-1][0-9])|(2[0-7]))))|(172\.((1[6-9])|(2[0-9])|(3[0-1])))"
-ONTHEFLYFILTER_IPs="${IANA_IPs}|${MSFT_SERVERS}|${LINODE}|${CLOUDFLARE}|1\.0\.0\.1|1\.1\.1\.1|127\.0\.0\.1|8\.8\.8\.8|8\.8\.4\.4" #Ignores these IPs, usually IANA reserved or something 
+ONTHEFLYFILTER_IPs="${IANA_IPs}|${MSFT_SERVERS}|${LINODE}|${CLOUDFLARE}|${AMAZON_SERVERS}|1\.0\.0\.1|1\.1\.1\.1|127\.0\.0\.1|8\.8\.8\.8|8\.8\.4\.4|151\.101\." #Ignores these IPs, usually IANA reserved or something 
 ##### Filter #####
 ##### TWEAKS #####
 # create 42Kmi/tweak.txt to edit these values
 if [ $MAKE_TWEAK = 1 ]; then
 if [ ! -f "$DIR"/42Kmi/tweak.txt ]; then
-echo -e "TWEAK_PINGRESOLUTION=5 #Number of pings sent
+echo -e "TWEAK_PINGRESOLUTION=3 #Number of pings sent
 TWEAK_TRGETCOUNT=20 #Total number of Traceroute runs
 TWEAK_SMARTLINECOUNT=8 #Number of lines before averaging
 TWEAK_SMARTPERCENT=155 #Percentage of average before using average
 TWEAK_SMART_AVG_COND=2 #Number of items that must be higher than average before using average
-TWEAK_SENTMODE=3 #0 or 1=Difference, 2=X^2, 3=Difference or X^2, 4=Difference & X^
+TWEAK_SENTMODE=3 #0 or 1=Difference, 2=X^2, 3=Difference or X^2, 4=Difference & X^2
 TWEAK_SENTLOSSLIMIT=1 #Number before Sentinel takes action
 TWEAK_PACKET_OR_BYTE=1 #Sentinel calculates by packet (1) or bytes (2)
 TWEAK_SENTINELDELAYBIG=2 #Interval to record difference between differences
 TWEAK_SENTINELDELAYSMALL=1 #Interval to record difference
-TWEAK_STRIKEMAX=3 #Number of strikes before Sentinel bans peer
-TWEAK_ABS_VAL=0 #0 to disable absolute value in Sentinel calculation, 1 to enable"|sed -E "s/^(\s)*//g" > "$DIR"/42Kmi/tweak.txt
+TWEAK_STRIKEMAX=5 #Number of strikes before Sentinel bans peer
+TWEAK_ABS_VAL=1 #0 to disable absolute value in Sentinel calculation, 1 to enable"|sed -E "s/^(\s)*//g" > "$DIR"/42Kmi/tweak.txt
 fi
 fi
 
@@ -374,7 +375,7 @@ BANCOUNTRY="" #Reinitialize
 	LDCOUNTRY=$(echo "$GEOMEM"|grep -E "^("$peer"|"$peerenc")#"|sed -n 1p|sed -E "s/^($peer|$peerenc)#//g")
 	else
 	LOCATION_DATA_STORE="$(curl --no-keepalive --no-buffer --connect-timeout ${CURL_TIMEOUT} -sk -A "$(echo $(dd bs=1 count=21 if=/dev/urandom 2>/dev/null)|hexdump -v -e '/1 "%02X"'|sed -e s/"0A$"//g)" "https://ipapi.co/"$peer"/json/")"
-	LDCOUNTRY="$(echo $(echo "$LOCATION_DATA_STORE"|grep -E "(city|region_code|\"country\"|continent_code)"|sed -E "s/^\s*?.*:\s*?//g"|sed -E "s/(\")//g")|sed "s/null/$(echo "$LOCATION_DATA_STORE"|grep "\"region\""|sed "s/.*://"|sed -E "s/(\"|,$|,?\s?(null))|(^(\s)*)//g")/"|sed -E "s/(,$|,?\s?(null))//g")"
+	LDCOUNTRY="$(echo $(echo "$LOCATION_DATA_STORE"|grep -E "(city|region_code|\"country\"|continent_code)"|sed -E "s/^\s*?.*:\s*?//g"|sed -E "s/(\")//g")|sed "s/null/$(echo "$LOCATION_DATA_STORE"|grep "\"region\""|sed "s/.*://"|sed -E "s/(\"|,$|,?\s?(null))|(^(\s)*)//g")/"|sed -E "s/(,$|,?\s?(null))//g"|sed -E "s/\n//g")"
 
 	wait $!
 	if [ -f "$DIR"/42Kmi/ipstack.txt ] ; then
@@ -432,11 +433,11 @@ BANCOUNTRY="" #Reinitialize
 	}
 	location_corrections
 	if ! { tail +1 ""$DIR"/42Kmi/${GEOMEMFILE}"| grep -E "^("$peer"|"$peerenc")#"; }; then echo ""$peerenc"#"$LDCOUNTRY"" >> ""$DIR"/42Kmi/${GEOMEMFILE}"; fi
-	LDCOUNTRYCHECK="$(echo $LDCOUNTRY|sed -E "s/.{4}$//g")"
+	LDCOUNTRYCHECK="$(echo "$LDCOUNTRY"|sed -E "s/.{4}$//g")"
 	CONTINENT="$(echo $LDCOUNTRY|sed -E "s/.{4}$//g")"
 	fi
-	## Ban IP
-	#if { echo "$LDCOUNTRYCHECK"|grep -Ei "($BANCOUNTRY)"; }; then
+	# Ban IP
+	#if { echo "$LDCOUNTRYCHECK"|grep -Ei "($BANCOUNTRY)$"; }; then
 	#	if ! { iptables -nL LDBAN|grep -Eq "\b${peer}\b"; }; then
 	#			eval "iptables -I LDBAN -s $peer -d $CONSOLE -j REJECT --reject-with icmp-host-prohibited "${WAITLOCK}""; wait $!
 	#	fi
@@ -456,6 +457,7 @@ BANCOUNTRY="" #Reinitialize
 		elif echo "$LDCOUNTRY"|grep -E "SA$"; then
 		LDCOUNTRY_toLog="${YELLOW}$(echo "$LDCOUNTRY"|sed -E "s/.{4}$//g")${NC}"
 	fi
+	LDCOUNTRY_toLog="${LDCOUNTRY_toLog// /%}"
 	}
 
 ##### Regional & Country Bans #####
@@ -477,7 +479,6 @@ BANCOUNTRY="" #Reinitialize
 						eval "iptables -D $tablename "$TABLELINENUMBER""
 					fi
 				done
-				#sed -i -E "s/(${ip}.*$)/$(echo -e "${BG_RED}")&/g" "/tmp/$RANDOMGET"; sleep 5 #Background color notification for banned country/region
 				sed -i -E "s/#(.\[[0-9]{1}\;[0-9]{2}m)?(${ip})\b/$(echo -e "#${BG_RED}")\2/g" "/tmp/$RANDOMGET"; sleep 5 #Background color notification for banned country/region
 
 				wait $!; sed -i -E "/(m)?${ip}#/d" "/tmp/$RANDOMGET"
@@ -746,7 +747,6 @@ meatandtatoes(){
 				if [ $LIMITTEST = "" ]; then
 				LIMITTEST=$(echo "$SETTINGS"|sed -n 2p); if echo "$LIMITTEST"| grep -Eo "\.([0-9]{3})$"; then LIMITTEST="$(echo "$LIMITTEST"|sed -E "s/\.//g")"; else LIMITTEST="$(( LIMITTEST * 1000 ))"; fi
 				fi
-				#LIMITXSQ=$(echo $(( (( 2 * (( (( LIMITTEST - LIMIT )) ** 2 )) )) / (( LIMITTEST + LIMIT )) ))|sed "s/\-//g")
 				LIMITXSQ=$(echo $(( (( 2 * (( (( LIMITTEST - LIMIT )) * (( LIMITTEST - LIMIT )) )) )) / (( LIMITTEST + LIMIT )) ))|sed "s/\-//g")
 				if { { [ $SMARTLINES -lt $SMARTLINECOUNT ] || [ $LIMITTEST = "" ]; } || ! [ $(echo "$(for item in $(tail +1 "/tmp/$RANDOMGET"|sed -E "s/.\[[0-9]{1}(\;[0-9]{2})?m//g"|sed "s/#/\ /g"|sed -E "/\b(${RESPONSE3}|\-\-)\b/d"|sed -E "s/(ms|\.)//g"|awk '{printf $4"\n"}'); do echo $(( $item > $(( LIMIT * SMARTPERCENT / 100 )) )); done)"|grep -c "1") -ge $SMART_AVG_COND ]; }; then LIMIT=$(echo "$SETTINGS"|sed -n 2p); if echo "$LIMIT"| grep -Eo "\.([0-9]{3})$"; then LIMIT="$(echo "$LIMIT"|sed -E "s/\.//g")"; else LIMIT="$(( LIMIT * 1000 ))"; fi; else LIMIT="$(( LIMIT + LIMITXSQ ))"; fi
 				LIMITTEST=$LIMIT
@@ -759,11 +759,11 @@ meatandtatoes(){
 			else LIMIT=$(echo "$SETTINGS"|sed -n 2p) ### Your max average millisecond limit. Peers returning values higher than this value are blocked.
 			if echo "$LIMIT"| grep -Eo "\.([0-9]{3})$"; then LIMIT="$(echo "$LIMIT"|sed -E "s/\.//g")"; else LIMIT="$(( LIMIT * 1000 ))"; fi
 			fi
-			COUNT=$(echo "$SETTINGS"|sed -n 3p) ### How many packets to send. Default is 5
-			if [ -f "$DIR"/42Kmi/tweak.txt ] ; then PINGRESOLUTION="${TWEAK_PINGRESOLUTION}"; else PINGRESOLUTION=5; fi
+			COUNT=$(echo "$SETTINGS"|sed -n 3p) ### How pings to run. Default is 5
+			if [ -f "$DIR"/42Kmi/tweak.txt ] ; then PINGRESOLUTION="${TWEAK_PINGRESOLUTION}"; else PINGRESOLUTION=3; fi
 			#PINGGET=$(echo $(echo "$(n=0; while [[ $n -lt "${COUNT}" ]]; do { ping -q -c "${PINGRESOLUTION}" -W 1 -s "${SIZE}" "${peer}" & } ; n=$((n+1)); done )"|grep -Eo "\/([0-9]{1,}\.[0-9]{1,})\/"|sed -E 's/(\/|\.)//g'|sed -E 's/(^|\b)(0){1,}//g'|sed -E 's/$/+/g')|sed -E 's/\+$//g') &> /dev/null
 			PINGGET=$(echo $(echo "$(n=0; while [[ $n -lt "${COUNT}" ]]; do { ping -c "${PINGRESOLUTION}" -W 1 -s "${SIZE}" "${peer}" & } ; n=$((n+1)); done )"|grep -Eo "time=(.*)$"|sed -E 's/( ms|\.|time=)//g'|sed -E 's/(^|\b)(0){1,}//g'|sed -E 's/$/+/g')|sed -E 's/\+$//g') &> /dev/null
-			wait $!
+			#wait $!
 			PINGCOUNT=$(echo "$PINGGET"|wc -w)
 			if ! [ "${PINGCOUNT}" != "$(echo -n "$PINGCOUNT" | grep -oEi "(0|)")" ]; then PINGCOUNT=$(( COUNT * PINGRESOLUTION )); fi #Fallback
 			PINGSUM=$(( $PINGGET ))
@@ -793,7 +793,6 @@ meatandtatoes(){
 				if [ $TRACELIMITTEST = "" ]; then
 				TRACELIMITTEST=$(echo "$SETTINGS"|sed -n 8p); if echo "$TRACELIMITTEST"| grep -Eo "\.([0-9]{3})$"; then TRACELIMITTEST="$(echo "$TRACELIMITTEST"|sed -E "s/\.//g")"; else TRACELIMITTEST="$(( TRACELIMITTEST * 1000 ))"; fi
 				fi
-				#TRACELIMITXSQ=$(echo $(( (( 2 * (( (( TRACELIMITTEST - TRACELIMIT )) ** 2 )) )) / (( TRACELIMITTEST + TRACELIMIT )) ))|sed "s/\-//g")
 				TRACELIMITXSQ=$(echo $(( (( 2 * (( (( TRACELIMITTEST - TRACELIMIT )) * (( TRACELIMITTEST - TRACELIMIT )) )) )) / (( TRACELIMITTEST + TRACELIMIT )) ))|sed "s/\-//g")
 				if { { [ $SMARTLINES -lt $SMARTLINECOUNT ] || [ $TRACELIMITTEST = "" ]; } || ! [ $(echo "$(for item in $(tail +1 "/tmp/$RANDOMGET"|sed -E "s/.\[[0-9]{1}(\;[0-9]{2})?m//g"|sed "s/#/\ /g"|sed -E "/\b(${RESPONSE3}|\-\-)\b/d"|sed -E "s/(ms|\.)//g"|awk '{printf $5"\n"}'); do echo $(( $item > $(( TRACELIMIT * SMARTPERCENT / 100 )) )); done)"|grep -c "1") -ge $SMART_AVG_COND ]; }; then TRACELIMIT=$(echo "$SETTINGS"|sed -n 8p); if echo "$TRACELIMIT"| grep -Eo "\.([0-9]{3})$"; then TRACELIMIT="$(echo "$TRACELIMIT"|sed -E "s/\.//g")"; else TRACELIMIT="$(( TRACELIMIT * 1000 ))"; fi; else TRACELIMIT="$(( TRACELIMIT + TRACELIMITXSQ ))"; fi
 				TRACELIMITTEST=$TRACELIMIT
@@ -811,7 +810,7 @@ meatandtatoes(){
 			MXP=$(( TTL * PROBES * TRGETCOUNT ))
 			#New TraceRoute
 			TRGET=$(echo $(echo "$(n=0; while [[ $n -lt "${TTL}" ]]; do { traceroute -Fn -m "${TRGETCOUNT}" -q "${PROBES}" -w 1 "${peer}" "${SIZE}" & } ; n=$((n+1)); done )"|grep -Eo "([0-9]{1,}\.[0-9]{3}\ ms)"|sed -E 's/(\/|\.|\ ms)//g'|sed -E 's/(^|\b)(0){1,}//g'|sed -E 's/$/+/g')|sed -E 's/\+$//g') &> /dev/null
-			wait $!
+			#wait $!
 			TRCOUNT=$(echo "$TRGET"|wc -w) #Counts for average
 			if [ "${TRCOUNT}" = "$(echo -n "$TRCOUNT" | grep -oEi "(0|)")" ]; then TRCOUNT=$(( TTL * PROBES)); fi #Fallback
 			TRSUM=$(( $TRGET ))
@@ -828,7 +827,9 @@ meatandtatoes(){
 		fi
 		##### TRACEROUTE #####
 		if ! { { echo "$EXIST_LIST"; }|grep -Eo "(([0-9]{1,3}\.?){3})\.([0-9]{1,3})"| tail +1 ""$DIR"/42Kmi/${FILTERIGNORE}"|grep -Eoq "^("$peer"|"$peerenc")$"; }; then
-		{ theping && thetraceroute && timestamps; }
+			{ theping && thetraceroute; }
+			timestamps
+			wait $!
 		fi
 fi
 		##### ACTION of IP Rule #####
@@ -868,20 +869,20 @@ if [ $PINGFULLDECIMAL = "$NULLTEXT" ] && [ TRAVGFULLDECIMAL = "$NULLTEXT" ]; the
 		#fi
 			{
 			case "${MODE}" in
-				 "$(echo -n "${MODE}" | grep -oEiv "([2345])")") #0 or 1=Ping Only
+				 0|1) #0 or 1=Ping Only
 					  BLOCK=$({ if [ "${PINGFULL}" -gt "${LIMIT}" ]; then { eval "iptables -I LDREJECT -s $peer -d $CONSOLE -j $ACTION1 "${WAITLOCK}";" && if ! { tail +1 /tmp/$RANDOMGET| grep -Fo "$peer"; }; then echo -e "\"$EPOCH\"$DATETIME#"$borneopeer"#"$PINGFULLDECIMAL"#"$TRAVGFULLDECIMAL"#"$RESULT"#"$SHOWSMARTLOG"#"$SHOWSMARTLOGTR"#"$LDCOUNTRY_toLog"#" >> /tmp/$RANDOMGET;fi; }; else { eval "iptables -A LDACCEPT -p all -s $peer -d $CONSOLE -j ACCEPT "${WAITLOCK}"" && if ! { tail +1 /tmp/$RANDOMGET| grep -Fo "$peer"; }; then echo -e "\"$EPOCH\"$DATETIME#"$borneopeer"#"$PINGFULLDECIMAL"#"$TRAVGFULLDECIMAL"#"$RESULT"#"$SHOWSMARTLOG"#"$SHOWSMARTLOGTR"#"$LDCOUNTRY_toLog"#" >> /tmp/$RANDOMGET;fi; } fi; } &)
 					  ;;
-				 "$(echo -n "${MODE}" | grep -oEi "([2])")") #2=TraceRoute Only
+				 2) #2=TraceRoute Only
 					  BLOCK=$({ if [ "${TRAVGFULL}" -gt "${TRACELIMIT}" ]; then { eval "iptables -I LDREJECT -s $peer -d $CONSOLE -j $ACTION1 "${WAITLOCK}";" && if ! { tail +1 /tmp/$RANDOMGET| grep -Fo "$peer"; }; then echo -e "\"$EPOCH\"$DATETIME#"$borneopeer"#"$PINGFULLDECIMAL"#"$TRAVGFULLDECIMAL"#"$RESULT"#"$SHOWSMARTLOG"#"$SHOWSMARTLOGTR"#"$LDCOUNTRY_toLog"#" >> /tmp/$RANDOMGET;fi; }; else { eval "iptables -A LDACCEPT -p all -s $peer -d $CONSOLE -j ACCEPT "${WAITLOCK}"" && if ! { tail +1 /tmp/$RANDOMGET| grep -Fo "$peer"; }; then echo -e "\"$EPOCH\"$DATETIME#"$borneopeer"#"$PINGFULLDECIMAL"#"$TRAVGFULLDECIMAL"#"$RESULT"#"$SHOWSMARTLOG"#"$SHOWSMARTLOGTR"#"$LDCOUNTRY_toLog"#" >> /tmp/$RANDOMGET;fi; } fi; } &)
 					  ;;
-				 "$(echo -n "${MODE}" | grep -oEi "([3])")") #3=Ping OR TraceRoute
+				 2) #3=Ping OR TraceRoute
 					  BLOCK=$({ if [ "${PINGFULL}" -gt "${LIMIT}" ] || [ "${TRAVGFULL}" -gt "${TRACELIMIT}" ]; then { eval "iptables -I LDREJECT -s $peer -d $CONSOLE -j $ACTION1 "${WAITLOCK}";" && if ! { tail +1 /tmp/$RANDOMGET| grep -Fo "$peer"; }; then echo -e "\"$EPOCH\"$DATETIME#"$borneopeer"#"$PINGFULLDECIMAL"#"$TRAVGFULLDECIMAL"#"$RESULT"#"$SHOWSMARTLOG"#"$SHOWSMARTLOGTR"#"$LDCOUNTRY_toLog"#" >> /tmp/$RANDOMGET;fi; }; else { eval "iptables -A LDACCEPT -p all -s $peer -d $CONSOLE -j ACCEPT "${WAITLOCK}"" && if ! { tail +1 /tmp/$RANDOMGET| grep -Fo "$peer"; }; then echo -e "\"$EPOCH\"$DATETIME#"$borneopeer"#"$PINGFULLDECIMAL"#"$TRAVGFULLDECIMAL"#"$RESULT"#"$SHOWSMARTLOG"#"$SHOWSMARTLOGTR"#"$LDCOUNTRY_toLog"#" >> /tmp/$RANDOMGET;fi; } fi; } &)
 					  ;; 
-				 "$(echo -n "${MODE}" | grep -oEi "([4])")") #4=Ping AND TraceRoute
+				 4) #4=Ping AND TraceRoute
 					  #LIMIT="$(( $LIMIT + 5000 ))" #Fuzzy. Lenient for ping times X ms above limit
 					  BLOCK=$({ if  { [ "${PINGFULL}" -le "$(( ${LIMIT} + 5000 ))" ] && [ "${TRAVGFULL}" -gt "${TRACELIMIT}" ]; }; then { eval "iptables -A LDACCEPT -p all -s $peer -d $CONSOLE -j ACCEPT "${WAITLOCK}"" && if ! { tail +1 /tmp/$RANDOMGET| grep -Fo "$peer"; }; then echo -e "\"$EPOCH\"$DATETIME#"$borneopeer"#"$PINGFULLDECIMAL"#"$TRAVGFULLDECIMAL"#"${YELLOW}${RESPONSE2}${NC}"#"$SHOWSMARTLOG"#"$SHOWSMARTLOGTR"#"$LDCOUNTRY_toLog"#" >> /tmp/$RANDOMGET; fi; }; elif { [ "${PINGFULL}" -gt "$(( ${LIMIT} + 5000 ))" ] && [ "${TRAVGFULL}" -gt "${TRACELIMIT}" ]; } || { [ "${PINGFULL}" -gt "$(( ${LIMIT} + 5000 ))" ] && [ "${TRAVGFULL}" -le "${TRACELIMIT}" ]; } || { [ "${PINGFULL}" -lt "1000" ] && [ "${TRAVGFULL}" -gt "${TRACELIMIT}" ]; }; then { eval "iptables -I LDREJECT -s $peer -d $CONSOLE -j $ACTION1 "${WAITLOCK}";" && if ! { tail +1 /tmp/$RANDOMGET| grep -Fo "$peer"; }; then echo -e "\"$EPOCH\"$DATETIME#"$borneopeer"#"$PINGFULLDECIMAL"#"$TRAVGFULLDECIMAL"#"${RED}${RESPONSE3}${NC}"#"$SHOWSMARTLOG"#"$SHOWSMARTLOGTR"#"$LDCOUNTRY_toLog"#" >> /tmp/$RANDOMGET;fi; }; else { eval "iptables -A LDACCEPT -p all -s $peer -d $CONSOLE -j ACCEPT "${WAITLOCK}"" && if ! { tail +1 /tmp/$RANDOMGET| grep -Fo "$peer"; }; then echo -e "\"$EPOCH\"$DATETIME#"$borneopeer"#"$PINGFULLDECIMAL"#"$TRAVGFULLDECIMAL"#"$RESULT"#"$SHOWSMARTLOG"#"$SHOWSMARTLOGTR"#"$LDCOUNTRY_toLog"#" >> /tmp/$RANDOMGET; fi; } fi; } &)
 					  ;;
-				 "$(echo -n "${MODE}" | grep -oEi "([5])")") #4=TraceRoute if Ping is null
+				 5|*) #4=TraceRoute if Ping is null
 				if [ "${PINGFULL}" = "--" ] || [ "${PINGFULL}" = "0" ] || [ $PINGFULLDECIMAL = "0" ] || [ $PINGFULLDECIMAL = "--" ] || [ $PINGFULLDECIMAL = "\-\-" ]; then
 					BLOCK=$({ if [ "${TRAVGFULL}" -gt "${TRACELIMIT}" ]; then { eval "iptables -I LDREJECT -s $peer -d $CONSOLE -j $ACTION1 "${WAITLOCK}";" && if ! { tail +1 /tmp/$RANDOMGET| grep -Fo "$peer"; }; then echo -e "\"$EPOCH\"$DATETIME#"$borneopeer"#"$PINGFULLDECIMAL"#"$TRAVGFULLDECIMAL"#"$RESULT"#"$SHOWSMARTLOG"#"$SHOWSMARTLOGTR"#"$LDCOUNTRY_toLog"#" >> /tmp/$RANDOMGET;fi; }; else { eval "iptables -A LDACCEPT -p all -s $peer -d $CONSOLE -j ACCEPT "${WAITLOCK}"" && if ! { tail +1 /tmp/$RANDOMGET| grep -Fo "$peer"; }; then echo -e "\"$EPOCH\"$DATETIME#"$borneopeer"#"$PINGFULLDECIMAL"#"$TRAVGFULLDECIMAL"#"$RESULT"#"$SHOWSMARTLOG"#"$SHOWSMARTLOGTR"#"$LDCOUNTRY_toLog"#" >> /tmp/$RANDOMGET;fi; } fi; } &)
 				else 
@@ -923,7 +924,8 @@ fi
 	RESPONSE1="OK!!" #OK/GOOD
 	RESPONSE2="Warn" #Pushing it...
 	RESPONSE3="BLOCK" #BLOCKED
-	SENTINEL_BAN_MESSAGE="‼‼‼‼‼ BANNED - SUSPECTED CONNECTION INSTABILITY ‼‼‼‼‼"
+	SENTINEL_BAN_MESSAGE='‼‼‼‼‼%BANNED%-%SUSPECTED%CONNECTION%INSTABILITY%‼‼‼‼‼'
+	SENTINEL_BAN_MESSAGE="${SENTINEL_BAN_MESSAGE// /%}"
 	
 	#RESPONSE1="●●●●●●" #OK/GOOD
 	#RESPONSE2="●●●●  " #Pushing it...
@@ -993,14 +995,15 @@ if ! [ "$SWITCH" = "$(echo -n "$SWITCH" | grep -oEi "(off|0|disable(d?))")" ]; t
 	else 
 		ADDWHITELIST=""
 	fi
-	PEERIP=$(echo "$IPCONNECT"|grep -Eo "(([0-9]{1,3}\.?){3})\.([0-9]{1,3})"|grep -Ev "^\b(${CONSOLE}|${ROUTER}|${IGNORE}|${ROUTERSHORT}|${FILTERIP}|${ONTHEFLYFILTER_IPs})\b""${ADDWHITELIST}"|awk '!a[$0]++'|sed -E "s/(\s)*//g") ### Get console Peer's IP DON'T TOUCH!
+	
+	PEERIP=$(echo "$IPCONNECT"|grep -Eo "(([0-9]{1,3}\.?){3})\.([0-9]{1,3})"|grep -Ev "^\b(${CONSOLE}|${ROUTER}|${IGNORE}$(if [ $EXIST_LIST != 0 ] || [ $EXIST_LIST != "" ]; then echo "|${EXIST_LIST}"; fi)|${ROUTERSHORT}|${FILTERIP}|${ONTHEFLYFILTER_IPs})\b""${ADDWHITELIST}"|awk '!a[$0]++'|sed -E "s/(\s)*//g") ### Get console Peer's IP DON'T TOUCH!
 		##### BLACKLIST #####
 		if [ -f "$DIR"/42Kmi/blacklist.txt ]; then
-		###*******Convert to for-loop!!!!!!!
-		#BLACKLIST=$(echo $(echo "$(tail +1 "${DIR}"/42Kmi/blacklist.txt|sed -E -e "/(#.*$|^$|\;|#^[ \t]*$)|#/d" -e "s/^/\^/g" -e "s/\^#|\^$//g" -e "s/\^\^/^/g" -e "s/$/|/g")")| sed -e 's/\|$//g' -e "s/(\ *)//g" -e 's/\b\.\b/\\./g') ### Permananent ban. If encountered, automatically blocked.
-		BLACKLIST=$(echo $(echo "$(tail +1 "${DIR}"/42Kmi/blacklist.txt|sed -E -e "/(#.*$|^$|\;|#^[ \t]*$)|#/d" -e "s/^/\^/g" -e "s/\^#|\^$//g" -e "s/\^\^/^/g" -e "s/$/|/g")")| sed -e 's/\|$//g') ### Permananent ban. If encountered, automatically blocked.
+		BLACKLIST=$(echo $(echo "$(tail +1 "${DIR}"/42Kmi/blacklist.txt|sed -E -e "/(#.*$|^$|\;|#^[ \t]*$)|#/d" -e "s/^/\^/g" -e "s/\^#|\^$//g" -e "s/\^\^/^/g" -e "s/$/|/g")")| sed -E 's/\|$//g') ### Permananent ban. If encountered, automatically blocked.
 		blacklist(){
-			if { echo "${BLACKLIST}" |grep -E "\b${peer}\b"; }; then eval "iptables -I LDBAN -s $peer -d $CONSOLE -j $ACTION1 "${WAITLOCK}";"; fi &
+			if { grep -E "\b(${peer})\b" "${DIR}"/42Kmi/blacklist.txt; }; then
+				eval "iptables -I LDBAN -s $peer -d $CONSOLE -j $ACTION1 "${WAITLOCK}";" &
+			fi
 		}
 		fi
 		##### BLACKLIST #####
@@ -1009,21 +1012,23 @@ if ! [ "$SWITCH" = "$(echo -n "$SWITCH" | grep -oEi "(off|0|disable(d?))")" ]; t
 	for peer in $PEERIP; do
 	if ! { echo "$EXIST_LIST"| grep -E "\b${peer}\b"; }; then
 	peerenc="$(echo -n "$peer"|openssl enc -base64 -nosalt -k "42KmiLagDrop")"
+		if [ -f "$DIR"/42Kmi/blacklist.txt ]; then
+			blacklist
+		fi
 	#peerenc="$(echo -n "$peer"|openssl enc -rc4-40 -nosalt -k "42KmiLagDrop")"
 		#PEERIP="${PEERIP//$peer/\b}"
 		PEERIP="$(echo "${PEERIP}"|sed -E "s/\b${peer}\b//g")"
 		LDSIMULLIMIT=8
 		if [ -f "$DIR"/42Kmi/blacklist.txt ]; then blacklist; fi
-		#if [[ $(printf "$PEERIP"|wc -l) <= $LDSIMULLIMIT ]] && [[ $(printf "$PEERIP"|wc -l) > 0 ]]; then
-		if [ $(printf "$PEERIP"|wc -l) -le $LDSIMULLIMIT ] && [ $(printf "$PEERIP"|wc -l) -gt 1 ]; then
-			wait $!
-			{ meatandtatoes; } &
-		else
-			{ meatandtatoes; }
-		fi
-		if [ $POPULATE = 1 ]; then
-			IGNORE="${IGNORE}|${peer}"
-		fi
+			if [ $(printf "$PEERIP"|wc -l) -le $LDSIMULLIMIT ] && [ $(printf "$PEERIP"|wc -l) -gt 1 ]; then
+				wait $!
+				{ meatandtatoes; } &
+			else
+				{ meatandtatoes; }
+			fi
+			if [ $POPULATE = 1 ]; then
+				IGNORE="${IGNORE}|${peer}"
+			fi
 		$PEERIP
 		cleanliness &> /dev/null &
 		bancountry &> /dev/null &
@@ -1158,7 +1163,6 @@ done &> /dev/null &
 SENTINEL=$(echo "$SETTINGS"|sed -n 10p)
 {
 if [ "$SENTINEL" = "$(echo -n "$SENTINEL" | grep -oEi "(yes|1|on|enable(d?))")" ]; then
-
 	sentinel(){
 	while "$@" &> /dev/null; do
 	
@@ -1173,42 +1177,48 @@ if [ "$SENTINEL" = "$(echo -n "$SENTINEL" | grep -oEi "(yes|1|on|enable(d?))")" 
 		SENTMODE=$TWEAK_SENTMODE
 		SENTLOSSLIMIT=$TWEAK_SENTLOSSLIMIT
 	else
-		PACKET_OR_BYTE=2 #1 for packets, 2 for bytes
+		PACKET_OR_BYTE=1 #1 for packets, 2 for bytes
 		SENTINELDELAYBIG=2
 		SENTINELDELAYSMALL=1
-		STRIKEMAX=3
+		STRIKEMAX=5
 		ABS_VAL=1 #Set to 1 to use absolute values instead.
 		SENTMODE=3 #0 or 1=Difference, 2=X^2, 3=Difference or X^2, 4=Difference & X^2
+		
+		#If BYTEDIFF -gt SENTLOSSLIMIT, Sentinel will act. These values are constant regardless of game played.
 		if [ $PACKET_OR_BYTE = 2 ]; then
-			SENTLOSSLIMIT=13000 #‭1048576 #13000 #Number before Sentinel takes action. Don't change
+			#Bytes
+			SENTLOSSLIMIT=13000
 		else
-			SENTLOSSLIMIT=110 #820 #110 #105 is Mario Kart 8 small average. #150 #1 Number before Sentinel takes action
+			#Packets
+			SENTLOSSLIMIT=24
+
 		fi
 	fi
 	
-	if [ $PACKET_OR_BYTE = 2 ]; then
-		#Values for Bytes
-		#DIFF_MIN=10485 #12000 #‭1048576 #524288‬ #30000 #Minimum difference between small time delay (must be greater than to count)
-		#CHI_LIMIT=50000 #20000
-		if [ $bytediffA_new != 0 ] && [ $bytediffA_old != 0 ]; then
-			if [ $bytediffA_new -ge 40800 ] && [ $bytediffA_old -ge 40800 ]; then
-				DIFF_MIN=40800 #Mario Kart 8 #Minimum difference between small time delay (must be greater than to count)
-				CHI_LIMIT=3000 #33 is Mario Kart 8 reasonable small average. #80 #$SENTLOSSLIMIT
-			else
-				DIFF_MIN=12000 #Smash Bros. for Wii U #Minimum difference between small time delay (must be greater than to count)
-				CHI_LIMIT=100 #800 #Smash Bros. for Wii U #$SENTLOSSLIMIT
-			fi
-		fi
-	else
-		if [ $bytediffA_new != 0 ] && [ $bytediffA_old != 0 ]; then
+	#Sentinel will act only if bytediffA_new and bytediffA_old are greater than DIFF_MIN. Varies with game.
+	DIFF_MIN_BYTES=40800 #85000
+	DIFF_MIN_PACKETS=120
+	if [ $bytediffA_new != 0 ] && [ $bytediffA_old != 0 ]; then
+		if [ $PACKET_OR_BYTE = 2 ]; then
+			#Values for Bytes
+			BYTE_OFFSET=5500
+				if [ $bytediffA_new -ge $DIFF_MIN_BYTES ] && [ $bytediffA_old -ge $DIFF_MIN_BYTES ]; then
+					DIFF_MIN=$DIFF_MIN_BYTES #High value for high data online games
+					CHI_LIMIT=1 
+				elif [ $bytediffA_new -lt $DIFF_MIN_BYTES ] && [ $bytediffA_old -lt $DIFF_MIN_BYTES ]; then
+					DIFF_MIN=12000 #Low value for low data online games
+					CHI_LIMIT=1 
+				fi
 			#Values for Packets
-			if [ $bytediffA_new -ge 170 ] && [ $bytediffA_old -ge 170 ]; then
-				DIFF_MIN=170 #Mario Kart 8 #Minimum difference between small time delay (must be greater than to count)
-				CHI_LIMIT=40 #33 is Mario Kart 8 reasonable small average. #80 #$SENTLOSSLIMIT
-			else
-				DIFF_MIN=50 #36 #Smash Bros. for Wii U #Minimum difference between small time delay (must be greater than to count)
-				CHI_LIMIT=15 #Smash Bros. for Wii U #$SENTLOSSLIMIT
-			fi
+				if [ $bytediffA_new -ge $DIFF_MIN_PACKETS ] && [ $bytediffA_old -ge $DIFF_MIN_PACKETS ]; then
+				BYTE_OFFSET=50 #5 #150
+					DIFF_MIN=$DIFF_MIN_PACKETS #High value for high data online games
+					CHI_LIMIT=1
+				elif [ $bytediffA_new -lt $DIFF_MIN_PACKETS ] && [ $bytediffA_old -lt $DIFF_MIN_PACKETS ]; then
+				BYTE_OFFSET=5
+					DIFF_MIN=36 #Low value for low data online games
+					CHI_LIMIT=1
+				fi
 		fi
 	fi
 	
@@ -1218,22 +1228,23 @@ if [ "$SENTINEL" = "$(echo -n "$SENTINEL" | grep -oEi "(yes|1|on|enable(d?))")" 
 	
 	for ip in $SENTINELLIST; do
 	#SENTINELLIST="$(echo "${SENTINELLIST}"|sed -E "s/\b${ip}\b//g")"
+	STRIKE_MARK_COUNT_GET="$(( $(grep -E "#(.\[[0-9]{1}\;[0-9]{2}m)(${ip})\b" "/tmp/$RANDOMGET"|grep -Eo "(‡*)$"|wc -c) / 3 ))" #Get strike count from log.
 	cleansentinel &
 	wait
 	if { iptables -nL LDACCEPT| grep -E "\b${CONSOLE}\b"|grep -Eq "\b${ip}\b"; }; then
 	{
 	if [ $bytediffA_new != 0 ]; then
-	bytediffA_old=$bytediffA_new
-	sleep $SENTINELDELAYBIG
+		bytediffA_old=$bytediffA_new
+		sleep $SENTINELDELAYBIG
 	else
-	bytediffA_old=0
+		bytediffA_old=0
 	fi
 		STRIKECOUNT="$(iptables -nL LDSENTSTRIKE|tail +3|grep -Ec "\b${ip}\b")"
 		LINENUMBERSTRIKEOUTBAN=$(iptables --line-number -nL LDSENTSTRIKE|grep -E "\b${ip}\b"|grep -Eo "^\s?[0-9]{1,}")
 		LINENUMBERSTRIKEOUTACCEPT=$(iptables --line-number -nL LDACCEPT|grep -E "\b${CONSOLE}\b"|grep -E "\b${ip}\b"|grep -Eo "^\s?[0-9]{1,}")
 		
 		case "$PACKET_OR_BYTE" in
-		1)
+		*|1)
 			byte1="$(iptables -xvnL LDACCEPT|tail +3|grep -E "\b${CONSOLE}\b"|grep -E "\b${ip}\b"|awk '{printf $1}')"
 			sleep $SENTINELDELAYSMALL
 			byte2="$(iptables -xvnL LDACCEPT|tail +3|grep -E "\b${CONSOLE}\b"|grep -E "\b${ip}\b"|awk '{printf $1}')"
@@ -1249,13 +1260,14 @@ if [ "$SENTINEL" = "$(echo -n "$SENTINEL" | grep -oEi "(yes|1|on|enable(d?))")" 
 		case "$ABS_VAL" in
 			*|0)
 				bytediffA_new=$(( (( $byte2 - $byte1 )) / $SENTINELDELAYSMALL )) #New
-				BYTEDIFF=$(( $bytediffA_new - $bytediffA_old ))
+				#BYTEDIFF=$(( $bytediffA_new - $bytediffA_old ))
 			;;
 			1)
 				bytediffA_new=$(echo "$(( $byte2 - $byte1 ))"|sed "s/\-//g")
-				BYTEDIFF=$(echo "$(( $bytediffB - $bytediffA_new ))"|sed "s/\-//g")
+				#BYTEDIFF=$(echo "$(( $bytediffB - $bytediffA_new ))"|sed "s/\-//g")
 			;;
 		esac
+		BYTEDIFF=$(( $bytediffA_new - $bytediffA_old ))
 		BYTESUM=$(( $bytediffA_new + $bytediffA_old ))
 		BYTEAVG=$(( $BYTESUM / 2 ))
 		if [ $BYTEAVG = 0 ]; then BYTEAVG=1; fi
@@ -1263,14 +1275,14 @@ if [ "$SENTINEL" = "$(echo -n "$SENTINEL" | grep -oEi "(yes|1|on|enable(d?))")" 
 		BYTEXSQ=$(( $BYTEDIFFSQ / $BYTEAVG ))
 		
 	sentinelstrike(){
-		if [ "$STRIKECOUNT" -ge $STRIKEMAX ]; then # Max strikes. You're OUT!
+		if [ "$STRIKECOUNT" -ge $STRIKEMAX ] || [ "$STRIKE_MARK_COUNT_GET" -ge $STRIKEMAX ]; then # Max strikes. You're OUT!
 		
-				
-			if ! { iptables -nL LDBAN|grep -Eq "\b${ip}\b"; }; then
-				eval "iptables -I LDBAN -s $ip -d $CONSOLE -j REJECT --reject-with icmp-host-prohibited "${WAITLOCK}""; wait $!
-				sed -i -E "s/#(.\[[0-9]{1}\;[0-9]{2}m)(${ip})(.*$)/$(echo -e "#${BG_RED}")\2 ${SENTINEL_BAN_MESSAGE} @ $(date +"%X") $(echo -e "${NC}")/g" "/tmp/$RANDOMGET"
-			fi
-			if { iptables -nL LDACCEPT|grep -Eq "\b${ip}\b"; }; then 
+			if { iptables -nL LDACCEPT|grep -Eq "\b${ip}\b"; }; then	
+				if ! { iptables -nL LDBAN|grep -Eq "\b${ip}\b"; }; then
+					eval "iptables -I LDBAN -s $ip -d $CONSOLE -j REJECT --reject-with icmp-host-prohibited "${WAITLOCK}""; wait $!
+					sed -i -E "s/#(.\[[0-9]{1}\;[0-9]{2}m)(${ip})(.*$)/$(echo -e "#${BG_RED}")\2%${SENTINEL_BAN_MESSAGE}%@%$(date +"%X")%$(echo -e "${NC}")/g" "/tmp/$RANDOMGET"
+				fi
+
 				eval "iptables -D LDACCEPT "$LINENUMBERSTRIKEOUTACCEPT""
 			fi
 				
@@ -1323,16 +1335,16 @@ if [ "$SENTINEL" = "$(echo -n "$SENTINEL" | grep -oEi "(yes|1|on|enable(d?))")" 
 		
 		##### PACKETBLOCK ##### // 0 or 1=Difference, 2=X^2, 3=Difference or X^2, 4=Difference & X^2
 				case "${SENTMODE}" in
-					"$(echo -n "${SENTMODE}" | grep -oEiv "([234])")") # Difference only
+					0|1) # Difference only
 						BYTEBLOCK=$({ if [ "${BYTEDIFF}" -gt "${SENTLOSSLIMIT}" ]; then sentinelstrike; fi; } &)
 						;;
-					"$(echo -n "${SENTMODE}" | grep -oEi "([2])")") #X^2 only
+					2) #X^2 only
 						BYTEBLOCK=$({ if [ "${BYTEXSQ}" -gt "${CHI_LIMIT}" ]; then sentinelstrike; fi; } &)
 						;;
-					"$(echo -n "${SENTMODE}" | grep -oEi "([3])")") #Difference or X^2
+					3) #Difference or X^2
 						BYTEBLOCK=$({ if [ "${BYTEDIFF}" -gt "${SENTLOSSLIMIT}" ] || [ "${BYTEXSQ}" -gt "${CHI_LIMIT}" ]; then sentinelstrike; fi; } &) 
 						;; 
-					"$(echo -n "${SENTMODE}" | grep -oEi "([4])")") #Difference AND X^2
+					4) #Difference AND X^2
 						BYTEBLOCK=$({ if [ "${BYTEDIFF}" -gt "${SENTLOSSLIMIT}" ] && [ "${BYTEXSQ}" -gt "${CHI_LIMIT}" ]; then sentinelstrike; fi; } &) 
 						;;
 				esac
@@ -1340,11 +1352,11 @@ if [ "$SENTINEL" = "$(echo -n "$SENTINEL" | grep -oEi "(yes|1|on|enable(d?))")" 
 	continue; exit
 	} &
 	fi
-
-	if [ $bytediffA_new -gt $DIFF_MIN ] && [ $bytediffA_old -gt $DIFF_MIN ]; then
+if [ $bytediffA_new != 0 ] && [ $bytediffA_old != 0 ] && [ $BYTEDIFF -gt 0 ]; then
+	if [ $bytediffA_new -gt $(( $DIFF_MIN + $BYTE_OFFSET )) ] && [ $bytediffA_old -gt $(( $DIFF_MIN + $BYTE_OFFSET )) ]; then
 		$BYTEBLOCK
 	fi
-
+fi
 	done #&
 	sentinel_bans; cleansentinel
 	#sleep "${SENTINELDELAYBIG}"
@@ -1434,20 +1446,23 @@ if [ $SHOWLOCATION = 1 ]; then LOCATION="$(echo " | LOCATE${BC}")"; LOCATECOL="$
 		NOTFRESH=300
 		if [ -f "/tmp/$RANDOMGET" ] && [ -s "/tmp/$RANDOMGET" ]; then
 		LOG="$(cat "/tmp/$RANDOMGET" | while read line; do echo $line; done 2> /dev/null)"
+		#LOG="$(tail +1 "/tmp/$RANDOMGET")"
 
-		for line in "$LOG"; do
-		wait $!
+		{
+		for line in $LOG; do
 			#Count strikes as numbers, if I can get it to work!
-			#if { echo "$line" | grep -Eoq "‡$"; }; then
-			#	STRIKE_MARK_COUNT="$(echo -n "$line"|grep -Eo "(‡*)$"|sed "s/‡/‡\n/g"|wc -l)"
-			#	#corrections
-			#	STRIKE_MARK_COUNT=$(( $STRIKE_MARK_COUNT - 1 ))
-			#	#sed -E "s/(‡*)$/${STRIKE_MARK_COUNT}/g"
-			#fi
-			echo -e "$line"|sed -E "s/(#){2,}/#/"|tr "#" "\t"|sed -E "/^\s*$/d"|sed '/txt/d'|sort -n|sed -E "s/^\"([0-9]{1,})\"/"$(if [ $(( $(date +%s) - \1 )) -le $NOTFRESH ]; then echo -e ${YELLOW}; else echo -e ${BLUE}; fi)"/g"|sed -E "s/(([0-9]{4,})(\-([0-9]{1,2})){2}.([0-9]{1,2}\:?){3})/\1$(echo -e ${NC})/g"|sed -E 's/\.[0-9]{1,3}\.[0-9]{1,3}\./.xx.xx./g'|sed -E "s/([0-9])ms/\1/g" |grep -nE ".*"|sed -E "s/^([0-9]{1,}):/\1.$(echo -e "${HIDE}") $(echo -e "${NC}")/g"|sed -E "s/[0-9]{4,}(-[0-9]{2}){2}\s//g"|sed -E "s/\, \, /, /g"|sed -E "s/\, 0(null)?0\,/,/g"|sed -E "s/^([1-9]\.)/ &/g"
-
+			if { echo "$line" | grep -Eoq "(‡{1,}$)"; }; then
+				STRIKE_MARK_COUNT="$(echo -n "$line"|grep -Eo "(‡*)$"|wc -c)"
+				#corrections
+				STRIKE_MARK_COUNT=$(( $STRIKE_MARK_COUNT / 3 ))
+				sed -E "s/(‡{1,})$/${BG_RED}${STRIKE_MARK_COUNT}${NC}/g"
+			fi
+		wait $!
+			
+			{ echo -e "$line"|sed "s/%/ /g"|sed -E "s/#(‡{1,})$/ $(echo -e "${BG_RED}${WHITE}${STRIKE_MARK_COUNT}${NC}")/g"|sed -E "s/(#){2,}/#/"|tr "#" "\t"|sed -E "/^\s*$/d"|sed '/txt/d'|sort -n|sed -E "s/^\"([0-9]{1,})\"/"$(if [ $(( $(date +%s) - \1 )) -le $NOTFRESH ]; then echo -e ${YELLOW}; else echo -e ${BLUE}; fi)"/g"|sed -E "s/(([0-9]{4,})(\-([0-9]{1,2})){2}.([0-9]{1,2}\:?){3})/\1$(echo -e ${NC})/g"|sed -E 's/\.[0-9]{1,3}\.[0-9]{1,3}\./.xx.xx./g'|sed -E "s/([0-9])ms/\1/g"; }
 		done &
-		
+		}|sort -n -t \"|grep -nE ".*"|sed -E "s/^([0-9]{1,}):/\1.$(echo -e "${HIDE}") $(echo -e "${NC}")/g"|sed -E "s/[0-9]{4,}(-[0-9]{2}){2}\s//g"|sed -E "s/\, \, /, /g"|sed -E "s/\, 0(null)?0\,/,/g"|sed -E "s/^([1-9]\.)/ &/g" & 
+
 		else
 			if [ ! -f "/tmp/$RANDOMGET" ] || [ ! -s "/tmp/$RANDOMGET" ]; then
 				echo -e "$LOG_MESSAGE"; sleep
