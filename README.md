@@ -24,9 +24,8 @@ What to expect in 3.0.0
 
 ![LagDrop](http://i.imgur.com/GGJmYyr.png)
 
-[See LagDrop in action!](https://www.youtube.com/watch?v=6g9MiaE-2k0)
-
-[Preview LagDrop 3.0.0](https://youtu.be/F7XfFheooUU)
+# See LagDrop in action!
+[![LagDrop in Action](https://i.ytimg.com/vi/qba7K7K8F_M/hqdefault.jpg)](https://youtu.be/qba7K7K8F_M)
 
 [Discuss LagDrop at 42Kmi.com](http://42kmi.com/Forum-42Kmi-LagDrop)
 
