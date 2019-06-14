@@ -1184,7 +1184,7 @@ if [ "$SENTINEL" = "$(echo -n "$SENTINEL" | grep -oEi "(yes|1|on|enable(d?))")" 
 		PACKET_OR_BYTE=1 #1 for packets, 2 for bytes
 		SENTINELDELAYBIG=2
 		SENTINELDELAYSMALL=1
-		STRIKEMAX=500
+		STRIKEMAX=5
 		ABS_VAL=1 #Set to 1 to use absolute values instead.
 		SENTMODE=3 #0 or 1=Difference, 2=X^2, 3=Difference or X^2, 4=Difference & X^2
 		
