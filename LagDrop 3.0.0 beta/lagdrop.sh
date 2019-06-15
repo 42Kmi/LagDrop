@@ -315,7 +315,7 @@ case "$1" in
 
 esac
 }
-ONTHEFLYFILTER="amazonaws|akamaitechnologies|Akamai|mcics|twitter|nintendowifi\.net|(nintendo|xboxlive|sony|playstation)\.net|ps[2-9]|nflxvideo|netflix|easo\.ea\.com|\.ea\.com|\.1e100\.net|GOGL|goog|Sony Online Entertainment|cloudfront\.net|facebook|fb-net|IANA|Cloudflare|BAD REQUEST|blizzard|NC Interactive|ncsoft|NCINT|RIOT(\s)?GAMES|RIOT|SQUARE ENIX|Valve Corporation|Ubisoft|not found|IANA-RESERVED|\b(dns|ns|NS|DNS)([0-9]{1,}?(\.|\-))\b|google\.com|LINODE" # Ignores if these words are found in whois requests
+ONTHEFLYFILTER="amazonaws|akamaitechnologies|Akamai|mcics|edgecast|cdn|twitter|nintendowifi\.net|(nintendo|xboxlive|sony|playstation)\.net|ps[2-9]|nflxvideo|netflix|easo\.ea\.com|\.ea\.com|\.1e100\.net|GOGL|goog|Sony Online Entertainment|cloudfront\.net|facebook|fb-net|IANA|Cloudflare|BAD REQUEST|blizzard|NC Interactive|ncsoft|NCINT|RIOT(\s)?GAMES|RIOT|SQUARE ENIX|Valve Corporation|Ubisoft|not found|IANA-RESERVED|\b(dns|ns|NS|DNS)([0-9]{1,}?(\.|\-))\b|google\.com|LINODE" # Ignores if these words are found in whois requests
 #ONTHEFLYFILTER="klhjgdfshjvckxrsjrfkctyjztyflkutyjsrehxcvhjyutresdxfcgh"
 AMAZON_SERVERS="(13\.(2(4[89]|5[01]))\.)"
 MSFT_SERVERS="(52\.(1((4[5-9])|([5-8][0-9])|(9[0-1]))))|(52\.(2(2[4-9]|[3-5][0-9])))|(52\.(9[6-9]|10[0-9]|11[1-5]))"
@@ -465,9 +465,9 @@ BANCOUNTRY="" #Reinitialize
 	BANCOUNTRY="" #Reinitialize
 		if [ -f "$DIR"/42Kmi/bancountry.txt ] ; then
 		#Country
-		BANCOUNTRY="$(echo $(echo "$(tail +1 ""${DIR}"/42Kmi/bancountry.txt"|sed -E "s/$/|/g")")|sed -E "s/\|$//g"|sed -E "s/\| /|/g"|sed 's/,/\\,/g'|sed -E "s/\|$//")" # "CC" format for Country only; "RR, CC" format for Region by Country; "(RR|GG), CC" format for multiple regions by country
+		BANCOUNTRY="$(echo $(echo "$(tail +1 ""${DIR}"/42Kmi/bancountry.txt"|sed -E "s/$/|/g")")|sed -E "s/\|$//g"|sed -E "s/\| /|/g"|sed 's/,/\\,/g'|sed -E "s/\|$//"|sed -E "s/\s/\%/g")" # "CC" format for Country only; "RR, CC" format for Region by Country; "(RR|GG), CC" format for multiple regions by country
 			if { tail +1 "/tmp/$RANDOMGET"|sed -E "s/.\[[0-9]{1}(\;[0-9]{2})?m//g"| grep -Ei "($BANCOUNTRY)"; }; then
-			BANCOUNTRYIP=$(tail +1 "/tmp/$RANDOMGET"| grep -Ei "($BANCOUNTRY).\[.*$"|grep -Eo "(([0-9]{1,3}\.){3})([0-9]{1,3})""${ADDWHITELIST}")
+			BANCOUNTRYIP=$(tail +1 "/tmp/$RANDOMGET"|grep -Ei "($BANCOUNTRY).\[.*$"|grep -Eo "(([0-9]{1,3}\.){3})([0-9]{1,3})\b""${ADDWHITELIST}")
 			for ip in $BANCOUNTRYIP; do
 				if ! { iptables -nL LDBAN|grep -Eq "\b${ip}\b"; }; then
 				eval "iptables -I LDBAN -s $ip -d $CONSOLE -j REJECT --reject-with icmp-host-prohibited "${WAITLOCK}""; wait $!
@@ -708,6 +708,8 @@ pingavgfornull(){
 meatandtatoes(){ 
 	#borneopeer="$(borneo "$peer")"
 	borneopeer="$peer"
+	# Checks filterignore cache, adds to LDIGNORE to prevent unnecessary checking
+	if { grep -Eo "^(${peer}|${peerenc})$" ""$DIR"/42Kmi/${FILTERIGNORE}"; }; then eval "iptables -I LDIGNORE -p all -s $peer -d $CONSOLE -j ACCEPT "${WAITLOCK}"; $IGNORE"; fi
 		#Do you believe in magic?
 		##### Whitelisting/ NSLookup #####
 		SERVERS="${ONTHEFLYFILTER}"
@@ -985,8 +987,8 @@ if ! [ "$SWITCH" = "$(echo -n "$SWITCH" | grep -oEi "(off|0|disable(d?))")" ]; t
 			else
 			IPCONNECT_SOURCE='/proc/net/nf_conntrack'	
 		fi
-		#IPCONNECT=$(grep -E "\b${CONSOLE}\b" "${IPCONNECT_SOURCE}""${ADDPORTS}") ### IP connections stored here, called from memory
-		IPCONNECT=$(tail +1 "/proc/net/ip_conntrack" | while read line; do echo $line; done 2> /dev/null|grep -E "\b${CONSOLE}\b""${ADDPORTS}") ### IP connections stored here, called from memory
+		IPCONNECT=$(grep -E "\b${CONSOLE}\b" "${IPCONNECT_SOURCE}""${ADDPORTS}") ### IP connections stored here, called from memory
+		#IPCONNECT=$(tail +1 "/proc/net/ip_conntrack" | while read line; do echo $line; done 2> /dev/null|grep -E "\b${CONSOLE}\b""${ADDPORTS}") ### IP connections stored here, called from memory
 		}
 	getiplist
 	##### Check Ports #####
@@ -1510,7 +1512,7 @@ fi 2> /dev/null
 specialcaserestart(){
 while : &> /dev/null; do
 	for tablename in LDACCEPT LDREJECT LDTEMPHOLD LDIGNORE LDBAN; do
-		if ! { iptables -nL $tablename &> /dev/null }; then maketables; fi
+		if ! { iptables -nL $tablename|grep -q "references" &> /dev/null }; then maketables; fi
 	done &> /dev/null
 #kill $!
 done
