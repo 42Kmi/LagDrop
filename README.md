@@ -49,6 +49,7 @@ Starting with version 3.0.0, LagDrop runs differently from previous versions.
 ----
 #### Required:
 * Router with [DD-WRT](http://dd-wrt.com), [OpenWRT](http://openwrt.org) other aftermarket firmware capable of running scripts. [Check if your router is compatible with DD-WRT here.](http://dd-wrt.com/site/support/router-database)
+[Check if your router is compatible with OpenWRT here.](https://openwrt.org/toh/views/toh_fwdownload)
 * Please ensure that curl and openssl are installed on your router.
 * SCP client to upload script and edit options file (e.g., WinSCP)
 ##### Optional:
