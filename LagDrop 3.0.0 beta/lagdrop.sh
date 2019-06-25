@@ -1058,7 +1058,7 @@ if ! [ "$SWITCH" = "$(echo -n "$SWITCH" | grep -oEi "(off|0|disable(d?))")" ]; t
 	#peerenc="$(echo -n "$peer"|openssl enc -rc4-40 -nosalt -k "42KmiLagDrop")"
 		#PEERIP="${PEERIP//$peer/\b}"
 		PEERIP="$(echo "${PEERIP}"|sed -E "s/\b${peer}\b//g")"; $PEERIP
-		LDSIMULLIMIT=20 #8
+		LDSIMULLIMIT=8
 		if [ -f "$DIR"/42Kmi/blacklist.txt ]; then blacklist; fi
 			if [ $(echo -n "$PEERIP"|wc -l) -gt 2 ] && [ $(echo -n "$PEERIP"|wc -l) -le $LDSIMULLIMIT ]; then
 				#wait $!
