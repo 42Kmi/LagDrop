@@ -314,7 +314,7 @@ case "$1" in
 
 esac
 }
-ONTHEFLYFILTER="amazonaws|akamaitechnologies|Akamai|mcics|EDGECAST(.*)?|edgecast|cdn|twitter|nintendowifi\.net|(nintendo|xboxlive|sony|playstation)\.net|ps[2-9]|nflxvideo|netflix|easo\.ea\.com|\.ea\.com|\.1e100\.net|GOGL|goog|Sony Online Entertainment|cloudfront\.net|facebook|fb-net|IANA|Cloudflare|BAD REQUEST|blizzard|NC Interactive|ncsoft|NCINT|RIOT(\s)?GAMES|RIOT|SQUARE ENIX|Valve Corporation|Ubisoft|not found|IANA-RESERVED|\b(dns|ns|NS|DNS)([0-9]{1,}?(\.|\-))\b|google\.com|LINODE|oath(\s)holdings|thePlatform" # Ignores if these words are found in whois requests
+ONTHEFLYFILTER="amazonaws|akamaitechnologies|Akamai|mcics|EDGECAST(.*)?|edgecast|cdn|twitter|nintendowifi\.net|(nintendo|xboxlive|sony|playstation)\.net|ps[2-9]|nflxvideo|netflix|easo\.ea\.com|\.ea\.com|\.1e100\.net|GOGL|goog|Sony Online Entertainment|cloudfront\.net|facebook|fb-net|IANA|Cloudflare|BAD REQUEST|blizzard|NC Interactive|ncsoft|NCINT|RIOT(\s)?GAMES|RIOT|SQUARE ENIX|Valve Corporation|Ubisoft|not found|IANA-RESERVED|\b(dns|ns|NS|DNS)([0-9]{1,}?(\.|\-))\b|google\.com|LINODE|oath(\s)holdings|thePlatform|(MoPub\,\sInc|mopub)" # Ignores if these words are found in whois requests
 #ONTHEFLYFILTER="klhjgdfshjvckxrsjrfkctyjztyflkutyjsrehxcvhjyutresdxfcgh"
 AMAZON_SERVERS="(13\.(2(4[89]|5[01]))\.)"
 MSFT_SERVERS="(52\.(1((4[5-9])|([5-8][0-9])|(9[0-1]))))|(52\.(2(2[4-9]|[3-5][0-9])))|(52\.(9[6-9]|10[0-9]|11[1-5]))"
@@ -481,7 +481,6 @@ BANCOUNTRY="" #Reinitialize
 				sed -i -E "s/#(.\[[0-9]{1}\;[0-9]{2}m)?(${ip})\b/$(echo -e "#${BG_RED}")\2/g" "/tmp/$RANDOMGET"; sleep 5 #Background color notification for banned country/region
 
 				wait $!; sed -i -E "/(m)?${ip}#/d" "/tmp/$RANDOMGET"
-				#eval "wait $!; sed -i -E "/\b${ip}\b#/d" "/tmp/$RANDOMGET""
 			done &
 			fi &
 		fi
@@ -561,7 +560,7 @@ cleanliness(){
 	done &
 	}
 	##### Clean Hold #####
-	CLEANLDTEMPHOLDLIST=$(iptables -nL LDTEMPHOLD|tail +3|awk '{printf $3"\n"}')
+	CLEANLDTEMPHOLDLIST=$(iptables -nL LDTEMPHOLD|tail +3|awk '{printf $4"\n"}')
 	for ip in $CLEANLDTEMPHOLDLIST; do
 	CLEANLDTEMPHOLDNUM=$(iptables --line-number -nL LDTEMPHOLD|grep -E "\b${CONSOLE}\b"|grep -E "\b${ip}\b"|grep -Eo "^\s?[0-9]{1,}")
 		if ! { echo "$(iptables -nL LDACCEPT && iptables -nL LDREJECT)"|grep -Eoq "\b${ip}\b"; }; then
@@ -572,7 +571,7 @@ cleanliness(){
 
 	cleansentinel(){
 		##### Clean Sentinel #####
-		CLEANLDSENTSTRIKELIST=$(iptables -nL LDSENTSTRIKE|tail +3|awk '{printf $3"\n"}'|awk '!a[$0]++')
+		CLEANLDSENTSTRIKELIST=$(iptables -nL LDSENTSTRIKE|tail +3|awk '{printf $4"\n"}'|awk '!a[$0]++')
 		for ip in $CLEANLDSENTSTRIKELIST; do
 		CLEANLDSENTSTRIKENUM=$(iptables --line-number -nL LDSENTSTRIKE|grep -E "\b${ip}\b"|grep -Eo "^\s?[0-9]{1,}"|sort -r)
 			if ! { tail +1 "/tmp/$RANDOMGET"|sed -E "s/.\[[0-9]{1}(\;[0-9]{2})?m//g"|grep -Ev "\b(${RESPONSE3}|${SENTINEL_BAN_MESSAGE})\b"|grep -Eoq "\b${ip}\b"; }; then 
@@ -702,7 +701,20 @@ pingavgfornull(){
 		fi
 	fi
 }
+panama(){
+	ROUND_TRIP=1
+	VACATION="$peer"
 
+	for destination in "$VACATION"; do
+		if [ $ROUND_TRIP -gt 0 ]; then
+			n=0; while [[ $n -lt $ROUND_TRIP ]]; do { destination_new=$(echo -n $(echo -n "$destination"|openssl enc -base64)|sed "s/\s//g"); destination=$destination_new; } ; n=$((n+1)); done
+			wait
+			printf $destination_new
+		else
+			printf $destination
+		fi
+	done
+}
 meatandtatoes(){ 
 	#borneopeer="$(borneo "$peer")"
 	borneopeer="$peer"
@@ -878,25 +890,25 @@ if [ $PINGFULLDECIMAL = "$NULLTEXT" ] && [ TRAVGFULLDECIMAL = "$NULLTEXT" ]; the
 		if ! { echo "$EXIST_LIST_GET"|grep -Eoq "\b(${peer})\b"; } && ! { tail +1 "/tmp/$RANDOMGET"|sed -E "s/.\[[0-9]{1}(\;[0-9]{2})?m//g"|grep -Eoq "\b?(${peer})\b"; }; then
 		
 			lagdrop_accept_condition(){
-			if ! { echo "$(iptables -nL LDACCEPT|tail +3|awk '{printf $3"\n"}'|awk '!a[$0]++')"|grep -Eoq "\b(${peer})\b"; } && ! { tail +1 "/tmp/$RANDOMGET"|sed -E "s/.\[[0-9]{1}(\;[0-9]{2})?m//g"|grep -Eoq "\b?(${peer})\b"; }; then
+			if ! { echo "$(iptables -nL LDACCEPT|tail +3|awk '{printf $4"\n"}'|awk '!a[$0]++')"|grep -Eoq "\b(${peer})\b"; } && ! { tail +1 "/tmp/$RANDOMGET"|sed -E "s/.\[[0-9]{1}(\;[0-9]{2})?m//g"|grep -Eoq "\b?(${peer})\b"; }; then
 				{ eval "iptables -A LDACCEPT -p all -s $peer -d $CONSOLE -j ACCEPT "${WAITLOCK}""; } && if ! { grep -Eo "\b(${peer})\b" "/tmp/$RANDOMGET"; }; then echo -e "\"$EPOCH\"$DATETIME#"$borneopeer"#"$PINGFULLDECIMAL"#"$TRAVGFULLDECIMAL"#"$RESULT"#"$SHOWSMARTLOG"#"$SHOWSMARTLOGTR"#"$LDCOUNTRY_toLog"#" >> /tmp/$RANDOMGET;fi;
 			fi
 			}
 
 			lagdrop_reject_condition(){
-			if ! { echo "$(iptables -nL LDREJECT|tail +3|awk '{printf $3"\n"}'|awk '!a[$0]++')"|grep -Eoq "\b(${peer})\b"; } && ! { tail +1 "/tmp/$RANDOMGET"|sed -E "s/.\[[0-9]{1}(\;[0-9]{2})?m//g"|grep -Eoq "\b?(${peer})\b"; }; then
+			if ! { echo "$(iptables -nL LDREJECT|tail +3|awk '{printf $4"\n"}'|awk '!a[$0]++')"|grep -Eoq "\b(${peer})\b"; } && ! { tail +1 "/tmp/$RANDOMGET"|sed -E "s/.\[[0-9]{1}(\;[0-9]{2})?m//g"|grep -Eoq "\b?(${peer})\b"; }; then
 				{ eval "iptables -A LDREJECT -s $peer -d $CONSOLE -j $ACTION1 "${WAITLOCK}""; } && if ! { grep -Eo "\b(${peer})\b" "/tmp/$RANDOMGET"; }; then echo -e "\"$EPOCH\"$DATETIME#"$borneopeer"#"$PINGFULLDECIMAL"#"$TRAVGFULLDECIMAL"#"$RESULT"#"$SHOWSMARTLOG"#"$SHOWSMARTLOGTR"#"$LDCOUNTRY_toLog"#" >> /tmp/$RANDOMGET;fi;
 			fi
 			}
 
 			lagdrop_reject_condition_2_1(){
-			if ! { echo "$(iptables -nL LDREJECT|tail +3|awk '{printf $3"\n"}'|awk '!a[$0]++')"|grep -Eoq "\b(${peer})\b"; } && ! { tail +1 "/tmp/$RANDOMGET"|sed -E "s/.\[[0-9]{1}(\;[0-9]{2})?m//g"|grep -Eoq "\b?(${peer})\b"; }; then
+			if ! { echo "$(iptables -nL LDREJECT|tail +3|awk '{printf $4"\n"}'|awk '!a[$0]++')"|grep -Eoq "\b(${peer})\b"; } && ! { tail +1 "/tmp/$RANDOMGET"|sed -E "s/.\[[0-9]{1}(\;[0-9]{2})?m//g"|grep -Eoq "\b?(${peer})\b"; }; then
 				{ eval "iptables -A LDACCEPT -p all -s $peer -d $CONSOLE -j ACCEPT "${WAITLOCK}"" && if ! { grep -Eo "\b(${peer})\b" "/tmp/$RANDOMGET"; }; then echo -e "\"$EPOCH\"$DATETIME#"$borneopeer"#"$PINGFULLDECIMAL"#"$TRAVGFULLDECIMAL"#"${YELLOW}${RESPONSE2}${NC}"#"$SHOWSMARTLOG"#"$SHOWSMARTLOGTR"#"$LDCOUNTRY_toLog"#" >> /tmp/$RANDOMGET; fi; }
 			fi
 			}
 			
 			lagdrop_reject_condition_2_2(){
-			if ! { echo "$(iptables -nL LDREJECT|tail +3|awk '{printf $3"\n"}'|awk '!a[$0]++')"|grep -Eoq "\b(${peer})\b"; } && ! { tail +1 "/tmp/$RANDOMGET"|sed -E "s/.\[[0-9]{1}(\;[0-9]{2})?m//g"|grep -Eoq "\b?(${peer})\b"; }; then
+			if ! { echo "$(iptables -nL LDREJECT|tail +3|awk '{printf $4"\n"}'|awk '!a[$0]++')"|grep -Eoq "\b(${peer})\b"; } && ! { tail +1 "/tmp/$RANDOMGET"|sed -E "s/.\[[0-9]{1}(\;[0-9]{2})?m//g"|grep -Eoq "\b?(${peer})\b"; }; then
 				{ eval "iptables -A LDREJECT -s $peer -d $CONSOLE -j $ACTION1 "${WAITLOCK}";" && if ! { grep -Eo "\b(${peer})\b" "/tmp/$RANDOMGET"; }; then echo -e "\"$EPOCH\"$DATETIME#"$borneopeer"#"$PINGFULLDECIMAL"#"$TRAVGFULLDECIMAL"#"${RED}${RESPONSE3}${NC}"#"$SHOWSMARTLOG"#"$SHOWSMARTLOGTR"#"$LDCOUNTRY_toLog"#" >> /tmp/$RANDOMGET;fi; }
 			fi
 			}
@@ -1023,7 +1035,6 @@ if ! [ "$SWITCH" = "$(echo -n "$SWITCH" | grep -oEi "(off|0|disable(d?))")" ]; t
 		}
 	getiplist
 	##### Check Ports #####
-	#EXIST_LIST_GET=$({ iptables -nL LDACCEPT && iptables -nL LDREJECT && iptables -nL LDBAN && iptables -nL LDIGNORE && iptables -nL LDKTA; }|grep -Eo "(([0-9]{1,3}\.){3})([0-9]{1,3})"|awk '!a[$0]++'|grep -v "${CONSOLE}")
 	EXIST_LIST_GET=$({ echo "$(iptables -nL LDACCEPT && iptables -nL LDREJECT && iptables -nL LDBAN && iptables -nL LDIGNORE && iptables -nL LDKTA)"; }|grep -Eo "(([0-9]{1,3}\.){3})([0-9]{1,3})"|awk '!a[$0]++')
 	EXIST_LIST=$(if [ $(echo "$EXIST_LIST_GET") != 0 ] || [ $(echo "$EXIST_LIST_GET") != "" ]; then echo ${EXIST_LIST_GET}|sed -E "s/\s/|/g"|sed -E "s/\|$//g";else echo "${CONSOLE}"; fi)
 	IGNORE=$(echo $({ if { { { echo "$EXIST_LIST_GET" && tail +1 ""$DIR"/42Kmi/${FILTERIGNORE}"; } ; }|grep -Eoq "([0-9]{1,3}\.?){4}"; } then echo "$({ { echo "$EXIST_LIST_GET" && tail +1 ""$DIR"/42Kmi/${FILTERIGNORE}"; } ; }|grep -Eo "(([0-9]{1,3}\.){3})([0-9]{1,3})"|sort -u|grep -v "${CONSOLE}"|grep -v "127.0.0.1"|sed 's/\./\\\./g')"|sed -E 's/$/\|/g'; else echo "${ROUTER}"; fi; })|sed -E 's/\|$//g'|sed -E 's/\ //g')
@@ -1049,13 +1060,14 @@ if ! [ "$SWITCH" = "$(echo -n "$SWITCH" | grep -oEi "(off|0|disable(d?))")" ]; t
 	{
 	$PEERIP
 	for peer in $PEERIP; do
-	#if ! { echo "$EXIST_LIST_GET"| grep -Eoq "\b(${peer})\b"; } || ! { tail +1 "/tmp/$RANDOMGET"|sed -E "s/.\[[0-9]{1}(\;[0-9]{2})?m//g"|grep -Eoq "\b?(${peer})\b"; }; then
 	if ! { tail +1 "/tmp/$RANDOMGET"|sed -E "s/.\[[0-9]{1}(\;[0-9]{2})?m//g"|grep -Eoq "\b?(${peer})\b"; }; then
-	peerenc="$(echo -n "$peer"|openssl enc -base64 -nosalt -k "42KmiLagDrop")"
+	#peerenc="$(echo -n "$peer"|openssl enc -base64 -nosalt -k "42KmiLagDrop")"
+	peerenc="$(panama &)"
+	wait $!
+
 		if [ -f "$DIR"/42Kmi/blacklist.txt ]; then
 			blacklist
 		fi
-	#peerenc="$(echo -n "$peer"|openssl enc -rc4-40 -nosalt -k "42KmiLagDrop")"
 		#PEERIP="${PEERIP//$peer/\b}"
 		PEERIP="$(echo "${PEERIP}"|sed -E "s/\b${peer}\b//g")"; $PEERIP
 		LDSIMULLIMIT=8
@@ -1117,7 +1129,6 @@ then
 	clearallow_check(){
 	getiplist
 	if ! { echo "$IPCONNECT"|grep -Eq "\b${CONSOLE}\b"|grep -Eoq "\b${allowed1}\b"; }; then
-	#eval "iptables -A LDTEMPHOLD -s ${allowed1} -d $CONSOLE"; else 
 		clearallow
 	fi
 	}
@@ -1159,7 +1170,6 @@ if [ "$CLEARBLOCKED" = "$(echo -n "$CLEARBLOCKED" | grep -oEi "(yes|1|on|enable(
 	clearreject_check(){
 		getiplist
 			if ! { echo "$IPCONNECT"|grep -q "\b${CONSOLE}\b"|grep -Eoq "\b${refused1}\b"; }; then
-				#eval "iptables -A LDTEMPHOLD -s ${refused1} -d $CONSOLE"; else 
 					clearreject
 			fi
 	}
@@ -1217,10 +1227,10 @@ if [ "$SENTINEL" = "$(echo -n "$SENTINEL" | grep -oEi "(yes|1|on|enable(d?))")" 
 		SENTMODE=$TWEAK_SENTMODE
 		SENTLOSSLIMIT=$TWEAK_SENTLOSSLIMIT
 	else
-		PACKET_OR_BYTE=1 #1 for packets, 2 for bytes
-		SENTINELDELAYBIG=2
-		SENTINELDELAYSMALL=1
-		STRIKEMAX=5
+		PACKET_OR_BYTE=1 #1 for packets, 2 for bytes (referred to as delta)
+		SENTINELDELAYBIG=2 #Distinguishes new delta from old delta.
+		SENTINELDELAYSMALL=1 #Establishes deltas
+		STRIKEMAX=5 #Max number of strikes before banning
 		ABS_VAL=1 #Set to 1 to use absolute values instead.
 		SENTMODE=3 #0 or 1=Difference, 2=X^2, 3=Difference or X^2, 4=Difference & X^2
 		
@@ -1237,9 +1247,31 @@ if [ "$SENTINEL" = "$(echo -n "$SENTINEL" | grep -oEi "(yes|1|on|enable(d?))")" 
 	
 	add_strike(){
 		sed -i -E "s/^.*${ip}\b.*$/&‡/g" "/tmp/$RANDOMGET" #Adds mark for strikes
-	}
-	
+	}	
 	fix_strikes(){
+		strike_correction(){
+			#Strike numbers correction; prevents incorrect strike numbers.
+			STRIKECOUNT_GET="$(iptables -nL LDSENTSTRIKE|grep -E "\b${ip}\b"|wc -l)"
+			wait
+			if [ $STRIKECOUNT_GET != $STRIKE_MARK_COUNT_GET ]; then
+				if [ $STRIKECOUNT_GET -lt $STRIKE_MARK_COUNT_GET ]; then
+					#If the number of strikes recorded in LDSENTSTRIKE is less than number of strikes recorded in the log, add to SENTSTRIKE
+					STRIKE_DIFF="$(( $STRIKE_MARK_COUNT_GET - $STRIKECOUNT_GET ))"
+					if [ "$STRIKE_DIFF" -gt "0" ] && [ "$STRIKE_MARK_COUNT_GET" -gt "0" ]; then
+						strike_diff_turn_count_remain=0; while [[ $strike_diff_turn_count_remain -lt "${STRIKE_DIFF}" ]]; do { eval "iptables -I LDSENTSTRIKE -s $ip"; } ; strike_diff_turn_count_remain=$((strike_diff_turn_count_remain+1)); done
+					fi
+				elif [ $STRIKE_MARK_COUNT_GET -lt $STRIKECOUNT_GET ]; then
+					#If the number of strikes recorded in the log is less than number of strikes recorded in LSSENTSTRIKE
+					STRIKE_DIFF="$(( $STRIKECOUNT_GET - $STRIKE_MARK_COUNT_GET ))"
+					if [ "$STRIKE_DIFF" -gt "0" ] && [ "$STRIKECOUNT_GET" -gt "0" ]; then
+						strike_diff_turn_count_remain=0; while [[ $strike_diff_turn_count_remain -lt "${STRIKE_DIFF}" ]]; do { add_strike; } ; strike_diff_turn_count_remain=$((strike_diff_turn_count_remain+1)); done
+					fi
+				fi
+			fi
+		}
+		strike_correction; wait
+
+	
 	#Accurate color to counter matching
 	case $STRIKE_MARK_COUNT_GET in
 		0)
@@ -1255,6 +1287,9 @@ if [ "$SENTINEL" = "$(echo -n "$SENTINEL" | grep -oEi "(yes|1|on|enable(d?))")" 
 			sed -i -E "s/#(.\[[0-9]{1}\;[0-9]{2}m){0,}(${ip})\b/#$(echo -e "${BG_YELLOW}")\2/g" "/tmp/$RANDOMGET"
 		;;
 		4|*)
+			sed -i -E "s/#(.\[[0-9]{1}\;[0-9]{2}m){0,}(${ip})\b/#$(echo -e "${BG_BLUE}")\2/g" "/tmp/$RANDOMGET"
+		;;
+		*)
 			sed -i -E "s/#(.\[[0-9]{1}\;[0-9]{2}m){0,}(${ip})\b/#$(echo -e "${BG_BLUE}")\2/g" "/tmp/$RANDOMGET"
 		;;
 	esac
@@ -1293,9 +1328,9 @@ if [ "$SENTINEL" = "$(echo -n "$SENTINEL" | grep -oEi "(yes|1|on|enable(d?))")" 
 	
 	for ip in $SENTINELLIST; do
 	(
-	STRIKE_MARK_COUNT_GET="$(( $(grep -E "#(.\[[0-9]{1}\;[0-9]{2}m)(${ip})\b" "/tmp/$RANDOMGET"|sed  "/${SENTINEL_BAN_MESSAGE}/d"|grep -Eo "(‡*)$"|wc -c) / 3 ))" #Get strike count from log.
+	STRIKE_MARK_COUNT_GET="$(( $(grep -E "#(.\[[0-9]{1}\;[0-9]{2}m)(${ip})\b" "/tmp/$RANDOMGET"|sed "/${SENTINEL_BAN_MESSAGE}/d"|grep -Eo "(‡*)$"|wc -c) / 3 ))" #Get strike count from log.
 
-	fix_strikes #&
+	fix_strikes & wait $! #&
 	cleansentinel &
 	#wait
 	if { iptables -nL LDACCEPT| grep -E "\b${CONSOLE}\b"|grep -Eoq "\b${ip}\b"; }; then
@@ -1326,20 +1361,20 @@ if [ "$SENTINEL" = "$(echo -n "$SENTINEL" | grep -oEi "(yes|1|on|enable(d?))")" 
 		#Math
 		case "$ABS_VAL" in
 			*|0)
-				bytediffA_new=$(( (( $byte2 - $byte1 )) / $SENTINELDELAYSMALL )) #New
+				bytediffA_new="$(( $(( $byte2 - $byte1 )) / $SENTINELDELAYSMALL ))" #New
 				#BYTEDIFF=$(( $bytediffA_new - $bytediffA_old ))
 			;;
 			1)
-				bytediffA_new=$(echo "$(( $byte2 - $byte1 ))"|sed "s/\-//g")
+				bytediffA_new="$(echo "$(( $(( $byte2 - $byte1 )) / $SENTINELDELAYSMALL ))"|sed "s/\-//g")"
 				#BYTEDIFF=$(echo "$(( $bytediffB - $bytediffA_new ))"|sed "s/\-//g")
 			;;
 		esac
-		BYTEDIFF=$(( $bytediffA_new - $bytediffA_old ))
-		BYTESUM=$(( $bytediffA_new + $bytediffA_old ))
-		BYTEAVG=$(( $BYTESUM / 2 ))
+		BYTEDIFF="$(( $bytediffA_new - $bytediffA_old ))"
+		BYTESUM="$(( $bytediffA_new + $bytediffA_old ))"
+		BYTEAVG="$(( $BYTESUM / 2 ))"
 		if [ $BYTEAVG = 0 ]; then BYTEAVG=1; fi
-		BYTEDIFFSQ=$(( $BYTEDIFF * $BYTEDIFF ))
-		BYTEXSQ=$(( $BYTEDIFFSQ / $BYTEAVG ))
+		BYTEDIFFSQ="$(( $BYTEDIFF * $BYTEDIFF ))"
+		BYTEXSQ="$(( $BYTEDIFFSQ / $BYTEAVG ))"
 		
 	sentinelstrike(){
 		if [ "$STRIKECOUNT" -ge $STRIKEMAX ] || [ "$STRIKE_MARK_COUNT_GET" -ge $STRIKEMAX ]; then # Max strikes. You're OUT!
@@ -1361,13 +1396,13 @@ if [ "$SENTINEL" = "$(echo -n "$SENTINEL" | grep -oEi "(yes|1|on|enable(d?))")" 
 					case "$STRIKECOUNT" in
 						0)
 							# Strike 1
-							#if [ "$STRIKECOUNT" = 0 ] || [ "$STRIKECOUNT" = "" ] || [ "$STRIKECOUNT" -lt 1 ]; then
+							if { { [ "$STRIKECOUNT" = 0 ] || [ "$STRIKECOUNT" = "" ]; } && [ "$STRIKECOUNT" -lt 1 ]; }; then
 								sed -i -E "s/#(${ip})#/#$(echo -e "${BG_CYAN}")\1#/g" "/tmp/$RANDOMGET"
 								wait
 								eval "iptables -I LDSENTSTRIKE -s $ip"
 								wait
 								if { iptables -nL LDSENTSTRIKE|grep -Eoq "\b${ip}\b"; } && { grep -Eoq "#(.\[[0-9]{1}\;[0-9]{2}m){0,}(${ip})#" "/tmp/$RANDOMGET"; }; then add_strike; fi
-							#fi
+							fi
 						;;
 						
 						1)
@@ -1563,7 +1598,7 @@ monitor(){
 ##### New Monitor Display #####
 display
 while "$@" &> /dev/null; do
-	sed -i -E "/\"\"/d" "/tmp/$RANDOMGET"
+	if { grep -E "\"\"" "/tmp/$RANDOMGET"; }; then sed -i -E "/\"\"/d" "/tmp/$RANDOMGET"; fi
 	ATIME=$(date +%s -r "/tmp/$RANDOMGET")
 	ASIZE=$(tail +1 "/tmp/$RANDOMGET"|wc -c)
 	if [[ "$ATIME" != "$LTIME" ]]; then

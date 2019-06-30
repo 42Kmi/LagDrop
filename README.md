@@ -103,10 +103,10 @@ This file which is created on the first run of the LagDrop contains the paramete
 
 1. **[console name]:** your console’s static IP. This is filled on the first run of LagDrop after setting a static IP for your console. The [console name] is determined by name given in lagdrop.sh
 2. **PingLimit:** This is the maximum average ping time in milliseconds permitted before blocking the peer. Default is 20.
-3. **Count:** This is the number of packets sent to peer. Default is 20.
-4. **Size:** This is the size of the packet in bytes, which tests of the peer’s bandwidth. Default is 2048
-5. **Mode:** Determines which test(s) is/are used. 0 or 1 for Ping only, 2 for TraceRoute only, 3 for Ping or TraceRoute (peer is blocked if they fail ping test or TraceRoute test; recommended), 4 for Ping and TraceRoute (peer is blocked if they fail ping test AND TraceRoute test). Default is 1. 
-6. **Max TTL:** Maximum TTL for the TraceRoute test (Active when Mode is set to 2, 3, or 4). Default is 20.
+3. **Count:** This is the number of Ping tests run. Default is 15.
+4. **Size:** This is the size of the packet in bytes, which tests of the peer’s bandwidth. Default is 1365
+5. **Mode:** Determines which test(s) is/are used. 0 or 1 for Ping only, 2 for TraceRoute only, 3 for Ping or TraceRoute (peer is blocked if they fail ping test or TraceRoute test; recommended), 4 for Ping and TraceRoute (peer is blocked if they fail ping test AND TraceRoute test), 5 is for testing TraceRoute if Ping is unavailable; if Ping is available but TraceRoute is over the limit, then the peer will be marked "Warn." Default is 5. We recommend not changing this value.
+6. **Max TTL:** Number of TraceRoute test to run (Active when Mode is set to 2, 3, 4, or 5). Default is 20.
 7. **Probes:** Number of times each node is checked during TraceRoute (Active when Mode is set to 2, 3, or 4). Default is 5.
 8. **TraceLimit:** The limit of the TraceRoute time average (in milliseconds) *(TraceRoute tests the ping time between nodes from you to the peer. LagDrop reads it as an average of those times.)* . Values higher than this are blocked (Active when Mode is set to 2, 3, or 4). Default is 30
 9. **ACTION:** Action performed when peer fails. Choose to REJECT (0 or REJECT) or DROP (1 or DROP) peers Default is REJECT. (The difference between REJECT and DROP is like replying "no thanks" messaged and just ignoring the message, resulting in a null ignore. REJECT is more "polite.")
