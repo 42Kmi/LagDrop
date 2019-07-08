@@ -3,7 +3,7 @@
 POPULATE=""
 MAKE_TWEAK=""
 cleanall(){
-PROC="$(ps|grep -E "$(echo $(ps|grep "${0##*/}"|grep -Ev "^(\s)?($$)\b"|grep -Ev "(\[("kthreadd"|"ksoftirqd"|"kworker"|"khelper"|"writeback"|"bioset"|"crypto"|"kblockd"|"khubd"|"kswapd"|"fsnotify_mark"|"deferwq"|"scsi_eh_"|"usb-storage"|"cfg80211"|"jffs2_gcd_mtd3").*\])"|grep -Ev "SW(.?)"|awk '{printf $3" "$4"|\n"}'|sort -u)|sed -E 's/.$//')"|grep -Ev "\b($$)\b"|grep -v "rm"|grep -Eo "^(\s*)?[0-9]{1,}")"
+PROC="$(ps|grep -E "$(echo $(ps|grep "${0##*/}"|grep -Ev "^(\s)?($$)\b"|grep -Ev "(\[("kthreadd"|"ksoftirqd"|"kworker"|"khelper"|"writeback"|"bioset"|"crypto"|"kblockd"|"khubd"|"kswapd"|"fsnotify_mark"|"deferwq"|"scsi_eh_"|"usb-storage"|"cfg80211"|"jffs2_gcd_mtd3").*\])"|grep -Ev "SW(.?)"|awk '{printf $3" "$4"|\n"}'|awk '!a[$0]++')|sed -E 's/.$//')"|grep -Ev "\b($$)\b"|grep -v "rm"|grep -Eo "^(\s*)?[0-9]{1,}")"
 	misterclean(){
 	iptables -F LDKTA
 	sed -i -E "/#(.*)#(.*)$/d" ""$DIR"/42Kmi/${GEOMEMFILE}" #Deletes lines with 2 #
@@ -321,7 +321,7 @@ MSFT_SERVERS="(52\.(1((4[5-9])|([5-8][0-9])|(9[0-1]))))|(52\.(2(2[4-9]|[3-5][0-9
 LINODE="(173\.255\.((19[2-9])|(2[0-9]{2})\.))"
 CLOUDFLARE="162\.15[89]\."
 IANA_IPs="(239\.255\.255\.250)|(10(\.[0-9]{1,3}){3})|(2(2[4-9]|3[0-9])(\.[0-9]{1,3}){3})|(255(\.([0-9]){1,3}){3})|(0\.)|(100\.((6[4-9])|[7-9][0-9]|1(([0-1][0-9])|(2[0-7]))))|(172\.((1[6-9])|(2[0-9])|(3[0-1])))"
-ONTHEFLYFILTER_IPs="${IANA_IPs}|${MSFT_SERVERS}|${LINODE}|${CLOUDFLARE}|${AMAZON_SERVERS}|1\.0\.0\.1|1\.1\.1\.1|127\.0\.0\.1|8\.8\.8\.8|8\.8\.4\.4|151\.101\." #Ignores these IPs, usually IANA reserved or something 
+ONTHEFLYFILTER_IPs="${IANA_IPs}|${MSFT_SERVERS}|${LINODE}|${CLOUDFLARE}|${AMAZON_SERVERS}|1\.0\.0\.1|1\.1\.1\.1|127\.0\.0\.1|8\.8\.8\.8|8\.8\.4\.4|151\.101\.|(148\.25[123]{1}\.)" #Ignores these IPs, usually IANA reserved or something 
 ##### Filter #####
 ##### TWEAKS #####
 # create 42Kmi/tweak.txt to edit these values
@@ -752,22 +752,15 @@ meatandtatoes(){
 				if ! { iptables -nL LDIGNORE|grep -Eoq "\b($peer)\b"; }; then
 					eval "iptables -I LDIGNORE -p all -s $peer -d $CONSOLE -j ACCEPT "${WAITLOCK}"; $IGNORE"
 				fi 
-			 if ! { grep -Eoq "^(${peer}|${peerenc})$" ""$DIR"/42Kmi/${FILTERIGNORE}"; }; then echo "$peerenc" >> ""$DIR"/42Kmi/${FILTERIGNORE}"; fi
+			 if ! { grep -Eo "^(${peer}|${peerenc})$" ""$DIR"/42Kmi/${FILTERIGNORE}"; }; then echo "$peerenc" >> ""$DIR"/42Kmi/${FILTERIGNORE}"; fi
 				else
-				{
-				IP_DB_SOURCE="https://rdap.arin.net/registry/ip/${peer}"
-				for db in $IP_DB_SOURCE; do
+				WHOIS="$(curl -sk --no-keepalive --no-buffer --connect-timeout ${CURL_TIMEOUT} "https://rdap.arin.net/registry/ip/"$peer"")"
+				if { { { echo "$WHOIS"|sed -E "s/^\s*//g"|sed "s/\"//g"| sed -E "s/(\[|\]|\{|\}|\,)//g"|sed "s/\\n/,/g"; }|sed  "s/],/]\\n/g"|sed -E "s/(\[|\]|\{|\})//g"|sed -E "s/(\")\,(\")/\1\\n\2/g"|sed -E '/^\"\"$/d'|sed 's/"//g'|sed -E 's/(\\r)?\\n/\n/g'; }|grep -Ev "\b(${IGNORE})\b"|grep -Eoi "\b(${SERVERS})\b"; } 2>&1 >/dev/null; then 
 					if ! { iptables -nL LDIGNORE|grep -Eoq "\b($peer)\b"; }; then
-						WHOIS="$(curl -sk --no-keepalive --no-buffer --connect-timeout ${CURL_TIMEOUT} "$db")"
-						if { { { echo "$WHOIS"|sed -E "s/^\s*//g"|sed "s/\"//g"| sed -E "s/(\[|\]|\{|\}|\,)//g"|sed "s/\\n/,/g"; }|sed  "s/],/]\\n/g"|sed -E "s/(\[|\]|\{|\})//g"|sed -E "s/(\")\,(\")/\1\\n\2/g"|sed -E '/^\"\"$/d'|sed 's/"//g'|sed -E 's/(\\r)?\\n/\n/g'; }|grep -Ev "\b(${IGNORE})\b"|grep -Eoi "\b(${SERVERS})\b"; } 2>&1 >/dev/null; then 
-								if ! { iptables -nL LDIGNORE|grep -Eoq "\b($peer)\b"; }; then
-									eval "iptables -I LDIGNORE -p all -s $peer -d $CONSOLE -j ACCEPT "${WAITLOCK}"; $IGNORE"
-								fi
-							if ! { grep -Eoq "^(${peer}|${peerenc})$" ""$DIR"/42Kmi/${FILTERIGNORE}"; }; then echo "$peerenc" >> ""$DIR"/42Kmi/${FILTERIGNORE}"; fi
-						fi
+						eval "iptables -I LDIGNORE -p all -s $peer -d $CONSOLE -j ACCEPT "${WAITLOCK}"; $IGNORE"
 					fi
-				done
-				}
+				if ! { grep -Eo "^(${peer}|${peerenc})$" ""$DIR"/42Kmi/${FILTERIGNORE}"; }; then echo "$peerenc" >> ""$DIR"/42Kmi/${FILTERIGNORE}"; fi
+				fi
 			fi
 		fi
 		##### Whitelisting/ NSLookup #####
@@ -1066,7 +1059,7 @@ if ! [ "$SWITCH" = "$(echo -n "$SWITCH" | grep -oEi "(off|0|disable(d?))")" ]; t
 	##### Check Ports #####
 	EXIST_LIST_GET=$({ echo "$(iptables -nL LDACCEPT && iptables -nL LDREJECT && iptables -nL LDBAN && iptables -nL LDIGNORE && iptables -nL LDKTA)"; }|grep -Eo "(([0-9]{1,3}\.){3})([0-9]{1,3})"|awk '!a[$0]++')
 	EXIST_LIST=$(if [ $(echo "$EXIST_LIST_GET") != 0 ] || [ $(echo "$EXIST_LIST_GET") != "" ]; then echo ${EXIST_LIST_GET}|sed -E "s/\s/|/g"|sed -E "s/\|$//g";else echo "${CONSOLE}"; fi)
-	IGNORE=$(echo $({ if { { { echo "$EXIST_LIST_GET" && tail +1 ""$DIR"/42Kmi/${FILTERIGNORE}"; } ; }|grep -Eoq "([0-9]{1,3}\.?){4}"; } then echo "$({ { echo "$EXIST_LIST_GET" && tail +1 ""$DIR"/42Kmi/${FILTERIGNORE}"; } ; }|grep -Eo "(([0-9]{1,3}\.){3})([0-9]{1,3})"|sort -u|grep -v "${CONSOLE}"|grep -v "127.0.0.1"|sed 's/\./\\\./g')"|sed -E 's/$/\|/g'; else echo "${ROUTER}"; fi; })|sed -E 's/\|$//g'|sed -E 's/\ //g')
+	IGNORE=$(echo $({ if { { { echo "$EXIST_LIST_GET" && tail +1 ""$DIR"/42Kmi/${FILTERIGNORE}"; } ; }|grep -Eoq "([0-9]{1,3}\.?){4}"; } then echo "$({ { echo "$EXIST_LIST_GET" && tail +1 ""$DIR"/42Kmi/${FILTERIGNORE}"; } ; }|grep -Eo "(([0-9]{1,3}\.){3})([0-9]{1,3})"|awk '!a[$0]++'|grep -v "${CONSOLE}"|grep -v "127.0.0.1"|sed 's/\./\\\./g')"|sed -E 's/$/\|/g'; else echo "${ROUTER}"; fi; })|sed -E 's/\|$//g'|sed -E 's/\ //g')
 	if [ -f "$DIR"/42Kmi/whitelist.txt ]; then
 		WHITELIST=$(echo $(echo "$(tail +1 "${DIR}"/42Kmi/whitelist.txt|sed -E -e "/(#.*$|^$|\;|#^[ \t]*$)|#/d" -e "s/^/\^/g" -e "s/\^#|\^$//g" -e "s/\^\^/^/g" -e "s/$/|/g")")|sed -e 's/\|$//g' -e "s/(\ *)//g" -e 's/\b\.\b/\\./g') ### Additional IPs to filter out. Make whitelist.txt in 42Kmi folder, add IPs there. Can now support extra lines and titles. See README
 		ADDWHITELIST="| grep -Ev "$WHITELIST""
@@ -1316,12 +1309,9 @@ if [ "$SENTINEL" = "$(echo -n "$SENTINEL" | grep -oEi "(yes|1|on|enable(d?))")" 
 		3)
 			sed -i -E "s/#(.\[[0-9]{1}\;[0-9]{2}m){0,}(${ip})\b/#$(echo -e "${BG_YELLOW}")\2/g" "/tmp/$RANDOMGET"
 		;;
-		4|*)
+		*)
 			sed -i -E "s/#(.\[[0-9]{1}\;[0-9]{2}m){0,}(${ip})\b/#$(echo -e "${BG_BLUE}")\2/g" "/tmp/$RANDOMGET"
 		;;
-		#*)
-		#	sed -i -E "s/#(.\[[0-9]{1}\;[0-9]{2}m){0,}(${ip})\b/#$(echo -e "${BG_BLUE}")\2/g" "/tmp/$RANDOMGET"
-		#;;
 	esac
 	}
 	
@@ -1522,29 +1512,47 @@ fi 2> /dev/null
 #==========================================================================================================
 
 #42Kmi LagDrop Monitor
+#spin(){
+#echo -e -n "${CLEARLINE}${RED}/\r${NC}" ; usleep $spinnertime
+#echo -e -n "${CLEARLINE}${YELLOW}/\r${NC}" ; usleep $spinnertime
+#echo -e -n "${CLEARLINE}${GREEN}/\r${NC}" ; usleep $spinnertime
+#echo -e -n "${CLEARLINE}${BLUE}/\r${NC}" ; usleep $spinnertime
+#echo -e -n "${CLEARLINE}${RED}-\r${NC}" ; usleep $spinnertime
+#echo -e -n "${CLEARLINE}${YELLOW}-\r${NC}" ; usleep $spinnertime
+#echo -e -n "${CLEARLINE}${GREEN}-\r${NC}" ; usleep $spinnertime
+#echo -e -n "${CLEARLINE}${BLUE}-\r${NC}" ; usleep $spinnertime
+#echo -e -n "${CLEARLINE}${RED}\\ \r${NC}" ; usleep $spinnertime
+#echo -e -n "${CLEARLINE}${YELLOW}\\ \r${NC}" ; usleep $spinnertime
+#echo -e -n "${CLEARLINE}${GREEN}\\ \r${NC}" ; usleep $spinnertime
+#echo -e -n "${CLEARLINE}${BLUE}\\ \r${NC}" ; usleep $spinnertime
+#echo -e -n "${CLEARLINE}${RED}|\r${NC}" ; usleep $spinnertime
+#echo -e -n "${CLEARLINE}${YELLOW}|\r${NC}" ; usleep $spinnertime
+#echo -e -n "${CLEARLINE}${GREEN}|\r${NC}" ; usleep $spinnertime
+#echo -e -n "${CLEARLINE}${BLUE}|\r${NC}" ; usleep $spinnertime
+#}
 spin(){
-echo -e -n "${CLEARLINE}${RED}/\r${NC}" ; usleep $spinnertime
-echo -e -n "${CLEARLINE}${YELLOW}/\r${NC}" ; usleep $spinnertime
-echo -e -n "${CLEARLINE}${GREEN}/\r${NC}" ; usleep $spinnertime
-echo -e -n "${CLEARLINE}${BLUE}/\r${NC}" ; usleep $spinnertime
-echo -e -n "${CLEARLINE}${RED}-\r${NC}" ; usleep $spinnertime
-echo -e -n "${CLEARLINE}${YELLOW}-\r${NC}" ; usleep $spinnertime
-echo -e -n "${CLEARLINE}${GREEN}-\r${NC}" ; usleep $spinnertime
-echo -e -n "${CLEARLINE}${BLUE}-\r${NC}" ; usleep $spinnertime
-echo -e -n "${CLEARLINE}${RED}\\ \r${NC}" ; usleep $spinnertime
-echo -e -n "${CLEARLINE}${YELLOW}\\ \r${NC}" ; usleep $spinnertime
-echo -e -n "${CLEARLINE}${GREEN}\\ \r${NC}" ; usleep $spinnertime
-echo -e -n "${CLEARLINE}${BLUE}\\ \r${NC}" ; usleep $spinnertime
-echo -e -n "${CLEARLINE}${RED}|\r${NC}" ; usleep $spinnertime
-echo -e -n "${CLEARLINE}${YELLOW}|\r${NC}" ; usleep $spinnertime
-echo -e -n "${CLEARLINE}${GREEN}|\r${NC}" ; usleep $spinnertime
-echo -e -n "${CLEARLINE}${BLUE}|\r${NC}" ; usleep $spinnertime
+SYMB='\
+|
+/
+-
+'
+for char in $SYMB; do
+	{
+	echo -e -n "${CLEARLINE}${RED}$char \r${NC}" ; usleep $spinnertime
+	echo -e -n "${CLEARLINE}${YELLOW}$char \r${NC}" ; usleep $spinnertime
+	echo -e -n "${CLEARLINE}${GREEN}$char \r${NC}" ; usleep $spinnertime
+	echo -e -n "${CLEARLINE}${BLUE}$char \r${NC}" ; usleep $spinnertime
+	}
+	wait
+done
 }
 spinner(){
-spinnertime=20000 #50000 #41666
-while "$@" 2> /dev/null;do
-spin;kill -9 $!
-done &
+	spinnertime=20000 #50000 #41666
+		while "$@" 2> /dev/null;do
+		#if ! { spin; }; then
+			spin;sed -E "/^(.\[[0-9]{1}\;[0-9]{2}m)?(\\|\|\/|\-)/d";kill -9 $!
+		#fi
+		done &
 }
 echo -e "$REFRESH"
 {
