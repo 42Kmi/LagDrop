@@ -269,7 +269,7 @@ if [ ! -d "$DIR"/42Kmi/$SUBFOLDER ]; then mkdir -p "$DIR"/42Kmi/$SUBFOLDER ; fi
 if [ ! -f "$DIR"/42Kmi/options_"$CONSOLENAME".txt ]; then echo -en "$CONSOLENAME=$GETSTATIC
 PINGLIMIT=100
 COUNT=15
-SIZE=1365
+SIZE=56
 MODE=5
 MAXTTL=5
 PROBES=3
@@ -317,11 +317,12 @@ esac
 ONTHEFLYFILTER="amazonaws|akamaitechnologies|Akamai|verizondigitalmedia|mcics|EDGECAST(.*)?|edgecast|cdn|twitter|nintendowifi\.net|(nintendo|xboxlive|sony|playstation)\.net|ps[2-9]|nflxvideo|netflix|easo\.ea\.com|\.ea\.com|\.1e100\.net|GOGL|goog|Sony Online Entertainment|cloudfront\.net|facebook|fb-net|IANA|Cloudflare|BAD REQUEST|blizzard|NC Interactive|ncsoft|NCINT|RIOT(\s)?GAMES|RIOT|SQUARE ENIX|Valve Corporation|Ubisoft|not found|IANA-RESERVED|\b(dns|ns|NS|DNS)([0-9]{1,}?(\.|\-))\b|google\.com|LINODE|oath(\s)holdings|thePlatform|(MoPub\,\sInc|mopub)|((([0-9A-Za-z\-]+\.)*nintendo\.(co\.jp|com|eu|co\.uk|es|pt|ch|at|de|nl|be|ch|ru|fr|it|co\.za|co\.kr|tw|com\.hk|com\.au|ca|co\.nz)(/|$))|(([0-9A-Za-z\-]+\.)*nintendo-europe\.com(/|$))|(([0-9A-Za-z\-]+\.)*nintendoservicecentre\.co\.uk(/|$))|(([0-9A-Za-z\-]+\.)*google\.(com|ad|ae|com\.af|com\.ag|com\.ai|al|am|co\.ao|com\.ar|as|at|com\.au|az|ba|com\.bd|be|bf|bg|com\.bh|bi|bj|com\.bn|com\.bo|com\.br|bs|bt|co\.bw|by|com\.bz|ca|cd|cf|cg|ch|ci|co\.ck|cl|cm|cn|com\.co|co\.cr|com\.cu|cv|com\.cy|cz|de|dj|dk|dm|com\.do|dz|com\.ec|ee|com\.eg|es|com\.et|fi|com\.fj|fm|fr|ga|ge|gg|com\.gh|com\.gi|gl|gm|gp|gr|com\.gt|gy|com\.hk|hn|hr|ht|hu|co\.id|ie|co\.il|im|co\.in|iq|is|it|je|com\.jm|jo|co\.jp|co\.ke|com\.kh|ki|kg|co\.kr|com\.kw|kz|la|com\.lb|li|lk|co\.ls|lt|lu|lv|com\.ly|co\.ma|md|me|mg|mk|ml|com\.mm|mn|ms|com\.mt|mu|mv|mw|com\.mx|com\.my|co\.mz|com\.na|com\.nf|com\.ng|com\.ni|ne|nl|no|com\.np|nr|nu|co\.nz|com\.om|com\.pa|com\.pe|com\.pg|com\.ph|com\.pk|pl|pn|com\.pr|ps|pt|com\.py|com\.qa|ro|ru|rw|com\.sa|com\.sb|sc|se|com\.sg|sh|si|sk|com\.sl|sn|so|sm|sr|st|com\.sv|td|tg|co\.th|com\.tj|tk|tl|tm|tn|to|com\.tr|tt|com\.tw|co\.tz|com\.ua|co\.ug|co\.uk|com\.uy|co\.uz|com\.vc|co\.ve|vg|co\.vi|com\.vn|vu|ws|rs|co\.za|co\.zm|co\.zw|cat)(/|$)))" # Ignores if these words are found in whois requests
 #ONTHEFLYFILTER="klhjgdfshjvckxrsjrfkctyjztyflkutyjsrehxcvhjyutresdxfcgh"
 AMAZON_SERVERS="(13\.(2(4[89]|5[01]))\.)"
+GOOGLE_SERVERS="(173.194)"
 MSFT_SERVERS="(52\.(1((4[5-9])|([5-8][0-9])|(9[0-1]))))|(52\.(2(2[4-9]|[3-5][0-9])))|(52\.(9[6-9]|10[0-9]|11[1-5]))"
 LINODE="(173\.255\.((19[2-9])|(2[0-9]{2})\.))"
 CLOUDFLARE="162\.15[89]\."
 IANA_IPs="(239\.255\.255\.250)|(10(\.[0-9]{1,3}){3})|(2(2[4-9]|3[0-9])(\.[0-9]{1,3}){3})|(255(\.([0-9]){1,3}){3})|(0\.)|(100\.((6[4-9])|[7-9][0-9]|1(([0-1][0-9])|(2[0-7]))))|(172\.((1[6-9])|(2[0-9])|(3[0-1])))"
-ONTHEFLYFILTER_IPs="${IANA_IPs}|${MSFT_SERVERS}|${LINODE}|${CLOUDFLARE}|${AMAZON_SERVERS}|1\.0\.0\.1|1\.1\.1\.1|127\.0\.0\.1|8\.8\.8\.8|8\.8\.4\.4|151\.101\.|(148\.25[123]{1}\.)" #Ignores these IPs, usually IANA reserved or something 
+ONTHEFLYFILTER_IPs="${IANA_IPs}|${MSFT_SERVERS}|${LINODE}|${CLOUDFLARE}|${AMAZON_SERVERS}|${GOOGLE_SERVERS}|1\.0\.0\.1|1\.1\.1\.1|127\.0\.0\.1|8\.8\.8\.8|8\.8\.4\.4|151\.101\.|(148\.25[123]{1}\.)" #Ignores these IPs, usually IANA reserved or something 
 ##### Filter #####
 ##### TWEAKS #####
 # create 42Kmi/tweak.txt to edit these values
@@ -419,6 +420,155 @@ BANCOUNTRY="" #Reinitialize
 			"$(echo "${LDCOUNTRY}"|grep -Eo "^Tysons\, Virginia\, US\, NA")")
 				LDCOUNTRY="Tysons, VA, US, NA"
 				;;
+			#UnitedStates
+					"$(echo "${LDCOUNTRY}"|grep -Eoi "^(.*)\, Alabama\, US\, NA")")
+						LDCOUNTRY="$(echo "$LDCOUNTRY"|sed -E "s/\, Alabama\,/, AL,/g")"
+						;;
+					"$(echo "${LDCOUNTRY}"|grep -Eoi "^(.*)\, Alaska\, US\, NA")")
+						LDCOUNTRY="$(echo "$LDCOUNTRY"|sed -E "s/\, Alaska\,/, AK,/g")"
+						;;
+					"$(echo "${LDCOUNTRY}"|grep -Eoi "^(.*)\, Arizona\, US\, NA")")
+						LDCOUNTRY="$(echo "$LDCOUNTRY"|sed -E "s/\, Arizona\,/, AZ,/g")"
+						;;
+					"$(echo "${LDCOUNTRY}"|grep -Eoi "^(.*)\, Arkansas\, US\, NA")")
+						LDCOUNTRY="$(echo "$LDCOUNTRY"|sed -E "s/\, Arkansas\,/, AR,/g")"
+						;;
+					"$(echo "${LDCOUNTRY}"|grep -Eoi "^(.*)\, California\, US\, NA")")
+						LDCOUNTRY="$(echo "$LDCOUNTRY"|sed -E "s/\, California\,/, CA,/g")"
+						;;
+					"$(echo "${LDCOUNTRY}"|grep -Eoi "^(.*)\, Colorado\, US\, NA")")
+						LDCOUNTRY="$(echo "$LDCOUNTRY"|sed -E "s/\, Colorado\,/, CO,/g")"
+						;;
+					"$(echo "${LDCOUNTRY}"|grep -Eoi "^(.*)\, Delaware\, US\, NA")")
+						LDCOUNTRY="$(echo "$LDCOUNTRY"|sed -E "s/\, Delaware\,/, DE,/g")"
+						;;
+					"$(echo "${LDCOUNTRY}"|grep -Eoi "^(.*)\, Florida\, US\, NA")")
+						LDCOUNTRY="$(echo "$LDCOUNTRY"|sed -E "s/\, Florida\,/, FL,/g")"
+						;;
+					"$(echo "${LDCOUNTRY}"|grep -Eoi "^(.*)\, Georgia\, US\, NA")")
+						LDCOUNTRY="$(echo "$LDCOUNTRY"|sed -E "s/\, Georgia\,/, GA,/g")"
+						;;
+					"$(echo "${LDCOUNTRY}"|grep -Eoi "^(.*)\, Hawaii\, US\, NA")")
+						LDCOUNTRY="$(echo "$LDCOUNTRY"|sed -E "s/\, Hawaii\,/, HI,/g")"
+						;;
+					"$(echo "${LDCOUNTRY}"|grep -Eoi "^(.*)\, Idaho\, US\, NA")")
+						LDCOUNTRY="$(echo "$LDCOUNTRY"|sed -E "s/\, Idaho\,/, ID,/g")"
+						;;
+					"$(echo "${LDCOUNTRY}"|grep -Eoi "^(.*)\, Illinois\, US\, NA")")
+						LDCOUNTRY="$(echo "$LDCOUNTRY"|sed -E "s/\, Illinois\,/, IL,/g")"
+						;;
+					"$(echo "${LDCOUNTRY}"|grep -Eoi "^(.*)\, Indiana\, US\, NA")")
+						LDCOUNTRY="$(echo "$LDCOUNTRY"|sed -E "s/\, Indiana\,/, IN,/g")"
+						;;
+					"$(echo "${LDCOUNTRY}"|grep -Eoi "^(.*)\, Iowa\, US\, NA")")
+						LDCOUNTRY="$(echo "$LDCOUNTRY"|sed -E "s/\, Iowa\,/, IA,/g")"
+						;;
+					"$(echo "${LDCOUNTRY}"|grep -Eoi "^(.*)\, Kansas\, US\, NA")")
+						LDCOUNTRY="$(echo "$LDCOUNTRY"|sed -E "s/\, Kansas\,/, KS,/g")"
+						;;
+					"$(echo "${LDCOUNTRY}"|grep -Eoi "^(.*)\, Kentucky\, US\, NA")")
+						LDCOUNTRY="$(echo "$LDCOUNTRY"|sed -E "s/\, Kentucky\,/, KY,/g")"
+						;;
+					"$(echo "${LDCOUNTRY}"|grep -Eoi "^(.*)\, Louisiana\, US\, NA")")
+						LDCOUNTRY="$(echo "$LDCOUNTRY"|sed -E "s/\, Louisiana\,/, LA,/g")"
+						;;
+					"$(echo "${LDCOUNTRY}"|grep -Eoi "^(.*)\, Maine\, US\, NA")")
+						LDCOUNTRY="$(echo "$LDCOUNTRY"|sed -E "s/\, Maine\,/, ME,/g")"
+						;;
+					"$(echo "${LDCOUNTRY}"|grep -Eoi "^(.*)\, Maryland\, US\, NA")")
+						LDCOUNTRY="$(echo "$LDCOUNTRY"|sed -E "s/\, Maryland\,/, MD,/g")"
+						;;
+					"$(echo "${LDCOUNTRY}"|grep -Eoi "^(.*)\, Massachusetts\, US\, NA")")
+						LDCOUNTRY="$(echo "$LDCOUNTRY"|sed -E "s/\, Massachusetts\,/, MA,/g")"
+						;;
+					"$(echo "${LDCOUNTRY}"|grep -Eoi "^(.*)\, Michigan\, US\, NA")")
+						LDCOUNTRY="$(echo "$LDCOUNTRY"|sed -E "s/\, Michigan\,/, MI,/g")"
+						;;
+					"$(echo "${LDCOUNTRY}"|grep -Eoi "^(.*)\, Minnesota\, US\, NA")")
+						LDCOUNTRY="$(echo "$LDCOUNTRY"|sed -E "s/\, Minnesota\,/, MN,/g")"
+						;;
+					"$(echo "${LDCOUNTRY}"|grep -Eoi "^(.*)\, Mississippi\, US\, NA")")
+						LDCOUNTRY="$(echo "$LDCOUNTRY"|sed -E "s/\, Mississippi\,/, MS,/g")"
+						;;
+					"$(echo "${LDCOUNTRY}"|grep -Eoi "^(.*)\, Missouri\, US\, NA")")
+						LDCOUNTRY="$(echo "$LDCOUNTRY"|sed -E "s/\, Missouri\,/, MO,/g")"
+						;;
+					"$(echo "${LDCOUNTRY}"|grep -Eoi "^(.*)\, Montana\, US\, NA")")
+						LDCOUNTRY="$(echo "$LDCOUNTRY"|sed -E "s/\, Montana\,/, MT,/g")"
+						;;
+					"$(echo "${LDCOUNTRY}"|grep -Eoi "^(.*)\, Nebraska\, US\, NA")")
+						LDCOUNTRY="$(echo "$LDCOUNTRY"|sed -E "s/\, Nebraska\,/, NE,/g")"
+						;;
+					"$(echo "${LDCOUNTRY}"|grep -Eoi "^(.*)\, Nevada\, US\, NA")")
+						LDCOUNTRY="$(echo "$LDCOUNTRY"|sed -E "s/\, Nevada\,/, NV,/g")"
+						;;
+					"$(echo "${LDCOUNTRY}"|grep -Eoi "^(.*)\, New Hampshire\, US\, NA")")
+						LDCOUNTRY="$(echo "$LDCOUNTRY"|sed -E "s/\, New Hampshire\,/, NH,/g")"
+						;;
+					"$(echo "${LDCOUNTRY}"|grep -Eoi "^(.*)\, New Jersey\, US\, NA")")
+						LDCOUNTRY="$(echo "$LDCOUNTRY"|sed -E "s/\, New Jersey\,/, NJ,/g")"
+						;;
+					"$(echo "${LDCOUNTRY}"|grep -Eoi "^(.*)\, New Mexico\, US\, NA")")
+						LDCOUNTRY="$(echo "$LDCOUNTRY"|sed -E "s/\, New Mexico\,/, NM,/g")"
+						;;
+					"$(echo "${LDCOUNTRY}"|grep -Eoi "^(.*)\, New York\, US\, NA")")
+						LDCOUNTRY="$(echo "$LDCOUNTRY"|sed -E "s/\, New York\,/, NY,/g")"
+						;;
+					"$(echo "${LDCOUNTRY}"|grep -Eoi "^(.*)\, North Carolina\, US\, NA")")
+						LDCOUNTRY="$(echo "$LDCOUNTRY"|sed -E "s/\, North Carolina\,/, NC,/g")"
+						;;
+					"$(echo "${LDCOUNTRY}"|grep -Eoi "^(.*)\, North Dakota\, US\, NA")")
+						LDCOUNTRY="$(echo "$LDCOUNTRY"|sed -E "s/\, North Dakota\,/, ND,/g")"
+						;;
+					"$(echo "${LDCOUNTRY}"|grep -Eoi "^(.*)\, Ohio\, US\, NA")")
+						LDCOUNTRY="$(echo "$LDCOUNTRY"|sed -E "s/\, Ohio\,/, OH,/g")"
+						;;
+					"$(echo "${LDCOUNTRY}"|grep -Eoi "^(.*)\, Oklahoma\, US\, NA")")
+						LDCOUNTRY="$(echo "$LDCOUNTRY"|sed -E "s/\, Oklahoma\,/, OK,/g")"
+						;;
+					"$(echo "${LDCOUNTRY}"|grep -Eoi "^(.*)\, Oregon\, US\, NA")")
+						LDCOUNTRY="$(echo "$LDCOUNTRY"|sed -E "s/\, Oregon\,/, OR,/g")"
+						;;
+					"$(echo "${LDCOUNTRY}"|grep -Eoi "^(.*)\, Pennsylvania\, US\, NA")")
+						LDCOUNTRY="$(echo "$LDCOUNTRY"|sed -E "s/\, Pennsylvania\,/, PA,/g")"
+						;;
+					"$(echo "${LDCOUNTRY}"|grep -Eoi "^(.*)\, Rhode Island\, US\, NA")")
+						LDCOUNTRY="$(echo "$LDCOUNTRY"|sed -E "s/\, Rhode Island\,/, RI,/g")"
+						;;
+					"$(echo "${LDCOUNTRY}"|grep -Eoi "^(.*)\, South Carolina\, US\, NA")")
+						LDCOUNTRY="$(echo "$LDCOUNTRY"|sed -E "s/\, South Carolina\,/, SC,/g")"
+						;;
+					"$(echo "${LDCOUNTRY}"|grep -Eoi "^(.*)\, South Dakota\, US\, NA")")
+						LDCOUNTRY="$(echo "$LDCOUNTRY"|sed -E "s/\, South Dakota\,/, SD,/g")"
+						;;
+					"$(echo "${LDCOUNTRY}"|grep -Eoi "^(.*)\, Tennessee\, US\, NA")")
+						LDCOUNTRY="$(echo "$LDCOUNTRY"|sed -E "s/\, Tennessee\,/, TN,/g")"
+						;;
+					"$(echo "${LDCOUNTRY}"|grep -Eoi "^(.*)\, Texas\, US\, NA")")
+						LDCOUNTRY="$(echo "$LDCOUNTRY"|sed -E "s/\, Texas\,/, TX,/g")"
+						;;
+					"$(echo "${LDCOUNTRY}"|grep -Eoi "^(.*)\, Utah\, US\, NA")")
+						LDCOUNTRY="$(echo "$LDCOUNTRY"|sed -E "s/\, Utah\,/, UT,/g")"
+						;;
+					"$(echo "${LDCOUNTRY}"|grep -Eoi "^(.*)\, Vermont\, US\, NA")")
+						LDCOUNTRY="$(echo "$LDCOUNTRY"|sed -E "s/\, Vermont\,/, VT,/g")"
+						;;
+					"$(echo "${LDCOUNTRY}"|grep -Eoi "^(.*)\, Virginia\, US\, NA")")
+						LDCOUNTRY="$(echo "$LDCOUNTRY"|sed -E "s/\, Virginia\,/, VA,/g")"
+						;;
+					"$(echo "${LDCOUNTRY}"|grep -Eoi "^(.*)\, Washington\, US\, NA")")
+						LDCOUNTRY="$(echo "$LDCOUNTRY"|sed -E "s/\, Washington\,/, WA,/g")"
+						;;
+					"$(echo "${LDCOUNTRY}"|grep -Eoi "^(.*)\, West Virginia\, US\, NA")")
+						LDCOUNTRY="$(echo "$LDCOUNTRY"|sed -E "s/\, West Virginia\,/, WV,/g")"
+						;;
+					"$(echo "${LDCOUNTRY}"|grep -Eoi "^(.*)\, Wisconsin\, US\, NA")")
+						LDCOUNTRY="$(echo "$LDCOUNTRY"|sed -E "s/\, Wisconsin\,/, WI,/g")"
+						;;
+					"$(echo "${LDCOUNTRY}"|grep -Eoi "^(.*)\, Wyoming\, US\, NA")")
+						LDCOUNTRY="$(echo "$LDCOUNTRY"|sed -E "s/\, Wyoming\,/, WY,/g")"
+						;;
+
 		#SA
 			"$(echo "${LDCOUNTRY}"|grep -Eo "^Manguinhos\, BR\, SA")")
 				LDCOUNTRY="Manguinhos, RJ, BR, SA"
@@ -803,8 +953,10 @@ meatandtatoes(){
 			fi
 			COUNT=$(echo "$SETTINGS"|sed -n 3p) ### How pings to run. Default is 5
 			if [ -f "$DIR"/42Kmi/tweak.txt ]; then PINGRESOLUTION="${TWEAK_PINGRESOLUTION}"; else PINGRESOLUTION=3; fi
+			PINGTTL=255
 			#PINGGET=$(echo $(echo "$(n=0; while [[ $n -lt "${COUNT}" ]]; do { ping -q -c "${PINGRESOLUTION}" -W 1 -s "${SIZE}" "${peer}" & } ; n=$((n+1)); done )"|grep -Eo "\/([0-9]{1,}\.[0-9]{1,})\/"|sed -E 's/(\/|\.)//g'|sed -E 's/(^|\b)(0){1,}//g'|sed -E 's/$/+/g')|sed -E 's/\+$//g') &> /dev/null
-			PINGGET=$(echo $(echo "$(n=0; while [[ $n -lt "${COUNT}" ]]; do { ping -c "${PINGRESOLUTION}" -W 1 -s "${SIZE}" "${peer}" & } ; n=$((n+1)); done )"|grep -Eo "time=(.*)$"|sed -E 's/( ms|\.|time=)//g'|sed -E 's/(^|\b)(0){1,}//g'|sed -E 's/$/+/g')|sed -E 's/\+$//g') &> /dev/null
+			#PINGGET=$(echo $(echo "$(n=0; while [[ $n -lt "${COUNT}" ]]; do { ping -c "${PINGRESOLUTION}" -W 1 -s "${SIZE}" "${peer}" & } ; n=$((n+1)); done )"|grep -Eo "time=(.*)$"|sed -E 's/( ms|\.|time=)//g'|sed -E 's/(^|\b)(0){1,}//g'|sed -E 's/$/+/g')|sed -E 's/\+$//g') &> /dev/null
+			PINGGET=$(echo $(echo "$(n=0; while [[ $n -lt "${COUNT}" ]]; do { { ping -c "${PINGRESOLUTION}" -W 1 -w 1 -t "${PINGTTL}" -s 56 "${peer}" & ping -c "${PINGRESOLUTION}" -W 1 -w 1 -t "${PINGTTL}" -s 96 "${peer}" & ping -c "${PINGRESOLUTION}" -W 1 -w 1 -t "${PINGTTL}" -s "${SIZE}" "${peer}" & }; wait $!; } & n=$((n+1)); done )"|grep -Eo "time=(.*)$"|sed -E 's/( ms|\.|time=)//g'|sed -E 's/(^|\b)(0){1,}//g'|sed -E 's/$/+/g')|sed -E 's/\+$//g') &> /dev/null
 			#wait $!
 			PINGCOUNT=$(echo "$PINGGET"|wc -w)
 			if ! [ "${PINGCOUNT}" != "$(echo -n "$PINGCOUNT" | grep -oEi "(0|)")" ]; then PINGCOUNT=$(( COUNT * PINGRESOLUTION )); fi #Fallback
@@ -848,10 +1000,11 @@ meatandtatoes(){
 			if echo "$TRACELIMIT"| grep -Eo "\.([0-9]{3})$"; then TRACELIMIT="$TRACELIMIT"; else TRACELIMIT="$(( TRACELIMIT * 1000 ))"; fi
 			fi
 			##### PARAMETERS #####
-			if [ -f "$DIR"/42Kmi/tweak.txt ]; then TRGETCOUNT="${TWEAK_TRGETCOUNT}"; else TRGETCOUNT=20; fi
+			if [ -f "$DIR"/42Kmi/tweak.txt ]; then TRGETCOUNT="${TWEAK_TRGETCOUNT}"; else TRGETCOUNT=17; fi
 			MXP=$(( TTL * PROBES * TRGETCOUNT ))
 			#New TraceRoute
 			TRGET=$(echo $(echo "$(n=0; while [[ $n -lt "${TTL}" ]]; do { traceroute -Fn -m "${TRGETCOUNT}" -q "${PROBES}" -w 1 "${peer}" "${SIZE}" & } ; n=$((n+1)); done )"|grep -Eo "([0-9]{1,}\.[0-9]{3}\ ms)"|sed -E 's/(\/|\.|\ ms)//g'|sed -E 's/(^|\b)(0){1,}//g'|sed -E 's/$/+/g')|sed -E 's/\+$//g') &> /dev/null
+			#TRGET=$(echo $(echo "$(n=0; while [[ $n -lt "${TTL}" ]]; do { { traceroute -Fn -m "${TRGETCOUNT}" -q "${PROBES}" -w 1 "${peer}" "${SIZE}"| sed 's/\*//g'|sed -E "s/^(\s*)?[0-9]{1,}(\s*)//g"|sed -E "/^(\s)*$/d"|tail -1; } & }; n=$((n+1)); done )"|grep -Eo "([0-9]{1,}\.[0-9]{3}\ ms)"|sed -E 's/(\/|\.|\ ms)//g'|sed -E 's/(^|\b)(0){1,}//g'|sed -E 's/$/+/g')|sed -E 's/\+$//g') &> /dev/null
 			#wait $!
 			TRCOUNT=$(echo "$TRGET"|wc -w) #Counts for average
 			if [ "${TRCOUNT}" = "$(echo -n "$TRCOUNT" | grep -oEi "(0|)")" ]; then TRCOUNT=$(( TTL * PROBES)); fi #Fallback
@@ -1224,8 +1377,8 @@ fi &
 cleanliness &> /dev/null &
 bancountry &> /dev/null &
 break; exit
-)
-#continue
+);kill $!
+continue
 done &> /dev/null & 
 }
 ( lagdrop & )
