@@ -39,6 +39,8 @@ What to expect in 3.0.0
 ![FriendCode](https://i.imgur.com/FDSfaK0.jpg)
 Down to play if I'm free from studying!
 
+### Free tip for all: Check your router security configurations. Make sure multicast is allowed/permitted (not filtered), and make sure random anonymous pings are allowed/permited (not filtered). Many online gaming services depend on these features being enabled for matchmaking.
+
 ## How it works
 ________________
 Some games, like Super Smash Bros for Wii U, utilize peer-to-peer matchmaking, meaning that opponents connect directly to each other for matches and do not rely on some distant server to facilitate of controller inputs between players. LagDrop scans for peer IP addresses connected to your console and pings them using parameters specified in the console-specific options.txt file. Any peer IP address that fails the test (returns an average ping time/TraceRoute average higher than the specified limit) is blocked from your console. Values above your limit are anticipated to be laggy, so why not prevent potential lag?

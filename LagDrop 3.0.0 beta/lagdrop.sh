@@ -4,18 +4,23 @@ POPULATE=""
 MAKE_TWEAK=""
 cleanall(){
 PROC="$(ps|grep -E "$(echo $(ps|grep "${0##*/}"|grep -Ev "^(\s)?($$)\b"|grep -Ev "(\[("kthreadd"|"ksoftirqd"|"kworker"|"khelper"|"writeback"|"bioset"|"crypto"|"kblockd"|"khubd"|"kswapd"|"fsnotify_mark"|"deferwq"|"scsi_eh_"|"usb-storage"|"cfg80211"|"jffs2_gcd_mtd3").*\])"|grep -Ev "SW(.?)"|awk '{printf $3" "$4"|\n"}'|awk '!a[$0]++')|sed -E 's/.$//')"|grep -Ev "\b($$)\b"|grep -v "rm"|grep -Eo "^(\s*)?[0-9]{1,}")"
-	misterclean(){
+
+#Empty LDKTA table and adjust geomem and pingmem files
 	iptables -F LDKTA
-	sed -i -E "/#(.*)#(.*)$/d" ""$DIR"/42Kmi/${GEOMEMFILE}" #Deletes lines with 2 #
-	sed -i -E "/((#(.*)#(.*)#$)|(^#|##))/d" ""$DIR"/42Kmi/${PINGMEM}" #Deletes lines with 3 #
-	kill -9 $(ps|grep "${0##*/}"|grep -Eo "^(\s*)?[0-9]{1,}\b"|grep -Ev "\b($$)\b") &> /dev/null #&
-	for process in $PROC; do
-		{ rm -rf "/proc/$process" 2>&1 >/dev/null 2> /dev/null; } &> /dev/null #&
-	#rm "/tmp/$RANDOMGET"; iptables -nL LDACCEPT; iptables -nL LDREJECT; iptables -nL LDIGNORE; iptables -nL LDKTA #; iptables -nL LDBAN
-	done &> /dev/null #&
+	sed -i -E "/#(.*)#(.*)$/d" ""$DIR"/42Kmi/${GEOMEMFILE}" & #Deletes lines with 2 #
+	sed -i -E "/((#(.*)#(.*)#$)|(^#|##))/d" ""$DIR"/42Kmi/${PINGMEM}" & #Deletes lines with 3 #
+	
+	misterclean(){
+		kill -9 $(ps|grep "${0##*/}"|grep -Eo "^(\s*)?[0-9]{1,}\b"|grep -Ev "\b($$)\b") &> /dev/null #&
+
+		for process in $PROC; do
+			{ rm -rf "/proc/$process" 2>&1 >/dev/null 2> /dev/null; } &> /dev/null #&
+			#rm "/tmp/$RANDOMGET"; iptables -nL LDACCEPT; iptables -nL LDREJECT; iptables -nL LDIGNORE; iptables -nL LDKTA #; iptables -nL LDBAN
+		done &> /dev/null #&
 	}
-n=0; while [[ $n -lt 10 ]]; do { misterclean & } ; n=$((n+1)); done
+( n=0; while [[ $n -lt 10 ]]; do { misterclean & } ; n=$((n+1)); done )
 wait $!
+kill -9 $(ps|grep "${0##*/}"|grep -Eo "^(\s*)?[0-9]{1,}")
 exit
 } &> /dev/null
 trap cleanall 0 1 2 3 6 9 15
@@ -875,7 +880,6 @@ cull_ignore(){
 	fi
 }
 meatandtatoes(){ 
-	#borneopeer="$(borneo "$peer")"
 	borneopeer="$peer"
 	if ! { iptables -nL LDIGNORE|grep -Eoq "\b($peer)\b"; }; then
 	{
@@ -1003,7 +1007,7 @@ meatandtatoes(){
 			if [ -f "$DIR"/42Kmi/tweak.txt ]; then TRGETCOUNT="${TWEAK_TRGETCOUNT}"; else TRGETCOUNT=17; fi
 			MXP=$(( TTL * PROBES * TRGETCOUNT ))
 			#New TraceRoute
-			TRGET=$(echo $(echo "$(n=0; while [[ $n -lt "${TTL}" ]]; do { traceroute -Fn -m "${TRGETCOUNT}" -q "${PROBES}" -w 1 "${peer}" "${SIZE}" & } ; n=$((n+1)); done )"|grep -Eo "([0-9]{1,}\.[0-9]{3}\ ms)"|sed -E 's/(\/|\.|\ ms)//g'|sed -E 's/(^|\b)(0){1,}//g'|sed -E 's/$/+/g')|sed -E 's/\+$//g') &> /dev/null
+			TRGET=$(echo $(echo "$(n=0; while [[ $n -lt "${TTL}" ]]; do { traceroute -Fn -m "${TRGETCOUNT}" -q "${PROBES}" -w 1 "${peer}" "${SIZE}" & } & n=$((n+1)); done )"|grep -Eo "([0-9]{1,}\.[0-9]{3}\ ms)"|sed -E 's/(\/|\.|\ ms)//g'|sed -E 's/(^|\b)(0){1,}//g'|sed -E 's/$/+/g')|sed -E 's/\+$//g') &> /dev/null
 			#TRGET=$(echo $(echo "$(n=0; while [[ $n -lt "${TTL}" ]]; do { { traceroute -Fn -m "${TRGETCOUNT}" -q "${PROBES}" -w 1 "${peer}" "${SIZE}"| sed 's/\*//g'|sed -E "s/^(\s*)?[0-9]{1,}(\s*)//g"|sed -E "/^(\s)*$/d"|tail -1; } & }; n=$((n+1)); done )"|grep -Eo "([0-9]{1,}\.[0-9]{3}\ ms)"|sed -E 's/(\/|\.|\ ms)//g'|sed -E 's/(^|\b)(0){1,}//g'|sed -E 's/$/+/g')|sed -E 's/\+$//g') &> /dev/null
 			#wait $!
 			TRCOUNT=$(echo "$TRGET"|wc -w) #Counts for average
@@ -1022,7 +1026,7 @@ meatandtatoes(){
 		fi
 		##### TRACEROUTE #####
 		if ! { { echo "$EXIST_LIST_GET"|grep -Eoq "\b(${peer})\b"; } && { tail +1 ""$DIR"/42Kmi/${FILTERIGNORE}"|grep -Eoq "^("$peer"|"$peerenc")$"; } && { tail +1 "/tmp/$RANDOMGET"|sed -E "s/.\[[0-9]{1}(\;[0-9]{2})?m//g"|grep -Eoq "\b?(${peer})\b"; }; }; then
-			{ theping && thetraceroute; }
+			{ theping; thetraceroute; }
 			#wait #$!
 			#timestamps
 		fi
@@ -1172,9 +1176,9 @@ else
 fi
 
 if [ $SHELLIS = "ash" ]; then
-CURL_TIMEOUT=10
+CURL_TIMEOUT=10 #For OpenWRT
 else
-CURL_TIMEOUT=3
+CURL_TIMEOUT=7 #For DD-WRT
 fi
 
 SIZE=$(echo "$SETTINGS"|sed -n 4p) ### Size of packets. Default is 1024
@@ -1403,10 +1407,10 @@ if [ "$SENTINEL" = "$(echo -n "$SENTINEL" | grep -oEi "(yes|1|on|enable(d?))")" 
 		SENTLOSSLIMIT=$TWEAK_SENTLOSSLIMIT
 	else
 		PACKET_OR_BYTE=1 #1 for packets, 2 for bytes (referred to as delta)
-		SENTINELDELAYBIG=2 #Distinguishes new delta from old delta.
+		SENTINELDELAYBIG=5 #Distinguishes new delta from old delta.
 		SENTINELDELAYSMALL=1 #Establishes deltas
 		STRIKEMAX=5 #Max number of strikes before banning
-		ABS_VAL=1 #Set to 1 to use absolute values instead.
+		ABS_VAL=0 #Set to 1 to use absolute values instead.
 		SENTMODE=3 #0 or 1=Difference, 2=X^2, 3=Difference or X^2, 4=Difference & X^2
 		
 		#If BYTEDIFF -gt SENTLOSSLIMIT, Sentinel will act. These values are constant regardless of game played.
