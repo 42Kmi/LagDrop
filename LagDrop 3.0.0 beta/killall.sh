@@ -1,6 +1,6 @@
 #!/bin/sh
 SCRIPTNAME=$(echo "${0##*/}")
-kill -9 $(ps|grep lagdrop.sh|grep -Eo "^(\s*)?[0-9]{1,}")
+kill -15 $(ps|grep lagdrop.sh|grep -Eo "^(\s*)?[0-9]{1,}")
 
 ##### Find Shell #####
 SHELLIS=$(if [ -f "/usr/bin/lua" ]; then echo "ash"; else echo "no"; fi)
@@ -33,5 +33,5 @@ fi
 exit
 ### Magic happens here ###
 wait $!
-kill -9 $(ps -w | grep -F "$SCRIPTNAME" | grep -v $$) &> /dev/null
+kill -15 $(ps -w | grep -F "$SCRIPTNAME" | grep -v $$) &> /dev/null
 ##### 42Kmi LagDrop, Written by 42Kmi. Property of 42Kmi, LLC. #####
