@@ -1,12 +1,12 @@
 #!/bin/sh
-if { which stty; }; then stty -echo; fi 2> /dev/null
+if { which stty; }; then stty -echo; fi &> /dev/null
 LDTEMPFOLDER=ldtmp
 {
 if [ ! -d "/tmp/${LDTEMPFOLDER}" ]; then mkdir -p "/tmp/${LDTEMPFOLDER}" ; fi
 POPULATE=""
 MAKE_TWEAK=""
 cleanall(){
-if { which stty; }; then stty echo; fi 2> /dev/null
+if { which stty; }; then stty echo; fi &> /dev/null
 PROC="$(ps|grep -E "$(echo $(ps|grep "$(echo "${0##*/}")"|grep -Ev "^(\s)?($$)\b"|grep -Ev "(\[("kthreadd"|"ksoftirqd"|"kworker"|"khelper"|"writeback"|"bioset"|"crypto"|"kblockd"|"khubd"|"kswapd"|"fsnotify_mark"|"deferwq"|"scsi_eh_"|"usb-storage"|"cfg80211"|"jffs2_gcd_mtd3").*\])"|grep -Ev "SW(.?)"|awk '{printf $3" "$4"|\n"}'|awk '!a[$0]++')|sed -E 's/.$//')"|grep -Ev "\b($$)\b"|grep -v "rm"|grep -Eo "^(\s*)?[0-9]{1,}")"
 CLEANCOUNT=5
 #Empty LDKTA table and adjust geomem and pingmem files
@@ -257,32 +257,32 @@ fi
 ##### Get Static IP #####
 ##### Prepare LagDrop's IPTABLES Chains #####
 maketables(){
-if ! { iptables -nL LDACCEPT|grep -Eoq "([1-9])([0-9]{1,})? references" 2>&1 >/dev/null; }; then
-until { iptables -nL LDACCEPT|grep -Eoq "([1-9])([0-9]{1,})? references"; }; do iptables -N LDACCEPT|iptables -P LDACCEPT ACCEPT|iptables -t filter -I FORWARD -j LDACCEPT; done &> /dev/null & break
+if ! { iptables -nL LDACCEPT; }; then
+until { iptables -nL LDACCEPT; }; do iptables -N LDACCEPT|iptables -P LDACCEPT ACCEPT|iptables -t filter -I FORWARD -j LDACCEPT; done &> /dev/null & break
 else break; fi &> /dev/null &
 
-if ! { iptables -nL LDREJECT|grep -Eoq "([1-9])([0-9]{1,})? references" 2>&1 >/dev/null; }; then
-until { iptables -nL LDREJECT|grep -Eoq "([1-9])([0-9]{1,})? references"; }; do iptables -N LDREJECT|iptables -P LDREJECT REJECT |iptables -t filter -I FORWARD -j LDREJECT; done &> /dev/null & break
+if ! { iptables -nL LDREJECT; }; then
+until { iptables -nL LDREJECT; }; do iptables -N LDREJECT|iptables -P LDREJECT REJECT |iptables -t filter -I FORWARD -j LDREJECT; done &> /dev/null & break
 else break; fi &> /dev/null &
 
-if ! { iptables -nL LDBAN|grep -Eoq "([1-9])([0-9]{1,})? references" 2>&1 >/dev/null; }; then
-until { iptables -nL LDBAN|grep -Eoq "([1-9])([0-9]{1,})? references"; }; do iptables -N LDBAN|iptables -P LDBAN REJECT --reject-with icmp-host-prohibited|iptables -t filter -I FORWARD -j LDBAN; done &> /dev/null & break
+if ! { iptables -nL LDBAN; }; then
+until { iptables -nL LDBAN; }; do iptables -N LDBAN|iptables -P LDBAN REJECT --reject-with icmp-host-prohibited|iptables -t filter -I FORWARD -j LDBAN; done &> /dev/null & break
 else break; fi &> /dev/null &
 
-if ! { iptables -nL LDIGNORE|grep -Eoq "([1-9])([0-9]{1,})? references" 2>&1 >/dev/null; }; then
-until { iptables -nL LDIGNORE|grep -Eoq "([1-9])([0-9]{1,})? references"; }; do iptables -N LDIGNORE|iptables -P LDIGNORE ACCEPT|iptables -t filter -A FORWARD -j LDIGNORE; done &> /dev/null & break
+if ! { iptables -nL LDIGNORE; }; then
+until { iptables -nL LDIGNORE; }; do iptables -N LDIGNORE|iptables -P LDIGNORE ACCEPT|iptables -t filter -A FORWARD -j LDIGNORE; done &> /dev/null & break
 else break; fi &> /dev/null &
 
-if ! { iptables -nL LDTEMPHOLD|grep -Eoq "([1-9])([0-9]{1,})? references" 2>&1 >/dev/null; }; then
-until { iptables -nL LDTEMPHOLD|grep -Eoq "([1-9])([0-9]{1,})? references"; }; do iptables -N LDTEMPHOLD|iptables -t filter -I INPUT -j LDTEMPHOLD; done &> /dev/null & break
+if ! { iptables -nL LDTEMPHOLD; }; then
+until { iptables -nL LDTEMPHOLD; }; do iptables -N LDTEMPHOLD|iptables -t filter -I INPUT -j LDTEMPHOLD; done &> /dev/null & break
 else break; fi &> /dev/null & #Hold for clear
 
-if ! { iptables -nL LDKTA|grep -Eoq "([1-9])([0-9]{1,})? references" 2>&1 >/dev/null; }; then
-until { iptables -nL LDKTA|grep -Eoq "([1-9])([0-9]{1,})? references"; }; do iptables -N LDKTA|iptables -P LDKTA REJECT|iptables -t filter -I FORWARD -j LDKTA; done &> /dev/null & break
+if ! { iptables -nL LDKTA; }; then
+until { iptables -nL LDKTA; }; do iptables -N LDKTA|iptables -P LDKTA REJECT|iptables -t filter -I FORWARD -j LDKTA; done &> /dev/null & break
 else break; fi &> /dev/null & 
 #
-if ! { iptables -nL LDSENTSTRIKE|grep -Eoq "([1-9])([0-9]{1,})? references" 2>&1 >/dev/null; }; then
-until { iptables -nL LDSENTSTRIKE|grep -Eoq "([1-9])([0-9]{1,})? references"; }; do iptables -N LDSENTSTRIKE|iptables -t filter -I INPUT -j LDSENTSTRIKE; done &> /dev/null & break
+if ! { iptables -nL LDSENTSTRIKE; }; then
+until { iptables -nL LDSENTSTRIKE; }; do iptables -N LDSENTSTRIKE|iptables -t filter -I INPUT -j LDSENTSTRIKE; done &> /dev/null & break
 else break; fi &> /dev/null & #Hold for clear
 }
 maketables &> /dev/null &
@@ -1213,7 +1213,7 @@ else
 fi
 
 if [ $SHELLIS = "ash" ]; then
-CURL_TIMEOUT=10 #For OpenWRT
+CURL_TIMEOUT=15 #For OpenWRT
 else
 CURL_TIMEOUT=7 #For DD-WRT
 fi
