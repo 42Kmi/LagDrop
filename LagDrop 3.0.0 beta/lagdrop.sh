@@ -19,10 +19,10 @@ CLEANCOUNT=5
 	
 	if [ "${SHELLIS}" != "ash" ] && { which nvram|grep -Eq "nvram$"; }; then	
 		restore_original_values(){
-			nvram set dmz_enable=${ORIGINAL_DMZ}
-			nvram set dmz_ipaddr=${ORIGINAL_DMZ_IPADDR}
-			nvram set block_multicast=${ORIGINAL_MULTICAST}
-			nvram set block_wan=${ORIGINAL_BLOCKWAN}
+			eval "nvram set dmz_enable=${ORIGINAL_DMZ}"
+			eval "nvram set dmz_ipaddr=${ORIGINAL_DMZ_IPADDR}"
+			eval "nvram set block_multicast=${ORIGINAL_MULTICAST}"
+			eval "nvram set block_wan=${ORIGINAL_BLOCKWAN}"
 		}
 		restore_original_values
 	fi
@@ -1948,7 +1948,7 @@ if [ $SHOWLOCATION = 1 ]; then LOCATION="$(echo " | LOCATE${BC}")"; LOCATECOL="$
 		fi
 		STALE_STASH=$(tail +1 "/tmp/$RANDOMGET")
 		STALE_AGE=$(date +%s -r "/tmp/$RANDOMGET")
-		wait $!;spinner & 
+		wait $!; spinner & 
 }
 
 monitor(){
