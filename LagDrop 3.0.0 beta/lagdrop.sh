@@ -1,12 +1,12 @@
 #!/bin/sh
-stty -echo
+if { which stty; }; then stty -echo; fi 2> /dev/null
 LDTEMPFOLDER=ldtmp
 {
 if [ ! -d "/tmp/${LDTEMPFOLDER}" ]; then mkdir -p "/tmp/${LDTEMPFOLDER}" ; fi
 POPULATE=""
 MAKE_TWEAK=""
 cleanall(){
-stty echo
+if { which stty; }; then stty echo; fi 2> /dev/null
 PROC="$(ps|grep -E "$(echo $(ps|grep "$(echo "${0##*/}")"|grep -Ev "^(\s)?($$)\b"|grep -Ev "(\[("kthreadd"|"ksoftirqd"|"kworker"|"khelper"|"writeback"|"bioset"|"crypto"|"kblockd"|"khubd"|"kswapd"|"fsnotify_mark"|"deferwq"|"scsi_eh_"|"usb-storage"|"cfg80211"|"jffs2_gcd_mtd3").*\])"|grep -Ev "SW(.?)"|awk '{printf $3" "$4"|\n"}'|awk '!a[$0]++')|sed -E 's/.$//')"|grep -Ev "\b($$)\b"|grep -v "rm"|grep -Eo "^(\s*)?[0-9]{1,}")"
 CLEANCOUNT=5
 #Empty LDKTA table and adjust geomem and pingmem files
