@@ -257,32 +257,32 @@ fi
 ##### Get Static IP #####
 ##### Prepare LagDrop's IPTABLES Chains #####
 maketables(){
-if ! { iptables -nL LDACCEPT; }; then
-until { iptables -nL LDACCEPT; }; do iptables -N LDACCEPT|iptables -P LDACCEPT ACCEPT|iptables -t filter -I FORWARD -j LDACCEPT; done &> /dev/null & break
+if ! { iptables -nL LDACCEPT|grep -E "Chain LDACCEPT \([1-9][0-9]{0,} reference(s)?\)"; }; then
+until { iptables -nL LDACCEPT|grep -E "Chain LDACCEPT \([1-9][0-9]{0,} reference(s)?\)"; }; do iptables -N LDACCEPT|iptables -P LDACCEPT ACCEPT|iptables -t filter -I FORWARD -j LDACCEPT; done &> /dev/null & break
 else break; fi &> /dev/null &
 
-if ! { iptables -nL LDREJECT; }; then
-until { iptables -nL LDREJECT; }; do iptables -N LDREJECT|iptables -P LDREJECT REJECT |iptables -t filter -I FORWARD -j LDREJECT; done &> /dev/null & break
+if ! { iptables -nL LDREJECT|grep -E "Chain LDREJECT \([1-9][0-9]{0,} reference(s)?\)"; }; then
+until { iptables -nL LDREJECT|grep -E "Chain LDREJECT \([1-9][0-9]{0,} reference(s)?\)"; }; do iptables -N LDREJECT|iptables -P LDREJECT REJECT |iptables -t filter -I FORWARD -j LDREJECT; done &> /dev/null & break
 else break; fi &> /dev/null &
 
-if ! { iptables -nL LDBAN; }; then
-until { iptables -nL LDBAN; }; do iptables -N LDBAN|iptables -P LDBAN REJECT --reject-with icmp-host-prohibited|iptables -t filter -I FORWARD -j LDBAN; done &> /dev/null & break
+if ! { iptables -nL LDBAN|grep -E "Chain LDBAN \([1-9][0-9]{0,} reference(s)?\)"; }; then
+until { iptables -nL LDBAN|grep -E "Chain LDBAN \([1-9][0-9]{0,} reference(s)?\)"; }; do iptables -N LDBAN|iptables -P LDBAN REJECT --reject-with icmp-host-prohibited|iptables -t filter -I FORWARD -j LDBAN; done &> /dev/null & break
 else break; fi &> /dev/null &
 
-if ! { iptables -nL LDIGNORE; }; then
-until { iptables -nL LDIGNORE; }; do iptables -N LDIGNORE|iptables -P LDIGNORE ACCEPT|iptables -t filter -A FORWARD -j LDIGNORE; done &> /dev/null & break
+if ! { iptables -nL LDIGNORE|grep -E "Chain LDIGNORE \([1-9][0-9]{0,} reference(s)?\)"; }; then
+until { iptables -nL LDIGNORE|grep -E "Chain LDIGNORE \([1-9][0-9]{0,} reference(s)?\)"; }; do iptables -N LDIGNORE|iptables -P LDIGNORE ACCEPT|iptables -t filter -A FORWARD -j LDIGNORE; done &> /dev/null & break
 else break; fi &> /dev/null &
 
-if ! { iptables -nL LDTEMPHOLD; }; then
-until { iptables -nL LDTEMPHOLD; }; do iptables -N LDTEMPHOLD|iptables -t filter -I INPUT -j LDTEMPHOLD; done &> /dev/null & break
+if ! { iptables -nL LDTEMPHOLD|grep -E "Chain LDTEMPHOLD \([1-9][0-9]{0,} reference(s)?\)"; }; then
+until { iptables -nL LDTEMPHOLD|grep -E "Chain LDTEMPHOLD \([1-9][0-9]{0,} reference(s)?\)"; }; do iptables -N LDTEMPHOLD|iptables -t filter -I INPUT -j LDTEMPHOLD; done &> /dev/null & break
 else break; fi &> /dev/null & #Hold for clear
 
-if ! { iptables -nL LDKTA; }; then
-until { iptables -nL LDKTA; }; do iptables -N LDKTA|iptables -P LDKTA REJECT|iptables -t filter -I FORWARD -j LDKTA; done &> /dev/null & break
+if ! { iptables -nL LDKTA|grep -E "Chain LDKTA \([1-9][0-9]{0,} reference(s)?\)"; }; then
+until { iptables -nL LDKTA|grep -E "Chain LDKTA \([1-9][0-9]{0,} reference(s)?\)"; }; do iptables -N LDKTA|iptables -P LDKTA REJECT|iptables -t filter -I FORWARD -j LDKTA; done &> /dev/null & break
 else break; fi &> /dev/null & 
 #
-if ! { iptables -nL LDSENTSTRIKE; }; then
-until { iptables -nL LDSENTSTRIKE; }; do iptables -N LDSENTSTRIKE|iptables -t filter -I INPUT -j LDSENTSTRIKE; done &> /dev/null & break
+if ! { iptables -nL LDSENTSTRIKE|grep -E "Chain LDSENTSTRIKE \([1-9][0-9]{0,} reference(s)?\)"; }; then
+until { iptables -nL LDSENTSTRIKE|grep -E "Chain LDSENTSTRIKE \([1-9][0-9]{0,} reference(s)?\)"; }; do iptables -N LDSENTSTRIKE|iptables -t filter -I INPUT -j LDSENTSTRIKE; done &> /dev/null & break
 else break; fi &> /dev/null & #Hold for clear
 }
 maketables &> /dev/null &
