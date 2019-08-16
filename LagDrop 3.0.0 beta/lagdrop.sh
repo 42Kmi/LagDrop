@@ -1690,6 +1690,7 @@ SWITCH_HOLD=0
 					#Make verify folder
 					if ! [ -d ""${DIR}"/42Kmi/verify/" ]; then mkdir ""${DIR}"/42Kmi/verify/"; fi
 					
+					vv_header(){
 					#Make header for verifyvalues.txt
 					HEADER_VV="IP\tTIME\tbytediffA\tbytediffB\tBYTESUM\tBYTEDIFF\tBYTEAVG\tBYTEDIFFSQ\tBYTEXSQ"
 					if [ -f ""${DIR}"/42Kmi/verify/verifyvalues#${SENTIPFILENAME}#.txt" ]; then
@@ -1699,15 +1700,18 @@ SWITCH_HOLD=0
 						else
 						echo -e "${HEADER_VV}\t$(date)" > ""${DIR}"/42Kmi/verify/verifyvalues#${SENTIPFILENAME}#.txt"
 					fi
+					}
 					
 					#Populate verifyvalues.txt
 					#if [ $bytediffA_new != $bytediffA_old ]; then
-						#if [ $BYTESUM != 0 ]; then
+						if [ $BYTESUM != 0 ]; then
 							#if [ $BYTEDIFF != 0 ]; then
+								vv_header
 								echo -e "$(echo $ip)\t$(date +%X)\t${bytediffA_old}\t${bytediffA_new}\t${BYTESUM}\t${BYTEDIFF}\t${BYTEAVG}\t${BYTEDIFFSQ}\t${BYTEXSQ}" >> ""${DIR}"/42Kmi/verify/verifyvalues#${SENTIPFILENAME}#.txt"
 							#fi
-						#fi
+						fi
 					#fi
+
 				}
 				fi #&
 				
@@ -1765,7 +1769,7 @@ SWITCH_HOLD=0
 		PACKET_OR_BYTE=1 #1 for packets, 2 for [kilo]bytes (referred to as delta)
 		SENTINELDELAYBIG=1 #Distinguishes new delta from old delta.
 		SENTINELDELAYSMALL=1 #Establishes deltas
-		STRIKEMAX=7 #5000000 #Max number of strikes before banning
+		STRIKEMAX=7 5000000 #Max number of strikes before banning
 		TWOPOINT_ON=0 #Set to 1 for Two-Point sequential comparison. Set to 0 for Continuous comparison
 		ABS_VAL=1 #Absolute value (e.g.: 3 - 5 = 2). Set to 0 to disable. Don't Change
 		SENTMODE=3 #0 or 1=Difference, 2=X^2, 3=Difference or X^2, 4=Difference & X^2
