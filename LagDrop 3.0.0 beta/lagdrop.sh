@@ -1769,7 +1769,7 @@ SWITCH_HOLD=0
 		PACKET_OR_BYTE=1 #1 for packets, 2 for [kilo]bytes (referred to as delta)
 		SENTINELDELAYBIG=1 #Distinguishes new delta from old delta.
 		SENTINELDELAYSMALL=1 #Establishes deltas
-		STRIKEMAX=7 5000000 #Max number of strikes before banning
+		STRIKEMAX=7 #5000000 #Max number of strikes before banning
 		TWOPOINT_ON=0 #Set to 1 for Two-Point sequential comparison. Set to 0 for Continuous comparison
 		ABS_VAL=1 #Absolute value (e.g.: 3 - 5 = 2). Set to 0 to disable. Don't Change
 		SENTMODE=3 #0 or 1=Difference, 2=X^2, 3=Difference or X^2, 4=Difference & X^2
