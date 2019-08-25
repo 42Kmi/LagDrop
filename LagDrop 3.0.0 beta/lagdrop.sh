@@ -316,7 +316,7 @@ SWITCH=ON
 case "$1" in
      "$(echo -n "$1" | grep -oEi "(nintendo|wiiu|wii|switch|[0-9]?ds|NSW)")") #Nintendo   
 		NINTENDO_SERVERS="(45\.55\.142\.122)|(45\.55)|(173\.255\.((19[2-9)|(2[0-9]{2}))\.)|(184\.30\.108\.110)|(38\.112\.28\.(9[6-9]))|(60\.32\.179\.((1[6-9])|(2[0-3])))|(60\.36\.183\.(15[2-9]))|(64\.124\.44\.((4[4-9])|(5[0-5])))|(64\.125\.103\.[0-9]{1,3})|(65\.166\.10\.((10[4-9])|11[01]))|(84\.37\.20\.((20[89])|(21[0-5])))|(84\.233\.128\.(6[4-9]|[7-9][0-9]|1[01][0-9]|12[0-7]))|(84\.233\.202\.([0-9]|[1-2][0-9]|3[0-1]))|(89\.202\.218\.([0-9]|1[0-5]))|(125\.196\.255\.(19[6-9]|20[0-7]))|(125\.199\.254\.(4[89]|5[0-9]|6[0-7]))|(125\.206\.241\.(1[7-8][0-9]|19[01]))|(133\.205\.103\.(19[2-9]|20[0-7]))|(192\.195\.204\.[0-9]{1,3})|(194\.121\.124\.(22[4-9]|23[01]))|(194\.176\.154\.(16[89]|17[0-5]))|(195\.10\.13\.(1[6-9]|[2-6][0-9]|7[0-5]))|(195\.27\.92\.(9[2-9]|1[0-9]{2}|20[0-7]))|(195\.27\.195\.([0-9]|1[0-5]))|(195\.73\.250\.(22[4-5]|23[01]))|(195\.243\.236\.(13[6-9]|14[0-3]))|(202\.232\.234\.(12[89]|13[0-9]|14[0-3]))|(205\.166\.76\.[0-9]{1,3})|(206\.19\.110\.[0-9]{1,3})|(208\.186\.152\.[0-9]{1,3})|(210\.88\.88\.(17[6-9]|18[0-9]|19[01]))|(210\.138\.40\.(2[4-9]|3[01]))|(210\.151\.57\.(8[0-9]|9[0-5]))|(210\.169\.213\.(3[2-9]|[45][0-9]|6[0-3]))|(210\.172\.105\.(1[678][0-9]|19[01]))|(210\.233\.54\.(3[2-9]|4[0-7]))|(211\.8\.190\.(19[2-9]|2[01][0-9]|22[0-3]))|(212\.100\.231\.6[01])|(213\.69\.144\.(1[678][0-9]|19[01]))|(217\.161\.8\.2[4-7])|(219\.96\.82\.(17[6-9]|18[0-9]|19[01]))|(220\.109\.217\.16[0-7])|(207\.38\.([8-9]|1[0-5])\.([0-9]{1,3}))|(209\.67\.106\.141)"
-		NIN_EXTRA="(95\.142\.154\.181)"
+		NIN_EXTRA="(95\.142\.154\.181|185\.157\.232\.22)"
 		FILTERIP="^(${NINTENDO_SERVERS}|${NIN_EXTRA})"
 		LOADEDFILTER="${RED}Nintendo${NC}"
 
@@ -337,7 +337,8 @@ case "$1" in
 
 esac
 }
-ONTHEFLYFILTER="amazonaws|akamaitechnologies|Akamai|verizondigitalmedia|mcics|EDGECAST(.*)?|edgecast|cdn|twitter|nintendowifi\.net|(nintendo|xboxlive|sony|playstation)\.net|ps[2-9]|nflxvideo|netflix|easo\.ea\.com|\.ea\.com|\.1e100\.net|GOGL|goog|Sony Online Entertainment|cloudfront\.net|facebook|fb-net|IANA|Cloudflare|BAD REQUEST|blizzard|NC Interactive|ncsoft|NCINT|RIOT(\s)?GAMES|RIOT|SQUARE ENIX|Valve Corporation|Ubisoft|not found|IANA-RESERVED|\b(dns|ns|NS|DNS)([0-9]{1,}?(\.|\-))\b|google\.com|LINODE|oath(\s)holdings|thePlatform|(MoPub\,\sInc|mopub)|((([0-9A-Za-z\-]+\.)*nintendo\.(co\.jp|com|eu|co\.uk|es|pt|ch|at|de|nl|be|ch|ru|fr|it|co\.za|co\.kr|tw|com\.hk|com\.au|ca|co\.nz)(/|$))|(([0-9A-Za-z\-]+\.)*nintendo-europe\.com(/|$))|(([0-9A-Za-z\-]+\.)*nintendoservicecentre\.co\.uk(/|$))|(([0-9A-Za-z\-]+\.)*google\.(com|ad|ae|com\.af|com\.ag|com\.ai|al|am|co\.ao|com\.ar|as|at|com\.au|az|ba|com\.bd|be|bf|bg|com\.bh|bi|bj|com\.bn|com\.bo|com\.br|bs|bt|co\.bw|by|com\.bz|ca|cd|cf|cg|ch|ci|co\.ck|cl|cm|cn|com\.co|co\.cr|com\.cu|cv|com\.cy|cz|de|dj|dk|dm|com\.do|dz|com\.ec|ee|com\.eg|es|com\.et|fi|com\.fj|fm|fr|ga|ge|gg|com\.gh|com\.gi|gl|gm|gp|gr|com\.gt|gy|com\.hk|hn|hr|ht|hu|co\.id|ie|co\.il|im|co\.in|iq|is|it|je|com\.jm|jo|co\.jp|co\.ke|com\.kh|ki|kg|co\.kr|com\.kw|kz|la|com\.lb|li|lk|co\.ls|lt|lu|lv|com\.ly|co\.ma|md|me|mg|mk|ml|com\.mm|mn|ms|com\.mt|mu|mv|mw|com\.mx|com\.my|co\.mz|com\.na|com\.nf|com\.ng|com\.ni|ne|nl|no|com\.np|nr|nu|co\.nz|com\.om|com\.pa|com\.pe|com\.pg|com\.ph|com\.pk|pl|pn|com\.pr|ps|pt|com\.py|com\.qa|ro|ru|rw|com\.sa|com\.sb|sc|se|com\.sg|sh|si|sk|com\.sl|sn|so|sm|sr|st|com\.sv|td|tg|co\.th|com\.tj|tk|tl|tm|tn|to|com\.tr|tt|com\.tw|co\.tz|com\.ua|co\.ug|co\.uk|com\.uy|co\.uz|com\.vc|co\.ve|vg|co\.vi|com\.vn|vu|ws|rs|co\.za|co\.zm|co\.zw|cat)(/|$)))" # Ignores if these words are found in whois requests
+#ONTHEFLYFILTER="GOOGLE\-CLOUD|amazonaws|akamaitechnologies|Akamai|AKAMAI\-[A-Z]{1,}|verizondigitalmedia|TWITT|EDGECAST(.*)?|edgecast|cdn|twitter|nintendowifi\.net|(nintendo|xboxlive|sony|playstation)\.net|ps[2-9]|nflxvideo|netflix|easo\.ea\.com|\.ea\.com|\.1e100\.net|GOGL|goog|Sony Online Entertainment|cloudfront\.net|facebook|fb-net|IANA|CLOUDFLARENET|Cloudflare|BAD REQUEST|blizzard|NC Interactive|ncsoft|NCINT|RIOT(\s)?GAMES|RIOT|SQUARE ENIX|Valve Corporation|Ubisoft|not found|IANA-RESERVED|\b(dns|ns|NS|DNS)([0-9]{1,}?(\.|\-))\b|google\.com|LINODE|oath(\s)holdings|thePlatform|(MoPub\,\sInc|mopub)|((([0-9A-Za-z\-]+\.)*nintendo\.(((co(m)?)((\.)?[a-z]{2})?))(/|$))|(([0-9A-Za-z\-]+\.)*nintendo-europe\.com(/|$))|(([0-9A-Za-z\-]+\.)*nintendoservicecentre\.co\.uk(/|$))|(([0-9A-Za-z\-]+\.)*google\.(((co|ad|ae)(m)?(\.)?[a-z]{2})|cat)(/|$)))" # Ignores if these words are found in whois requests
+ONTHEFLYFILTER="(((([0-9A-Za-z\-]+\.)*google\.(((co|ad|ae)(m)?(\.)?[a-z]{2})|cat)(/|$)))|GOOGLE\-CLOUD|GOGL|goog)|(amazonaws|akamaitechnologies|Akamai|AKAMAI\-[A-Z]{1,}|AKAMAI-TATAC)|verizondigitalmedia|(TWITT|twitter)|EDGECAST(.*)?|edgecast|cdn|nintendowifi\.net|(nintendo|xboxlive|sony|playstation)\.net|ps[2-9]|(nflxvideo|netflix)|(easo\.ea\.com|\.ea\.com)|\.1e100\.net|Sony Online Entertainment|cloudfront\.net|(facebook|fb-net)|(IANA|IANA-RESERVED)|(CLOUDFLARENET|Cloudflare)|BAD REQUEST|blizzard|(NC Interactive|ncsoft|NCINT)|(RIOT(\s)?GAMES|RIOT)|SQUARE ENIX|Valve Corporation|Ubisoft|not found|\b(dns|ns|NS|DNS)([0-9]{1,}?(\.|\-))\b|LINODE|oath(\s)holdings|thePlatform|(MoPub\,\sInc|mopub)|((([0-9A-Za-z\-]+\.)*nintendo\.(((co(m)?)((\.)?[a-z]{2})?))(/|$))|(([0-9A-Za-z\-]+\.)*nintendo-europe\.com(/|$))|(([0-9A-Za-z\-]+\.)*nintendoservicecentre\.co\.uk(/|$)))" # Ignores if these words are found in whois requests
 #ONTHEFLYFILTER="klhjgdfshjvckxrsjrfkctyjztyflkutyjsrehxcvhjyutresdxfcgh"
 AMAZON_SERVERS="(13\.(2(4[89]|5[01]))\.)"
 GOOGLE_SERVERS="(173.194)"
@@ -345,7 +346,7 @@ MSFT_SERVERS="(52\.(1((4[5-9])|([5-8][0-9])|(9[0-1]))))|(52\.(2(2[4-9]|[3-5][0-9
 LINODE="(173\.255\.((19[2-9])|(2[0-9]{2})\.))"
 CLOUDFLARE="162\.15[89]\."
 IANA_IPs="(239\.255\.255\.250)|(10(\.[0-9]{1,3}){3})|(2(2[4-9]|3[0-9])(\.[0-9]{1,3}){3})|(255(\.([0-9]){1,3}){3})|(0\.)|(100\.((6[4-9])|[7-9][0-9]|1(([0-1][0-9])|(2[0-7]))))|(172\.((1[6-9])|(2[0-9])|(3[0-1])))"
-ONTHEFLYFILTER_IPs="${IANA_IPs}|${MSFT_SERVERS}|${LINODE}|${CLOUDFLARE}|${AMAZON_SERVERS}|${GOOGLE_SERVERS}|1\.0\.0\.1|1\.1\.1\.1|127\.0\.0\.1|8\.8\.8\.8|8\.8\.4\.4|151\.101\.|(148\.25[123]{1}\.)" #Ignores these IPs, usually IANA reserved or something 
+ONTHEFLYFILTER_IPs="${IANA_IPs}|${MSFT_SERVERS}|${LINODE}|${CLOUDFLARE}|${AMAZON_SERVERS}|${GOOGLE_SERVERS}|1\.0\.0\.1|1\.1\.1\.1|127\.0\.0\.1|8\.8\.8\.8|8\.8\.4\.4|151\.101\.|(148\.25[123]{1}\.)|(64\.86\.206\.[0-9]{1,3})" #Ignores these IPs, usually IANA reserved or something 
 ##### Filter #####
 ##### TWEAKS #####
 # create 42Kmi/tweak.txt to edit these values
@@ -909,6 +910,18 @@ cull_ignore(){
 		n=0; while [[ $n -lt "$LDIGNORE_ENTRIES_CUTDOWN" ]]; do { iptables -D LDIGNORE 1; }; n=$((n+1)); done & 
 	fi
 }
+cull_kta(){
+	if [ "$DECONGEST" = "$(echo -n "$DECONGEST" | grep -oEi "(yes|1|on|enable(d?))")" ]; then
+		#Clear LDKTA after X number of entries reached.
+		LDKTA_ENTRIES_LIMIT=200
+		LDKTA_ENTRIES_CUTDOWN=$(( $LDKTA_ENTRIES_LIMIT / 2 ))
+		LDKTA_LINECOUNT=$(iptables -nL LDKTA|tail +3|wc -l)
+		if [ $LDKTA_LINECOUNT -ge $LDKTA_ENTRIES_LIMIT ]; then
+			#Remove half of entry limit to free iptables memory
+			n=0; while [[ $n -lt "$LDKTA_ENTRIES_CUTDOWN" ]]; do { iptables -D LDKTA 1; }; n=$((n+1)); done & 
+		fi
+	fi
+}
 meatandtatoes(){ 
 	borneopeer="$peer"
 	if ! { iptables -nL LDIGNORE|grep -Eoq "\b($peer)\b"; }; then
@@ -936,14 +949,15 @@ meatandtatoes(){
 				if ! { iptables -nL LDIGNORE|grep -Eoq "\b($peer)\b"; }; then
 					eval "iptables -A LDIGNORE -p all -s $peer -d $CONSOLE -j ACCEPT "${WAITLOCK}"; $IGNORE"
 				fi 
-			 if ! { grep -Eo "^(${peer}|${peerenc})$" ""$DIR"/42Kmi/${FILTERIGNORE}"; }; then echo "$peerenc" >> ""$DIR"/42Kmi/${FILTERIGNORE}"; fi
-				else
-				WHOIS="$(curl -sk --no-keepalive --no-buffer --connect-timeout ${CURL_TIMEOUT} "https://rdap.arin.net/registry/ip/"$peer"")"
-				if { { { echo "$WHOIS"|sed -E "s/^\s*//g"|sed "s/\"//g"| sed -E "s/(\[|\]|\{|\}|\,)//g"|sed "s/\\n/,/g"; }|sed  "s/],/]\\n/g"|sed -E "s/(\[|\]|\{|\})//g"|sed -E "s/(\")\,(\")/\1\\n\2/g"|sed -E '/^\"\"$/d'|sed 's/"//g'|sed -E 's/(\\r)?\\n/\n/g'; }|grep -Ev "\b(${IGNORE})\b"|grep -Eoi "\b(${SERVERS})\b"; } 2>&1 >/dev/null; then 
+				if ! { grep -Eo "^(${peer}|${peerenc})$" ""$DIR"/42Kmi/${FILTERIGNORE}"; }; then echo "$peerenc" >> ""$DIR"/42Kmi/${FILTERIGNORE}"; fi
+			else
+				#WHOIS="$(curl -sk --no-keepalive --no-buffer --connect-timeout ${CURL_TIMEOUT} "https://rdap.arin.net/registry/ip/"$peer""|sed -E "s/^\s*//g"|sed "s/\"//g"| sed -E "s/(\[|\]|\{|\}|\,)//g"|sed "s/\\n/,/g")"
+				WHOIS="$(curl -sk --no-keepalive --no-buffer --connect-timeout ${CURL_TIMEOUT} "https://rdap.arin.net/registry/ip/"$peer""|sed -E "s/^\s*//g"|sed "s/\"//g"| sed -E "s/(\[|\]|\{|\}|\,)//g"|sed "s/\\n/,/g"|sed  "s/],/]\\n/g"|sed -E "s/(\[|\]|\{|\})//g"|sed -E "s/(\")\,(\")/\1\\n\2/g"|sed -E '/^\"\"$/d'|sed 's/"//g')"
+				if { { echo "$WHOIS"; }|grep -Ev "\b(${IGNORE})\b"|grep -Eoi "\b(${SERVERS})\b"; }; then 
 					if ! { iptables -nL LDIGNORE|grep -Eoq "\b($peer)\b"; }; then
 						eval "iptables -A LDIGNORE -p all -s $peer -d $CONSOLE -j ACCEPT "${WAITLOCK}"; $IGNORE"
 					fi
-				if ! { grep -Eo "^(${peer}|${peerenc})$" ""$DIR"/42Kmi/${FILTERIGNORE}"; }; then echo "$peerenc" >> ""$DIR"/42Kmi/${FILTERIGNORE}"; fi
+					if ! { grep -Eo "^(${peer}|${peerenc})$" ""$DIR"/42Kmi/${FILTERIGNORE}"; }; then echo "$peerenc" >> ""$DIR"/42Kmi/${FILTERIGNORE}"; fi
 				fi
 			fi
 		fi &
@@ -988,15 +1002,13 @@ meatandtatoes(){
 			COUNT=$(echo "$SETTINGS"|sed -n 3p) ### How pings to run. Default is 5
 			if [ -f "$DIR"/42Kmi/tweak.txt ]; then PINGRESOLUTION="${TWEAK_PINGRESOLUTION}"; else PINGRESOLUTION=3; fi
 			PINGTTL=255
-			#PINGGET=$(echo $(echo "$(n=0; while [[ $n -lt "${COUNT}" ]]; do { ping -q -c "${PINGRESOLUTION}" -W 1 -s "${SIZE}" "${peer}" & } ; n=$((n+1)); done )"|grep -Eo "\/([0-9]{1,}\.[0-9]{1,})\/"|sed -E 's/(\/|\.)//g'|sed -E 's/(^|\b)(0){1,}//g'|sed -E 's/$/+/g')|sed -E 's/\+$//g') &> /dev/null
-			#PINGGET=$(echo $(echo "$(n=0; while [[ $n -lt "${COUNT}" ]]; do { ping -c "${PINGRESOLUTION}" -W 1 -s "${SIZE}" "${peer}" & } ; n=$((n+1)); done )"|grep -Eo "time=(.*)$"|sed -E 's/( ms|\.|time=)//g'|sed -E 's/(^|\b)(0){1,}//g'|sed -E 's/$/+/g')|sed -E 's/\+$//g') &> /dev/null
-			PINGGET=$(echo $(echo "$(n=0; while [[ $n -lt "${COUNT}" ]]; do { { ping -c "${PINGRESOLUTION}" -W 1 -t "${PINGTTL}" -s 56 "${peer}" & ping -c "${PINGRESOLUTION}" -W 1  -t "${PINGTTL}" -s 96 "${peer}" & ping -c "${PINGRESOLUTION}" -W 1 -t "${PINGTTL}" -s "${SIZE}" "${peer}" & }; wait $!; } & n=$((n+1)); done )"|grep -Eo "time=(.*)$"|sed -E 's/( ms|\.|time=)//g'|sed -E 's/(^|\b)(0){1,}//g'|sed -E 's/$/+/g')|sed -E 's/\+$//g') &> /dev/null
+			PINGGET=$(echo $(echo "$(n=0; while [[ $n -lt "${COUNT}" ]]; do { { ping -c "${PINGRESOLUTION}" -W 1 -t "${PINGTTL}" -s 56 "${peer}" & ping -c "${PINGRESOLUTION}" -W 1  -t "${PINGTTL}" -s 96 "${peer}" & ping -c "${PINGRESOLUTION}" -W 1 -t "${PINGTTL}" -s "${SIZE}" "${peer}" & }; } & n=$((n+1)); done )"|grep -Eo "time=(.*)$"|sed -E 's/( ms|\.|time=)//g'|sed -E 's/(^|\b)(0){1,}//g'|sed -E 's/$/+/g')|sed -E 's/\+$//g') &> /dev/null; wait $!
 			#wait $!
 			PINGCOUNT=$(echo "$PINGGET"|wc -w)
-			if ! [ "${PINGCOUNT}" != "$(echo -n "$PINGCOUNT" | grep -oEi "(0|)")" ]; then PINGCOUNT=$(( COUNT * PINGRESOLUTION )); fi #Fallback
-			PINGSUM=$(( $PINGGET ))
-			if [ $PINGSUM = 0 ]; then PINGSUM=$(( $(( LIMIT / 1000 + 1 )) * PINGRESOLUTION * COUNT )); FORNULL=1; else FORNULL=0; fi
-			PINGFULL=$(( PINGSUM / PINGCOUNT ))
+			if ! [ "${PINGCOUNT}" != "$(echo -n "$PINGCOUNT" | grep -oEi "(0|)")" ]; then PINGCOUNT=$(( COUNT * PINGRESOLUTION )); wait $!; fi #Fallback
+			PINGSUM=$(( $PINGGET )); wait $!
+			if [ $PINGSUM = 0 ]; then PINGSUM=$(( $(( LIMIT / 1000 + 1 )) * PINGRESOLUTION * COUNT )); wait $!; FORNULL=1; else FORNULL=0; fi
+			PINGFULL=$(( PINGSUM / PINGCOUNT )); wait $!
 			PING=$(echo "$PINGFULL"|sed -E 's/.{3}$//g' )
 			PINGFULLDECIMAL=$(echo "$(echo "$PINGFULL" | sed 's/.\{3\}$/.&/'| sed -E 's/^\./0./g'|sed -E 's/$/ms/g')")
 		fi
@@ -1037,19 +1049,19 @@ meatandtatoes(){
 			if [ -f "$DIR"/42Kmi/tweak.txt ]; then TRGETCOUNT="${TWEAK_TRGETCOUNT}"; else TRGETCOUNT=17; fi #17
 			MXP=$(( TTL * PROBES * TRGETCOUNT ))
 			#New TraceRoute
-			TRGET=$(echo $(echo "$(n=0; while [[ $n -lt "${TTL}" ]]; do { traceroute -Fn -m "${TRGETCOUNT}" -q "${PROBES}" -w 1 "${peer}" "${SIZE}" & } & n=$((n+1)); done )"|grep -Eo "([0-9]{1,}\.[0-9]{3}\ ms)"|sed -E 's/(\/|\.|\ ms)//g'|sed -E 's/(^|\b)(0){1,}//g'|sed -E 's/$/+/g')|sed -E 's/\+$//g') &> /dev/null
+			TRGET=$(echo $(echo "$(n=0; while [[ $n -lt "${TTL}" ]]; do { traceroute -Fn -m "${TRGETCOUNT}" -q "${PROBES}" -w 1 "${peer}" "${SIZE}" & } & n=$((n+1)); done )"|grep -Eo "([0-9]{1,}\.[0-9]{3}\ ms)"|sed -E 's/(\/|\.|\ ms)//g'|sed -E 's/(^|\b)(0){1,}//g'|sed -E 's/$/+/g')|sed -E 's/\+$//g') &> /dev/null; wait $!
 			#TRGET=$(echo $(echo "$(n=0; while [[ $n -lt "${TTL}" ]]; do { { traceroute -Fn -m "${TRGETCOUNT}" -q "${PROBES}" -w 1 "${peer}" "${SIZE}"| sed 's/\*//g'|sed -E "s/^(\s*)?[0-9]{1,}(\s*)//g"|sed -E "/^(\s)*$/d"|tail -1; } & }; n=$((n+1)); done )"|grep -Eo "([0-9]{1,}\.[0-9]{3}\ ms)"|sed -E 's/(\/|\.|\ ms)//g'|sed -E 's/(^|\b)(0){1,}//g'|sed -E 's/$/+/g')|sed -E 's/\+$//g') &> /dev/null
 			#wait $!
 			TRCOUNT=$(echo "$TRGET"|wc -w) #Counts for average
-			if [ "${TRCOUNT}" = "$(echo -n "$TRCOUNT" | grep -oEi "(0|)")" ]; then TRCOUNT=$(( TTL * PROBES)); fi #Fallback
-			TRSUM=$(( $TRGET ))
-			if [ $TRGET = 0 ]; then TRGET=$(( $(( TRACELIMIT / 1000 + 1 )) * MXP )); FORNULLTR=1 ;else FORNULLTR=0; fi
+			if [ "${TRCOUNT}" = "$(echo -n "$TRCOUNT" | grep -oEi "(0|)")" ]; then TRCOUNT=$(( TTL * PROBES)); wait $!; fi #Fallback
+			TRSUM=$(( $TRGET )); wait $!
+			if [ $TRGET = 0 ]; then TRGET=$(( $(( TRACELIMIT / 1000 + 1 )) * MXP )); wait $!; FORNULLTR=1 ;else FORNULLTR=0; fi
 			if [ "${TRCOUNT}" != 0 ]; then
-			TRAVGFULL=$(( TRSUM / TRCOUNT )) #TRACEROURTE sum for math
+			TRAVGFULL=$(( TRSUM / TRCOUNT )); wait $! #TRACEROURTE sum for math
 			TRAVG=$(echo $TRAVGFULL | sed -E's/.{3}$//g')
 			else
-			TRAVGFULL=$(( TRSUM / MXP )) #TRACEROURTE sum for math
-			TRAVG=$(echo $TRAVGFULL | sed -E's/.{3}$//g')
+			TRAVGFULL=$(( TRSUM / MXP )); wait $! #TRACEROURTE sum for math
+			TRAVG=$(echo $TRAVGFULL | sed -E's/.{3}$//g'); wait $!
 			fi
 			TRAVGFULLDECIMAL=$(echo "$(echo "$TRAVGFULL" | sed 's/.\{3\}$/.&/'| sed -E 's/^\./0./g'|sed -E 's/$/ms/g')")
 		}
@@ -1148,7 +1160,7 @@ if [ $PINGFULLDECIMAL = "$NULLTEXT" ] && [ TRAVGFULLDECIMAL = "$NULLTEXT" ]; the
 			if ! { tail +1 "/tmp/$RANDOMGET"|sed -E "s/.\[[0-9]{1}(\;[0-9]{2})?m//g"|grep -Eo "\b${peer}\b"; }; then
 				if ! { echo "$EXIST_LIST_GET"| grep -Eoq "\b(${peer})\b"; } && ! { tail +1 "/tmp/$RANDOMGET"|sed -E "s/.\[[0-9]{1}(\;[0-9]{2})?m//g"|grep -Eoq "\b?(${peer})\b"; }; then $BLOCK
 					if ! { echo "$(iptables -nL LDTEMPHOLD && iptables -nL LDIGNORE && iptables -nL LDBAN)"| grep -Eoq "\b${peer}\b"; }; then
-					eval "iptables -I LDTEMPHOLD -s $peer -d $CONSOLE"
+					eval "iptables -A LDTEMPHOLD -s $peer -d $CONSOLE"
 					fi
 				fi
 			fi
@@ -1171,10 +1183,100 @@ if [ $STALE_MATH -ge $(( 60 * $STALE_LIMIT )) ]; then
 	fi
 fi
 }	
+clear_old(){
+	#getiplist
+	CLEARLIMIT=$(echo "$SETTINGS"|sed -n 13p)
+	DELETEDELAY=300 #180 #90 #60 #300
+	#Allow
+	CLEARALLOWED=$(echo "$SETTINGS"|sed -n 11p)
+	if [ "$CLEARALLOWED" = "$(echo -n "$CLEARALLOWED" | grep -oEi "(yes|1|on|enable(d?))")" ];
+	then
+		COUNTALLOW=$(tail +1 "/tmp/$RANDOMGET"|sed -E "s/.\[[0-9]{1}(\;[0-9]{2})?m//g"|grep -Ev "\b(${RESPONSE3}|${SENTINEL_BAN_MESSAGE})\b"|wc -l)
+		if [ "${COUNTALLOW}" -gt "${CLEARLIMIT}" ]; then
+		clearallow(){
+		LINENUMBERACCEPTED=$(iptables --line-number -nL LDACCEPT|grep -E "\b${allowed1}\b"|grep -Eo "^\s?[0-9]{1,}")
+
+		eval "iptables -D LDACCEPT "$LINENUMBERACCEPTED""
+		sed -i -E "s/#(.\[[0-9]{1}\;[0-9]{2}m)(${allowed1})\b/$(echo -e "#${BG_MAGENTA}")\2/g" "/tmp/$RANDOMGET"; sleep 5 #Clear warning
+		wait $!; sed -i -E "/#((.\[[0-9]{1}(\;[0-9]{2})m))?${allowed1}\b/d" "/tmp/$RANDOMGET"
+		}
+		clearallow_check(){
+		getiplist
+		if ! { echo "$IPCONNECT"|grep -Eq "\b${CONSOLE}\b"|grep -Eoq "\b${allowed1}\b"; }; then
+			clearallow
+		fi
+		}
+			#Allowed List Clear
+			ACCEPTED1=$(tail +1 "/tmp/$RANDOMGET"|sed -E "s/.\[[0-9]{1}(\;[0-9]{2})?m//g"|grep -Ev "\b(${RESPONSE3}|${SENTINEL_BAN_MESSAGE})\b"|grep -Eo "(([0-9]{1,3}\.){3})([0-9]{1,3})"|grep -Ev "\b${CONSOLE}\b") #|sed -n 1p)
+			for allowed1 in $ACCEPTED1; do wait $!
+			COUNTALLOW=$(tail +1 "/tmp/$RANDOMGET"|sed -E "s/.\[[0-9]{1}(\;[0-9]{2})?m//g"|grep -Ev "\b(${RESPONSE3}|${SENTINEL_BAN_MESSAGE})\b"|wc -l)
+			getiplist
+			ACCEPTED1="${ACCEPTED1//${allowed1}/\b}"
+					{ wait $!
+					if ! { echo "$IPCONNECT"|grep -E "\b${CONSOLE}\b"|grep -Eoq "\b${allowed1}\b"; }; then
+						if iptables -nL LDTEMPHOLD| grep -Eoq "\b${allowed1}\b"; then
+							if ! { echo "$IPCONNECT"|grep -E "\b${CONSOLE}\b"|grep -Eoq "\b${allowed1}\b"; }; then
+							LINENUMBERHOLD1=$(iptables --line-number -nL LDTEMPHOLD|grep -E "\b${allowed1}\b"|grep -Eo "^\s?[0-9]{1,}")
+							iptables -D LDTEMPHOLD "$LINENUMBERHOLD1"
+							sleep $DELETEDELAY
+								clearallow_check
+							fi
+						#else
+						#		clearallow_check
+						fi
+					fi #& #Must not parallel. Parallelling cause problems.
+					} #&
+			done & #Must not parallel. Parallelling cause problems.
+		fi
+	fi &
+	#Blocked
+	CLEARBLOCKED=$(echo "$SETTINGS"|sed -n 12p)
+	if [ "$CLEARBLOCKED" = "$(echo -n "$CLEARBLOCKED" | grep -oEi "(yes|1|on|enable(d?))")" ];
+		then
+			COUNTBLOCKED=$(tail +1 "/tmp/$RANDOMGET"|sed -E "s/.\[[0-9]{1}(\;[0-9]{2})?m//g"|grep -E "\b${RESPONSE3}\b"|wc -l)
+			if [ "${COUNTBLOCKED}" -gt "${CLEARLIMIT}" ]; then
+		clearreject(){
+			LINENUMBERREJECTED=$(iptables --line-number -nL LDREJECT|grep -E "\b${refused1}\b"|grep -Eo "^\s?[0-9]{1,}")
+			eval "iptables -D LDREJECT "$LINENUMBERREJECTED""
+			sed -i -E "s/#(.\[[0-9]{1}\;[0-9]{2}m)(${refused1})\b/$(echo -e "#${BG_MAGENTA}")\2/g" "/tmp/$RANDOMGET"; sleep 5 #Clear warning
+			wait $!; sed -i -E "/((.\[[0-9]{1}(\;[0-9]{2})m))?${refused1}\b/d" "/tmp/$RANDOMGET"
+		}
+		clearreject_check(){
+			getiplist
+				if ! { echo "$IPCONNECT"|grep -q "\b${CONSOLE}\b"|grep -Eoq "\b${refused1}\b"; }; then
+						clearreject
+				fi
+		}
+				#Blocked List Clear
+				REJECTED1=$(tail +1 "/tmp/$RANDOMGET"|sed -E "s/.\[[0-9]{1}(\;[0-9]{2})?m//g"|grep -E "\b${RESPONSE3}\b"|grep -Eo "(([0-9]{1,3}\.){3})([0-9]{1,3})"|grep -Ev "\b${CONSOLE}\b")
+				for refused1 in $REJECTED1; do wait $!
+				COUNTBLOCKED=$(tail +1 "/tmp/$RANDOMGET"|sed -E "s/.\[[0-9]{1}(\;[0-9]{2})?m//g"|grep -E "\b${RESPONSE3}\b"|wc -l)
+				getiplist
+				REJECTED1="${REJECTED1//${refused1}/\b}"
+
+						{ wait $!
+						if ! { echo "$IPCONNECT"|grep -E "\b${CONSOLE}\b"|grep -Eoq "\b${refused1}\b"; }; then
+							if iptables -nL LDTEMPHOLD| grep -Eoq "\b${refused1}\b"; then
+								if ! { echo "$IPCONNECT"|grep -E "\b${CONSOLE}\b"|grep -Eoq "\b${refused1}\b"; }; then
+								LINENUMBERHOLD2=$(iptables --line-number -nL LDTEMPHOLD|grep "\b${refused1}\b"|grep -Eo "^\s?[0-9]{1,}")
+								iptables -D LDTEMPHOLD "$LINENUMBERHOLD2"
+								sleep $DELETEDELAY
+									clearreject_check
+								fi
+							else 
+								clearreject_check
+							fi
+						fi #& #Must not parallel. Parallelling cause problems.
+						} #&
+				done & #Must not parallel. Parallelling cause problems.
+			fi
+	fi &
+	wait $!
+}
+
 #User-Response Functions
 #=================
 #Executable processes, loops and stuff
-
 	RESPONSE1="OK!!" #OK/GOOD
 	RESPONSE2="Warn" #Pushing it...
 	RESPONSE3="BLOCK" #BLOCKED
@@ -1215,7 +1317,7 @@ fi
 if [ $SHELLIS = "ash" ]; then
 CURL_TIMEOUT=15 #For OpenWRT
 else
-CURL_TIMEOUT=7 #For DD-WRT
+CURL_TIMEOUT=10 #For DD-WRT
 fi
 
 SIZE=$(echo "$SETTINGS"|sed -n 4p) ### Size of packets. Default is 1024
@@ -1355,97 +1457,11 @@ decongest(){
 			if { ping -q -c 1 -W 1 -s 1 "${CONSOLE}"|grep -q -F -w "100% packet loss"; }; then iptables -F LDKTA; fi
 	fi
 }
-decongest &> /dev/null
+decongest &> /dev/null &
 #####Decongest - Block all other connections#####
 
 ##### Clear Old #####
-#getiplist
-CLEARLIMIT=$(echo "$SETTINGS"|sed -n 13p)
-DELETEDELAY=60 #60 #300
-#Allow
-CLEARALLOWED=$(echo "$SETTINGS"|sed -n 11p)
-if [ "$CLEARALLOWED" = "$(echo -n "$CLEARALLOWED" | grep -oEi "(yes|1|on|enable(d?))")" ];
-then
-	COUNTALLOW=$(tail +1 "/tmp/$RANDOMGET"|sed -E "s/.\[[0-9]{1}(\;[0-9]{2})?m//g"|grep -Ev "\b(${RESPONSE3}|${SENTINEL_BAN_MESSAGE})\b"|wc -l)
-	if [ "${COUNTALLOW}" -gt "${CLEARLIMIT}" ]; then
-	clearallow(){
-	LINENUMBERACCEPTED=$(iptables --line-number -nL LDACCEPT|grep -E "\b${allowed1}\b"|grep -Eo "^\s?[0-9]{1,}")
-
-	eval "iptables -D LDACCEPT "$LINENUMBERACCEPTED""
-	sed -i -E "s/#(.\[[0-9]{1}\;[0-9]{2}m)(${allowed1})\b/$(echo -e "#${BG_MAGENTA}")\2/g" "/tmp/$RANDOMGET"; sleep 5 #Clear warning
-	wait $!; sed -i -E "/#((.\[[0-9]{1}(\;[0-9]{2})m))?${allowed1}\b/d" "/tmp/$RANDOMGET"
-	}
-	clearallow_check(){
-	getiplist
-	if ! { echo "$IPCONNECT"|grep -Eq "\b${CONSOLE}\b"|grep -Eoq "\b${allowed1}\b"; }; then
-		clearallow
-	fi
-	}
-		#Allowed List Clear
-		ACCEPTED1=$(tail +1 "/tmp/$RANDOMGET"|sed -E "s/.\[[0-9]{1}(\;[0-9]{2})?m//g"|grep -Ev "\b(${RESPONSE3}|${SENTINEL_BAN_MESSAGE})\b"|grep -Eo "(([0-9]{1,3}\.){3})([0-9]{1,3})"|grep -Ev "\b${CONSOLE}\b") #|sed -n 1p)
-		for allowed1 in $ACCEPTED1; do wait $!
-		COUNTALLOW=$(tail +1 "/tmp/$RANDOMGET"|sed -E "s/.\[[0-9]{1}(\;[0-9]{2})?m//g"|grep -Ev "\b(${RESPONSE3}|${SENTINEL_BAN_MESSAGE})\b"|wc -l)
-		getiplist
-		ACCEPTED1="${ACCEPTED1//${allowed1}/\b}"
-				{ wait $!
-				if ! { echo "$IPCONNECT"|grep -E "\b${CONSOLE}\b"|grep -Eoq "\b${allowed1}\b"; }; then
-					if iptables -nL LDTEMPHOLD| grep -Eoq "\b${allowed1}\b"; then
-						if ! { echo "$IPCONNECT"|grep -E "\b${CONSOLE}\b"|grep -Eoq "\b${allowed1}\b"; }; then
-						LINENUMBERHOLD1=$(iptables --line-number -nL LDTEMPHOLD|grep -E "\b${allowed1}\b"|grep -Eo "^\s?[0-9]{1,}")
-						iptables -D LDTEMPHOLD "$LINENUMBERHOLD1"
-						sleep $DELETEDELAY
-							clearallow_check
-						fi
-					#else
-					#		clearallow_check
-					fi
-				fi #& #Must not parallel. Parallelling cause problems.
-				} #&
-		done & #Must not parallel. Parallelling cause problems.
-	fi
-fi &
-#Blocked
-CLEARBLOCKED=$(echo "$SETTINGS"|sed -n 12p)
-if [ "$CLEARBLOCKED" = "$(echo -n "$CLEARBLOCKED" | grep -oEi "(yes|1|on|enable(d?))")" ];
-	then
-		COUNTBLOCKED=$(tail +1 "/tmp/$RANDOMGET"|sed -E "s/.\[[0-9]{1}(\;[0-9]{2})?m//g"|grep -E "\b${RESPONSE3}\b"|wc -l)
-		if [ "${COUNTBLOCKED}" -gt "${CLEARLIMIT}" ]; then
-	clearreject(){
-		LINENUMBERREJECTED=$(iptables --line-number -nL LDREJECT|grep -E "\b${refused1}\b"|grep -Eo "^\s?[0-9]{1,}")
-		eval "iptables -D LDREJECT "$LINENUMBERREJECTED""
-		sed -i -E "s/#(.\[[0-9]{1}\;[0-9]{2}m)(${refused1})\b/$(echo -e "#${BG_MAGENTA}")\2/g" "/tmp/$RANDOMGET"; sleep 5 #Clear warning
-		wait $!; sed -i -E "/((.\[[0-9]{1}(\;[0-9]{2})m))?${refused1}\b/d" "/tmp/$RANDOMGET"
-	}
-	clearreject_check(){
-		getiplist
-			if ! { echo "$IPCONNECT"|grep -q "\b${CONSOLE}\b"|grep -Eoq "\b${refused1}\b"; }; then
-					clearreject
-			fi
-	}
-			#Blocked List Clear
-			REJECTED1=$(tail +1 "/tmp/$RANDOMGET"|sed -E "s/.\[[0-9]{1}(\;[0-9]{2})?m//g"|grep -E "\b${RESPONSE3}\b"|grep -Eo "(([0-9]{1,3}\.){3})([0-9]{1,3})"|grep -Ev "\b${CONSOLE}\b")
-			for refused1 in $REJECTED1; do wait $!
-			COUNTBLOCKED=$(tail +1 "/tmp/$RANDOMGET"|sed -E "s/.\[[0-9]{1}(\;[0-9]{2})?m//g"|grep -E "\b${RESPONSE3}\b"|wc -l)
-			getiplist
-			REJECTED1="${REJECTED1//${refused1}/\b}"
-
-					{ wait $!
-					if ! { echo "$IPCONNECT"|grep -E "\b${CONSOLE}\b"|grep -Eoq "\b${refused1}\b"; }; then
-						if iptables -nL LDTEMPHOLD| grep -Eoq "\b${refused1}\b"; then
-							if ! { echo "$IPCONNECT"|grep -E "\b${CONSOLE}\b"|grep -Eoq "\b${refused1}\b"; }; then
-							LINENUMBERHOLD2=$(iptables --line-number -nL LDTEMPHOLD|grep "\b${refused1}\b"|grep -Eo "^\s?[0-9]{1,}")
-							iptables -D LDTEMPHOLD "$LINENUMBERHOLD2"
-							sleep $DELETEDELAY
-								clearreject_check
-							fi
-						else 
-							clearreject_check
-						fi
-					fi #& #Must not parallel. Parallelling cause problems.
-					} #&
-			done & #Must not parallel. Parallelling cause problems.
-		fi
-fi &
+clear_old &
 }
 
 cleanliness &> /dev/null &
@@ -1465,7 +1481,7 @@ SWITCH_HOLD=0
 	sentinel(){
 	#Functions
 	continuous_mode(){
-		bytediffA_old=$(tail +1 "/tmp/${LDTEMPFOLDER}/#${SENTIPFILENAME}#.oldval")
+		bytediffA_old=$(tail +1 "/tmp/${LDTEMPFOLDER}/#${SENTIPFILENAME}#.oldval"); wait $!
 		#sleep $SENTINELDELAYBIG
 	}
 	add_strike(){
@@ -1530,6 +1546,7 @@ SWITCH_HOLD=0
 			# If less than the max number of strikes...
 			else
 				if [ "$STRIKECOUNT" -lt $STRIKEMAX ]; then
+				#GET_LDSENTSTRIKE=$(iptables -nL LDSENTSTRIKE|tail +3)
 									
 					#Counting Strikes, marking in log
 					case "$STRIKECOUNT" in
@@ -1577,10 +1594,9 @@ SWITCH_HOLD=0
 							fi
 						;;
 
-					esac
-					wait
-				fi
-		fi
+					esac; wait $!
+				fi; wait $!
+		fi; wait $!
 
 	}
 	sent_action(){
@@ -1611,73 +1627,78 @@ SWITCH_HOLD=0
 			case "$PACKET_OR_BYTE" in
 			*|1)
 			#Packet
-				byte1="$({ iptables -xvnL LDACCEPT; wait $!; }|tail +3|grep -E "\b${ip}\b"|awk '{printf $1}')"
+				byte1="$( iptables -xvnL LDACCEPT|tail +3|grep -E "\b${ip}\b"|awk '{printf $1}')"; wait $!
 				sleep $SENTINELDELAYSMALL; wait $!
-				byte2="$({ iptables -xvnL LDACCEPT; wait $!; }|tail +3|grep -E "\b${ip}\b"|awk '{printf $1}')"
+				byte2="$( iptables -xvnL LDACCEPT|tail +3|grep -E "\b${ip}\b"|awk '{printf $1}')"; wait $!
 				
 				if [ $TWOPOINT_ON = 1 ]; then
 					sleep $SENTINELDELAYBIG; wait $!
-					byte3="$({ iptables -xvnL LDACCEPT; wait $!; }|tail +3|grep -E "\b${ip}\b"|awk '{printf $1}')"
+					byte3="$( iptables -xvnL LDACCEPT|tail +3|grep -E "\b${ip}\b"|awk '{printf $1}')"; wait $!
 					sleep $SENTINELDELAYSMALL; wait $!
-					byte4="$({ iptables -xvnL LDACCEPT; wait $!; }|tail +3|grep -E "\b${ip}\b"|awk '{printf $1}')"
+					byte4="$( iptables -xvnL LDACCEPT|tail +3|grep -E "\b${ip}\b"|awk '{printf $1}')"; wait $!
 				fi
 			;;
 			2)
 			#Bytes
-				byte1="$(( $({ iptables -xvnL LDACCEPT; wait $!; }|tail +3|grep -E "\b${ip}\b"|awk '{printf $2}') / $BYTE_DIV ))"
+				byte1="$(( $( iptables -xvnL LDACCEPT|tail +3|grep -E "\b${ip}\b"|awk '{printf $2}') / $BYTE_DIV ))"; wait $!
 				sleep $SENTINELDELAYSMALL; wait $!
-				byte2="$(( $({ iptables -xvnL LDACCEPT; wait $!; }|tail +3|grep -E "\b${ip}\b"|awk '{printf $2}') / $BYTE_DIV ))"
+				byte2="$(( $( iptables -xvnL LDACCEPT|tail +3|grep -E "\b${ip}\b"|awk '{printf $2}') / $BYTE_DIV ))"; wait $!
 				
 				if [ $TWOPOINT_ON = 1 ]; then
 					sleep $SENTINELDELAYBIG; wait $!
-					byte3="$(( $({ iptables -xvnL LDACCEPT; wait $!; }|tail +3|grep -E "\b${ip}\b"|awk '{printf $2}') / $BYTE_DIV ))"
+					byte3="$(( $( iptables -xvnL LDACCEPT|tail +3|grep -E "\b${ip}\b"|awk '{printf $2}') / $BYTE_DIV ))"; wait $!
 					sleep $SENTINELDELAYSMALL; wait $!
-					byte4="$(( $({ iptables -xvnL LDACCEPT; wait $!; }|tail +3|grep -E "\b${ip}\b"|awk '{printf $2}') / $BYTE_DIV ))"
+					byte4="$(( $( iptables -xvnL LDACCEPT|tail +3|grep -E "\b${ip}\b"|awk '{printf $2}') / $BYTE_DIV ))"; wait $!
 				fi
 			;;
 			esac
-
-			#Math
-			case "$ABS_VAL" in
-				*|0)
-					#Absolute Value disabled
-					if [ $TWOPOINT_ON = 1 ]; then
-						bytediffA_old="$(( $(( $byte2 - $byte1 )) / $SENTINELDELAYSMALL ))"
-						bytediffA_new="$(( $(( $byte4 - $byte3 )) / $SENTINELDELAYSMALL ))"
-						BYTEDIFF="$(( $bytediffA_new - $bytediffA_old ))"
-					else
-						#if [ -f "/tmp/${LDTEMPFOLDER}/#${SENTIPFILENAME}#.oldval" ]; then sleep $SENTINELDELAYBIG; wait $!; fi
-						bytediffA_new="$(( $(( $byte2 - $byte1 )) / $SENTINELDELAYSMALL ))"
-						continuous_mode
-						BYTEDIFF="$(( $bytediffA_new - $bytediffA_old ))"
-					fi
-				;;
-				1)
-					#Absolute Value enabled.
-					if [ $TWOPOINT_ON = 1 ]; then
-						bytediffA_old="$(( $(( $byte2 - $byte1 )) / $SENTINELDELAYSMALL ))"
-						bytediffA_new="$(( $(( $byte4 - $byte3 )) / $SENTINELDELAYSMALL ))"
-						BYTEDIFF="$(( $bytediffA_new - $bytediffA_old ))"
-					else
-						#if [ -f "/tmp/${LDTEMPFOLDER}/#${SENTIPFILENAME}#.oldval" ]; then sleep $SENTINELDELAYBIG; wait $!; fi
-						bytediffA_new="$(( $(( $byte2 - $byte1 )) / $SENTINELDELAYSMALL ))"
-						continuous_mode
-						BYTEDIFF="$(( $bytediffA_new - $bytediffA_old ))"
-					fi
-				;;
-			esac
 			
+			#Absolute value adjust
 			if [ $ABS_VAL = 1 ]; then
-				bytediffA_old=${bytediffA_old#-}
-				bytediffA_new=${bytediffA_new#-}
-				BYTEDIFF=${BYTEDIFF#-}
+				#byte1=${byte1#\-}; wait $!
+				#byte2=${byte2#\-}; wait $!
+				#byte3=${byte3#\-}; wait $!
+				#byte4=${byte4#\-}; wait $!
+				byte1=$(echo -n "$byte1"|sed -E "s/-//g"); wait $!
+				byte2=$(echo -n "$byte2"|sed -E "s/-//g"); wait $!
+				byte3=$(echo -n "$byte3"|sed -E "s/-//g"); wait $!
+				byte4=$(echo -n "$byte4"|sed -E "s/-//g"); wait $!
 			fi
 			
-			BYTESUM="$(( $bytediffA_new + $bytediffA_old ))"
-			BYTEAVG="$(( $BYTESUM / 2 ))"; if [ $BYTEAVG = 0 ]; then BYTEAVG=1; fi
+			#Math
 			
-			BYTEDIFFSQ="$(( $BYTEDIFF * $BYTEDIFF ))"
-			BYTEXSQ="$(( $BYTEDIFFSQ / $BYTEAVG ))"
+			if [ $TWOPOINT_ON = 1 ]; then
+				bytediffA_old="$(( $(( $byte2 - $byte1 )) / $SENTINELDELAYSMALL ))"; wait $!
+				bytediffA_new="$(( $(( $byte4 - $byte3 )) / $SENTINELDELAYSMALL ))"; wait $!
+			else
+				#if [ -f "/tmp/${LDTEMPFOLDER}/#${SENTIPFILENAME}#.oldval" ]; then sleep $SENTINELDELAYBIG; wait $!; fi
+				bytediffA_new="$(( $(( $byte2 - $byte1 )) / $SENTINELDELAYSMALL ))"; wait $!
+				continuous_mode; wait $!
+			fi
+			
+			#BYTEDIFF="$(( $bytediffA_new - $bytediffA_old ))"; wait $!
+			
+			if [ $ABS_VAL = 1 ]; then
+				#bytediffA_old=${bytediffA_old#\-}; wait $!
+				#bytediffA_new=${bytediffA_new#\-}; wait $!
+				#BYTEDIFF=${BYTEDIFF#\-}; wait $!
+				bytediffA_old=$(echo -n "$bytediffA_old"|sed -E "s/-//g"); wait $!
+				bytediffA_new=$(echo -n "$bytediffA_new"|sed -E "s/-//g"); wait $!
+				BYTEDIFF="$(( $bytediffA_new - $bytediffA_old ))"; wait $!
+				BYTEDIFF=$(echo -n "$BYTEDIFF"|sed -E "s/-//g"); wait $!
+				if [ $bytediffA_new = $bytediffA_old ]; then BYTEDIFF=0; fi #BYTEDIFF Correction
+			else
+				BYTEDIFF="$(( $bytediffA_new - $bytediffA_old ))"; wait $!
+			fi
+			
+			
+			BYTESUM="$(( $bytediffA_new + $bytediffA_old ))"; wait $!
+			BYTEAVG="$(( $BYTESUM / 2 ))"; wait $!
+			if [ $BYTEAVG = 0 ]; then BYTEAVG=1; fi
+			
+			BYTEDIFFSQ="$(( $BYTEDIFF * $BYTEDIFF ))"; wait $!
+			BYTEXSQ="$(( $BYTEDIFFSQ / $BYTEAVG ))"; wait $!
+			BYTESTD_DEV="$(( (( 100 * $BYTEDIFF )) / $BYTEAVG ))"
 			
 			if [ $TWOPOINT_ON != 1 ]; then
 				if [ ! -d "/tmp/${LDTEMPFOLDER}" ]; then mkdir -p "/tmp/${LDTEMPFOLDER}" ; fi
@@ -1692,7 +1713,7 @@ SWITCH_HOLD=0
 					
 					vv_header(){
 					#Make header for verifyvalues.txt
-					HEADER_VV="IP\tTIME\tbytediffA\tbytediffB\tBYTESUM\tBYTEDIFF\tBYTEAVG\tBYTEDIFFSQ\tBYTEXSQ"
+					HEADER_VV="IP\tTIME\tbytediffA\tbytediffB\tBYTESUM\tBYTEDIFF\tBYTEAVG\tBYTEDIFFSQ\tBYTEXSQ\tBYTESTD_DEV"
 					if [ -f ""${DIR}"/42Kmi/verify/verifyvalues#${SENTIPFILENAME}#.txt" ]; then
 						if ! { grep -Eq "^(${HEADER_VV})" ""${DIR}"/42Kmi/verify/verifyvalues#${SENTIPFILENAME}#.txt"; }; then
 						echo -e "${HEADER_VV}\t$(date)" >> ""${DIR}"/42Kmi/verify/verifyvalues#${SENTIPFILENAME}#.txt"
@@ -1704,14 +1725,15 @@ SWITCH_HOLD=0
 					
 					#Populate verifyvalues.txt
 					#if [ $bytediffA_new != $bytediffA_old ]; then
-						if [ $BYTESUM != 0 ]; then
-							#if [ $BYTEDIFF != 0 ]; then
+						#if [ $BYTESUM != 0 ]; then
+						if ! { [ $bytediffA_new = $bytediffA_old ] && [ $BYTEDIFF != 0 ]; }; then
+							if [ $BYTEDIFF != 0 ]; then
 								vv_header
-								echo -e "$(echo $ip)\t$(date +%X)\t${bytediffA_old}\t${bytediffA_new}\t${BYTESUM}\t${BYTEDIFF}\t${BYTEAVG}\t${BYTEDIFFSQ}\t${BYTEXSQ}" >> ""${DIR}"/42Kmi/verify/verifyvalues#${SENTIPFILENAME}#.txt"
-							#fi
+								echo -e "$(echo $ip)\t$(date +%X)\t${bytediffA_old}\t${bytediffA_new}\t${BYTESUM}\t${BYTEDIFF}\t${BYTEAVG}\t${BYTEDIFFSQ}\t${BYTEXSQ}\t${BYTESTD_DEV}" >> ""${DIR}"/42Kmi/verify/verifyvalues#${SENTIPFILENAME}#.txt"
+							fi
 						fi
+						#fi
 					#fi
-
 				}
 				fi #&
 				
@@ -1731,12 +1753,19 @@ SWITCH_HOLD=0
 						4) #Difference AND X^2
 							BYTEBLOCK=$({ if { [ "${BYTEAVG}" -gt "${BYTEAVGLIMIT}" ] && [ "${BYTEDIFF}" -gt "${SENTLOSSLIMIT}" ]; } && [ "${BYTEXSQ}" -gt "${CHI_LIMIT}" ]; then sentinelstrike; fi; } &) 
 							;;
+						5) #Difference AND X^2 AND STD_DEV
+							BYTEBLOCK=$({ if { [ "${BYTEAVG}" -gt "${BYTEAVGLIMIT}" ] && [ "${BYTEDIFF}" -gt "${SENTLOSSLIMIT}" ]; } && [ "${BYTEXSQ}" -gt "${CHI_LIMIT}" ] && [ "${BYTESTD_DEV}" -gt "${BYTESTD_DEV_LIMIT}" ] ; then sentinelstrike; fi; } &) 
+							;;
 					esac
-		}
+		} #& #Comment if it causes problems
 		fi
 			{
 			if [ $bytediffA_new != $bytediffA_old ]; then
-				if [ $bytediffA_new != 0 ] && [ $bytediffA_old != 0 ]; then
+				if [ $bytediffA_old != 0 ] && [ $bytediffA_new != 0 ]; then
+				if [ $bytediffA_old -gt $DIFF_MIN ]; then
+				if [ $bytediffA_new -gt $DIFF_MIN ]; then
+				if [ $BYTESUM != $BYTEDIFF ]; then
+				if ! { [ $bytediffA_new = $bytediffA_old ] && [ $BYTEDIFF != 0 ]; }; then
 					if [ $BYTESUM != 0 ]; then
 						if [ $BYTEDIFF != 0 ]; then
 							if [ $bytediffA_new -gt $(( $DIFF_MIN + $BYTE_OFFSET )) ] && [ $bytediffA_old -gt $(( $DIFF_MIN + $BYTE_OFFSET )) ]; then
@@ -1745,8 +1774,12 @@ SWITCH_HOLD=0
 						fi
 					fi
 				fi
+				fi
+				fi
+				fi
+				fi
 			fi
-			} &
+			} #&
 		) #&& wait $! &
 		SWITCH_HOLD=0
 		}
@@ -1768,11 +1801,12 @@ SWITCH_HOLD=0
 	else
 		PACKET_OR_BYTE=1 #1 for packets, 2 for [kilo]bytes (referred to as delta)
 		SENTINELDELAYBIG=1 #Distinguishes new delta from old delta.
-		SENTINELDELAYSMALL=1 #Establishes deltas
+		SENTINELDELAYSMALL=1 #1 #Establishes deltas
 		STRIKEMAX=7 #5000000 #Max number of strikes before banning
 		TWOPOINT_ON=0 #Set to 1 for Two-Point sequential comparison. Set to 0 for Continuous comparison
 		ABS_VAL=1 #Absolute value (e.g.: 3 - 5 = 2). Set to 0 to disable. Don't Change
-		SENTMODE=3 #0 or 1=Difference, 2=X^2, 3=Difference or X^2, 4=Difference & X^2
+		SENTMODE=5 #4 #3 #0 or 1=Difference, 2=X^2, 3=Difference or X^2, 4=Difference & X^2
+		BYTESTD_DEV_LIMIT=100
 		
 		#If BYTEDIFF -gt SENTLOSSLIMIT, Sentinel will act. These values are constant regardless of game played.
 		if [ $PACKET_OR_BYTE = 2 ]; then
@@ -1782,49 +1816,51 @@ SWITCH_HOLD=0
 			SENTLOSSLIMIT=3 #1 #Don't change
 		else
 			#Packets
-			BYTEAVGLIMIT=36 #0 #1500 #28 #22 #21 #20 #Don't change
-			SENTLOSSLIMIT=8 #14 #18 #10 #32 #0 #200 #65 #58 #55 #50 #40 #28 #8 #Don't change
+			BYTEAVGLIMIT=38 #42 #100 #38 #42 #36 #Don't change
+			SENTLOSSLIMIT=10 #10 #8 #Don't change
+
 
 		fi
 	fi
 	
 	
 	#Sentinel will act only if bytediffA_new and bytediffA_old are greater than DIFF_MIN. Varies with game.
-	DIFF_MIN_BYTES=0 #1000
-	DIFF_MIN_PACKETS=0 #200 #0 #Don't change
-	if [ $bytediffA_new != 0 ] && [ $bytediffA_old != 0 ]; then
+	DIFF_MIN_BYTES=10 #1000
+	DIFF_MIN_PACKETS=1000 #5000 #13000 #200 #0 #Don't change
+	#if [ $bytediffA_new != 0 ] && [ $bytediffA_old != 0 ]; then
 		if [ $PACKET_OR_BYTE = 2 ]; then
 			#Values for Bytes
-			BYTE_OFFSET=0
 			if [ $bytediffA_new -ge $DIFF_MIN_BYTES ] && [ $bytediffA_old -ge $DIFF_MIN_BYTES ]; then
+				BYTE_OFFSET=0
 				DIFF_MIN=$DIFF_MIN_BYTES #High value for high data online games
 				CHI_LIMIT=1
 				#BYTEAVGLIMIT=3000
 				#SENTLOSSLIMIT=1000
 			elif [ $bytediffA_new -lt $DIFF_MIN_BYTES ] && [ $bytediffA_old -lt $DIFF_MIN_BYTES ]; then
-				DIFF_MIN=0 #Low value for low data online games
+				BYTE_OFFSET=0
+				DIFF_MIN=5 #0 #Low value for low data online games
 				CHI_LIMIT=1
-				#BYTEAVGLIMIT=9
-				#SENTLOSSLIMIT=7
+				#BYTEAVGLIMIT=1500
+				#SENTLOSSLIMIT=1500
 			fi
 		else
 			#Values for Packets
 			if [ $bytediffA_new -ge $DIFF_MIN_PACKETS ] && [ $bytediffA_old -ge $DIFF_MIN_PACKETS ]; then
-			BYTE_OFFSET=0
+				BYTE_OFFSET=0
 				DIFF_MIN=$DIFF_MIN_PACKETS #High value for high data online games
-				CHI_LIMIT=0
+				CHI_LIMIT=1
 				#BYTEAVGLIMIT=3000
 				#SENTLOSSLIMIT=1500
 			elif [ $bytediffA_new -lt $DIFF_MIN_PACKETS ] && [ $bytediffA_old -lt $DIFF_MIN_PACKETS ]; then
-			BYTE_OFFSET=0
-				DIFF_MIN=0 #0 #12 #Low value for low data online games. Don't Change
+				BYTE_OFFSET=0
+				DIFF_MIN=20 #30 #20 #0 #12 #Low value for low data online games. Don't Change
 				CHI_LIMIT=1
 				#BYTEAVGLIMIT=36
-				#SENTLOSSLIMIT=18
+				#SENTLOSSLIMIT=8
 			fi
 		fi
-	fi
-	#CHI_LIMIT=0
+	#fi
+	CHI_LIMIT=1
 	SENTINELLIST="$(tail +1 "/tmp/$RANDOMGET"|sed -E "s/.\[[0-9]{1}(\;[0-9]{2})?m//g"|sed -E "/\b(${RESPONSE3})\b/d"|sed "/${SENTINEL_BAN_MESSAGE}/d"|grep -Eo "\b(([0-9]{1,3}\.){3})([0-9]{1,3})\b")"
 	
 #====================================================
@@ -1833,8 +1869,10 @@ SWITCH_HOLD=0
 		if [ $(iptables -nL LDACCEPT|tail +3|wc -l) -gt 1 ]; then
 
 			{ if [ $SWITCH_HOLD = 0 ]; then sent_action; else wait $!; fi; } &
+
 		elif [ $(iptables -nL LDACCEPT|tail +3|wc -l) = 1 ]; then
-			sent_action &
+			#sent_action &
+			{ if [ $SWITCH_HOLD = 0 ]; then sent_action; else wait $!; fi; } 
 		fi
 	done; wait $!; kill -15 $!
 	sentinel_bans; cleansentinel
@@ -1959,7 +1997,7 @@ monitor(){
 ##### New Monitor Display #####
 display
 while "$@" &> /dev/null; do
-cull_ignore; sentinel_bans
+cull_ignore; cull_kta; sentinel_bans
 	if { grep -E "\"\"" "/tmp/$RANDOMGET"; }; then sed -i -E "/\"\"/d" "/tmp/$RANDOMGET"; fi
 	ATIME=$(date +%s -r "/tmp/$RANDOMGET")
 	ASIZE=$(tail +1 "/tmp/$RANDOMGET"|wc -c)
