@@ -1445,7 +1445,9 @@ fi
 #####Decongest - Block all other connections#####
 decongest(){
 	if [ "$DECONGEST" = "$(echo -n "$DECONGEST" | grep -oEi "(yes|1|on|enable(d?))")" ]; then
-			DECONGESTLIST=$(grep -v "\b${CONSOLE}\b" "${IPCONNECT_SOURCE}"|grep -Eo "(([0-9]{1,3}\.){3})([0-9]{1,3})"|awk '!a[$0]++'|grep -Ev "^${ROUTERSHORT}")
+			#DECONGESTLIST=$(grep -Ev "\b${CONSOLE}\b" "${IPCONNECT_SOURCE}"|grep -Eo "(([0-9]{1,3}\.){3})([0-9]{1,3})"|awk '!a[$0]++'|grep -Ev "^${ROUTERSHORT}")
+			DECONGEST_FILTER=$(echo $(grep -E "\b${CONSOLE}\b" "${IPCONNECT_SOURCE}"|grep -Eo "\b(([0-9]{1,3}\.){3})([0-9]{1,3})\b"|awk '!a[$0]++')|sed -E "s/\s/|/g")
+			DECONGESTLIST=$(tail +1 "${IPCONNECT_SOURCE}"|grep -Eo "\b(([0-9]{1,3}\.){3})([0-9]{1,3})\b"|grep -Ev "\b${DECONGEST_FILTER}\b"||grep -Ev "^${ROUTERSHORT}"|awk '!a[$0]++')
 			for kta in $DECONGESTLIST; do
 			if ! { iptables -nL LDKTA|grep -Eoq "\b${kta}\b"; }; then
 				eval "iptables -A LDKTA -s $kta -j DROP "${WAITLOCK}" &> /dev/null"
@@ -1997,7 +1999,7 @@ monitor(){
 ##### New Monitor Display #####
 display
 while "$@" &> /dev/null; do
-cull_ignore; cull_kta; sentinel_bans
+cull_ignore; sentinel_bans
 	if { grep -E "\"\"" "/tmp/$RANDOMGET"; }; then sed -i -E "/\"\"/d" "/tmp/$RANDOMGET"; fi
 	ATIME=$(date +%s -r "/tmp/$RANDOMGET")
 	ASIZE=$(tail +1 "/tmp/$RANDOMGET"|wc -c)
