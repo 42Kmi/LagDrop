@@ -127,7 +127,6 @@ LOGO="
                                                                            
 "
 VERSION="Ver 3.0.0 beta, #OneForAll"
-#export LC_ALL=C
 MESSAGE="$(echo -e "	${LOGO}
 
 Enter an identifier!! Eg: WIIU, XBOX, PS4, PC, etc.
@@ -260,31 +259,31 @@ fi
 ##### Prepare LagDrop's IPTABLES Chains #####
 maketables(){
 if ! { iptables -nL LDACCEPT|grep -E "Chain LDACCEPT \([1-9][0-9]{0,} reference(s)?\)"; }; then
-until { iptables -nL LDACCEPT|grep -E "Chain LDACCEPT \([1-9][0-9]{0,} reference(s)?\)"; }; do iptables -N LDACCEPT|iptables -P LDACCEPT ACCEPT|iptables -t filter -I FORWARD -j LDACCEPT; done &> /dev/null #&  break
+until { iptables -nL LDACCEPT|grep -E "Chain LDACCEPT \([1-9][0-9]{0,} reference(s)?\)"; }; do iptables -N LDACCEPT|iptables -P LDACCEPT ACCEPT|iptables -t filter -I FORWARD -j LDACCEPT; done &> /dev/null; wait $!
 else break; fi &> /dev/null #& 
 
 if ! { iptables -nL LDREJECT|grep -E "Chain LDREJECT \([1-9][0-9]{0,} reference(s)?\)"; }; then
-until { iptables -nL LDREJECT|grep -E "Chain LDREJECT \([1-9][0-9]{0,} reference(s)?\)"; }; do iptables -N LDREJECT|iptables -P LDREJECT REJECT |iptables -t filter -I FORWARD -j LDREJECT; done &> /dev/null #&  break
+until { iptables -nL LDREJECT|grep -E "Chain LDREJECT \([1-9][0-9]{0,} reference(s)?\)"; }; do iptables -N LDREJECT|iptables -P LDREJECT REJECT |iptables -t filter -I FORWARD -j LDREJECT; done &> /dev/null; wait $!
 else break; fi &> /dev/null #& 
 
 if ! { iptables -nL LDBAN|grep -E "Chain LDBAN \([1-9][0-9]{0,} reference(s)?\)"; }; then
-until { iptables -nL LDBAN|grep -E "Chain LDBAN \([1-9][0-9]{0,} reference(s)?\)"; }; do iptables -N LDBAN|iptables -P LDBAN REJECT --reject-with icmp-host-prohibited|iptables -t filter -I FORWARD -j LDBAN; done &> /dev/null #&  break
+until { iptables -nL LDBAN|grep -E "Chain LDBAN \([1-9][0-9]{0,} reference(s)?\)"; }; do iptables -N LDBAN|iptables -P LDBAN REJECT --reject-with icmp-host-prohibited|iptables -t filter -I FORWARD -j LDBAN; done &> /dev/null; wait $!
 else break; fi &> /dev/null #& 
 
 if ! { iptables -nL LDIGNORE|grep -E "Chain LDIGNORE \([1-9][0-9]{0,} reference(s)?\)"; }; then
-until { iptables -nL LDIGNORE|grep -E "Chain LDIGNORE \([1-9][0-9]{0,} reference(s)?\)"; }; do iptables -N LDIGNORE|iptables -P LDIGNORE ACCEPT|iptables -t filter -A FORWARD -j LDIGNORE; done &> /dev/null #&  break
+until { iptables -nL LDIGNORE|grep -E "Chain LDIGNORE \([1-9][0-9]{0,} reference(s)?\)"; }; do iptables -N LDIGNORE|iptables -P LDIGNORE ACCEPT|iptables -t filter -A FORWARD -j LDIGNORE; done &> /dev/null; wait $!
 else break; fi &> /dev/null #& 
 
 if ! { iptables -nL LDTEMPHOLD|grep -E "Chain LDTEMPHOLD \([1-9][0-9]{0,} reference(s)?\)"; }; then
-until { iptables -nL LDTEMPHOLD|grep -E "Chain LDTEMPHOLD \([1-9][0-9]{0,} reference(s)?\)"; }; do iptables -N LDTEMPHOLD|iptables -t filter -I INPUT -j LDTEMPHOLD; done &> /dev/null #&  break
+until { iptables -nL LDTEMPHOLD|grep -E "Chain LDTEMPHOLD \([1-9][0-9]{0,} reference(s)?\)"; }; do iptables -N LDTEMPHOLD|iptables -t filter -I INPUT -j LDTEMPHOLD; done &> /dev/null; wait $!
 else break; fi &> /dev/null #&  #Hold for clear
 
 if ! { iptables -nL LDKTA|grep -E "Chain LDKTA \([1-9][0-9]{0,} reference(s)?\)"; }; then
-until { iptables -nL LDKTA|grep -E "Chain LDKTA \([1-9][0-9]{0,} reference(s)?\)"; }; do iptables -N LDKTA|iptables -P LDKTA REJECT|iptables -t filter -I FORWARD -j LDKTA; done &> /dev/null #&  break
+until { iptables -nL LDKTA|grep -E "Chain LDKTA \([1-9][0-9]{0,} reference(s)?\)"; }; do iptables -N LDKTA|iptables -P LDKTA REJECT|iptables -t filter -I FORWARD -j LDKTA; done &> /dev/null; wait $!
 else break; fi &> /dev/null #&  
 #
 if ! { iptables -nL LDSENTSTRIKE|grep -E "Chain LDSENTSTRIKE \([1-9][0-9]{0,} reference(s)?\)"; }; then
-until { iptables -nL LDSENTSTRIKE|grep -E "Chain LDSENTSTRIKE \([1-9][0-9]{0,} reference(s)?\)"; }; do iptables -N LDSENTSTRIKE|iptables -t filter -I INPUT -j LDSENTSTRIKE; done &> /dev/null #&  break
+until { iptables -nL LDSENTSTRIKE|grep -E "Chain LDSENTSTRIKE \([1-9][0-9]{0,} reference(s)?\)"; }; do iptables -N LDSENTSTRIKE|iptables -t filter -I INPUT -j LDSENTSTRIKE; done &> /dev/null; wait $!
 else break; fi &> /dev/null #&  #Hold for clear
 }
 maketables &> /dev/null &
@@ -321,18 +320,18 @@ case "$1" in
 		NIN_EXTRA="(95\.142\.154\.181|185\.157\.232\.22)"
 		FILTERIP="^(${NINTENDO_SERVERS}|${NIN_EXTRA})"
 		LOADEDFILTER="${RED}Nintendo${NC}"
-
           ;;
+		  
      "$(echo -n "$1" | grep -oEi "(playstation|ps[2-9]|sony|psx)")") #Sony      
         FILTERIP="^63\.241\.6\.(4[8-9]|5[0-5])|^63\.241\.60\.4[0-4]|^64\.37\.(12[8-9]|1[3-9][0-9])\.|^69\.153\.161\.(1[6-9]|2[0-9]|3[0-1])|^199\.107\.70\.7[2-9]|^199\.108\.([0-9]|1[0-5])\.|^199\.108\.(19[2-9]|20[0-7])\."
 		LOADEDFILTER="${BLUE}PlayStation${NC}"
-
           ;;
+		  
      "$(echo -n "$1" | grep -oEi "(microsoft|x[boxne1360]{1,})")") #Microsoft
         FILTERIP="^104\.((6[4-9]{1})|(7[0-9]{1})|(8[0-9]{1})|(9[0-9]{1})|(10[0-9]{1})|(11[0-9]{1})|(12[0-7]{1}))|^13\.((6[4-9]{1})|(7[0-9]{1})|(8[0-9]{1})|(9[0-9]{1})|(10[0-7]{1}))|^131\.253\.(([2-4]{1}[1-9]{1}))|^134\.170\.|^137\.117\.|^137\.135\.|^138\.91\.|^152\.163\.|^157\.((5[4-9]{1})|60)\.|^168\.((6[1-3]{1}))\.|^191\.239\.160\.97|^23\.((3[2-9]{1})|(6[0-7]{1}))\.|^23\.((9[6-9]{1})|(10[0-3]{1}))\.|^2((2[4-9]{1})|(3[0-9]{1}))\.|^40\.((7[4-9]{1})|([8-9]{1}[0-9]{1})|(10[0-9]{1})|(11[0-9]{1})|(12[0-5]{1}))\.|^52\.((8[4-9]{1})|(9[0-5]{1}))\.|^54\.((22[4-9]{1})|(23[0-9]{1}))\.|^54\.((23[0-1]{1}))\.|^64\.86\.|^65\.((5[2-5]{1}))\.|^69\.164.\(([0-9]{1})|([1-5]{1}[0-9]{1})|((6[0-3]{1}))\.|^40.(7[4-9]|[8-9][0-9]|1[0-1][0-9]|12[0-7]).|^138.91.|^13.64.|^157.54.|^157\.(5[4-9]|60)\."
 		LOADEDFILTER="${GREEN}Xbox${NC}"
-
-          ;; 
+          ;;
+		  
      *) #PC/Debug/Custom
         FILTERIP="^99999" #Debug, Add IPs to whitelist.txt file instead
 		LOADEDFILTER="${YELLOW}"$1"${NC}"
@@ -774,7 +773,6 @@ cleanliness(){
 		for ip in $CLEANLDSENTSTRIKELIST; do
 			CLEANLDSENTSTRIKENUM=$(iptables --line-number -nL LDSENTSTRIKE|grep -E "\b${ip}\b"|grep -Eo "^\s?[0-9]{1,}"|sort -r)
 			if ! { tail +1 "/tmp/$RANDOMGET"|sed -E "s/.\[[0-9]{1}(\;[0-9]{2})?m//g"|grep -Ev "\b(${RESPONSE3}|${SENTINEL_BAN_MESSAGE})\b"|grep -Eoq "\b${ip}\b"; }; then 
-			#if ! { iptables -nL LDACCEPT|grep -E "\b${ip}\b"; }; then 
 				##### Clear LDSENTSTRIKE #####
 				for line in $CLEANLDSENTSTRIKENUM; do
 					iptables -D LDSENTSTRIKE $line
@@ -807,7 +805,6 @@ cleantable
 cleanlog
 zerotables
 }
-
 ping_tr_results(){
 	#PING-TR RESULTS
 	LIMITPERCENT="85"
@@ -824,7 +821,6 @@ ping_tr_results(){
 	
 	fi
 }
-
 pingavgfornull(){
 	if [ $SHOWLOCATION = 1 ]; then
 	CALL_PING_MEM="$(tail +1 ""$DIR"/42Kmi/${PINGMEM}")"
@@ -1305,10 +1301,6 @@ txqueuelen_restore(){
 	RESPONSE3="BLOCK" #BLOCKED
 	SENTINEL_BAN_MESSAGE='‼‼‼‼‼%BANNED%-%SUSPECTED%CONNECTION%INSTABILITY%‼‼‼‼‼'
 	SENTINEL_BAN_MESSAGE="${SENTINEL_BAN_MESSAGE// /%}"
-	
-	#RESPONSE1="●●●●●●" #OK/GOOD
-	#RESPONSE2="●●●●  " #Pushing it...
-	#RESPONSE3="●●    " #BLOCKED
 {
 	#Store Values
 	if [ "${SHELLIS}" != "ash" ] && { which nvram|grep -Eq "nvram$"; }; then
@@ -1318,12 +1310,12 @@ txqueuelen_restore(){
 		ORIGINAL_MULTICAST="$(echo $(nvram get block_multicast))"
 		ORIGINAL_BLOCKWAN="$(echo $(nvram get block_wan))"
 		}
+		store_original_values
 	fi
 lagdrop(){
 
 while "$@" &> /dev/null; do
 (
-#wait $!
 #magic Happens Here
 ##### SETTINGS & TWEAKS #####
 SETTINGS=$(tail +1 "$DIR"/42Kmi/options_"$CONSOLENAME".txt|sed -E "s/#.*$//g"|sed -E "/(^#.*#$|^$|\;|#^[ \t]*$)|#/d"|sed -E 's/^.*=//g') #Settings stored here, called from memory
@@ -1370,20 +1362,16 @@ if ! [ "$SWITCH" = "$(echo -n "$SWITCH" | grep -oEi "(off|0|disable(d?))")" ]; t
 					eval "nvram set dmz_ipaddr=${CONSOLE_IP_END}"
 					#nvram show >/dev/null
 				fi
-				
-				#nvram show >/dev/null
 			fi
 			
 			#Enable multicast
 			if ! [ $(nvram get block_multicast) = 0 ]; then
 				eval "nvram set block_multicast=0"
-				#nvram show >/dev/null
 			fi
 			
 			#Enable Pings
 			if ! [ $(nvram get block_wan) = 0 ]; then
 				eval "nvram set block_wan=0"
-				#nvram show >/dev/null
 			fi
 		fi
 	}
@@ -1440,16 +1428,12 @@ if ! [ "$SWITCH" = "$(echo -n "$SWITCH" | grep -oEi "(off|0|disable(d?))")" ]; t
 				if [ -f "$DIR"/42Kmi/blacklist.txt ]; then
 					blacklist
 				fi
-				#PEERIP="${PEERIP//$peer/\b}"
 				PEERIP="$(echo "${PEERIP}"|sed -E "s/\b${peer}\b//g")"; $PEERIP
 				LDSIMULLIMIT=8
 				if [ -f "$DIR"/42Kmi/blacklist.txt ]; then blacklist; fi
 					if [ $(echo -n "$PEERIP"|wc -l) -gt 2 ] && [ $(echo -n "$PEERIP"|wc -l) -le $LDSIMULLIMIT ]; then
-						#wait $!
-						#{ meatandtatoes; } &
 						{ meatandtatoes & } && wait $!
 					else
-						#{ meatandtatoes; }
 						{ meatandtatoes && wait $!; }
 					fi
 					if [ $POPULATE = 1 ]; then
@@ -1469,7 +1453,12 @@ fi
 decongest(){
 	if [ "$DECONGEST" = "$(echo -n "$DECONGEST" | grep -oEi "(yes|1|on|enable(d?))")" ]; then
 		txqueuelen_adjust &> /dev/null
-		DECONGEST_EXIST=$(iptables -nL LDKTA|grep -Eo "\b(([0-9]{1,3}\.){3})([0-9]{1,3})\b"|awk '!a[$0]++'|sed -E "s/\s/|/g")
+		if [ $(iptables -nL LDKTA|tail +3|wc -l) -gt 0 ]; then
+			DECONGEST_EXIST=$(iptables -nL LDKTA|grep -Eo "\b(([0-9]{1,3}\.){3})([0-9]{1,3})\b"|awk '!a[$0]++'|sed -E "s/\s/|/g")
+		else
+			DECONGEST_EXIST=${CONSOLE}
+		fi
+		
 		DECONGEST_FILTER=$(echo $(grep -E "\b${CONSOLE}\b" "${IPCONNECT_SOURCE}"|grep -Eo "\b(([0-9]{1,3}\.){3})([0-9]{1,3})\b"|awk '!a[$0]++')|sed -E "s/\s/|/g")
 		DECONGESTLIST=$(tail +1 "${IPCONNECT_SOURCE}"|grep -Ev "\b${CONSOLE}\b"|grep -Eo "\b(([0-9]{1,3}\.){3})([0-9]{1,3})\b"|grep -Ev "\b(${DECONGEST_FILTER}|${FILTERIP}|${DECONGEST_EXIST}|(198\.11\.209\.(22[4-9]|23[0-1])))\b"|grep -Ev "^${ROUTERSHORT}"|awk '!a[$0]++')
 		for kta in $DECONGESTLIST; do
@@ -1484,7 +1473,7 @@ decongest(){
 	fi
 }
 #####Decongest - Block all other connections#####
-decongest &> /dev/null &
+decongest &> /dev/null
 
 ##### Clear Old #####
 clear_old &
@@ -1503,14 +1492,60 @@ done &> /dev/null &
 SENTINEL=$(echo "$SETTINGS"|sed -n 10p)
 {
 if [ "$SENTINEL" = "$(echo -n "$SENTINEL" | grep -oEi "(yes|1|on|enable(d?))")" ]; then
-	#Functions
+	#Sentinel: Checks against intrinsic/extrinsic peer lag by comparing difference in transmitted packets or bytes at 2 time points
+	VERIFY_VALUES=0 #Creates verifyvalues.txt in 42Kmi/verify to check Sentinel values.
+	
+	if [ -f "$DIR"/42Kmi/tweak.txt ]; then
+		PACKET_OR_BYTE=$TWEAK_PACKET_OR_BYTE; 
+		SENTINELDELAYBIG=$TWEAK_SENTINELDELAYBIG; 
+		SENTINELDELAYSMALL=$TWEAK_SENTINELDELAYSMALL; 
+		STRIKEMAX=$TWEAK_STRIKEMAX; 
+		ABS_VAL=$TWEAK_ABS_VAL
+		SENTMODE=$TWEAK_SENTMODE
+		SENTLOSSLIMIT=$TWEAK_SENTLOSSLIMIT
+	else
+		PACKET_OR_BYTE=1 #1 for packets, 2 for [kilo]bytes (referred to as delta)
+		SENTINELDELAYBIG=1 #Distinguishes new delta from old delta.
+		SENTINELDELAYSMALL=1 #1 #Establishes deltas
+		STRIKEMAX=7 #5000000 #Max number of strikes before banning
+		TWOPOINT_ON=0 #Set to 1 for Two-Point sequential comparison. Set to 0 for Continuous comparison
+		ABS_VAL=1 #Absolute value (e.g.: 3 - 5 = 2). Set to 0 to disable. Don't Change
+		SENTMODE=5 #4 #3 #0 or 1=Difference, 2=X^2, 3=Difference or X^2, 4=Difference & X^2
+		BYTESTD_DEV_LIMIT=10 #60 #100
+		
+		#If BYTEDIFF -gt SENTLOSSLIMIT, Sentinel will act. These values are constant regardless of game played.
+		if [ $PACKET_OR_BYTE = 2 ]; then
+			BYTE_DIV=1000
+			#Bytes
+			BYTEAVGLIMIT=9 #12
+			SENTLOSSLIMIT=3 #1 #Don't change
+		else
+			#Packets
+			BYTEAVGLIMIT=30 #36 #42 #100 #38 #42 #36 #Don't change
+			SENTLOSSLIMIT=16 #10 #8 #Don't change
+		fi
+	fi
+
+		#Functions
+	get_the_values(){
+		#Get iptables LDACCEPT values
+		GET_LDACCEPT_VALUES1="$(iptables -xvnL LDACCEPT)"
+		sleep $SENTINELDELAYSMALL
+		GET_LDACCEPT_VALUES2="$(iptables -xvnL LDACCEPT)"
+		if [ $TWOPOINT_ON = 1 ]; then
+			sleep $SENTINELDELAYBIG
+			GET_LDACCEPT_VALUES3="$(iptables -xvnL LDACCEPT)"
+			sleep $SENTINELDELAYSMALL
+			GET_LDACCEPT_VALUES4="$(iptables -xvnL LDACCEPT)"
+		fi
+	}
+
 	continuous_mode(){
-		bytediffA_old=$(tail +1 "/tmp/${LDTEMPFOLDER}/#${SENTIPFILENAME}#.oldval"); wait $!
-		#sleep $SENTINELDELAYBIG
+		bytediffA_old=$(tail +1 "/tmp/${LDTEMPFOLDER}/#${SENTIPFILENAME}#.oldval");
 	}
 	add_strike(){
 		wait $!; sed -i -E "s/^.*${ip}\b.*$/&‡/g" "/tmp/$RANDOMGET" #Adds mark for strikes
-		echo "Q" >> "/tmp/$RANDOMGET"; wait; sed -i -E "/^(\s*)?[a-zA-Z]$/d" "/tmp/$RANDOMGET" # Adds then removes letter to change byte count for refresh
+		echo "Q" >> "/tmp/$RANDOMGET"; wait $!; sed -i -E "/^(\s*)?[a-zA-Z]$/d" "/tmp/$RANDOMGET" # Adds then removes letter to change byte count for refresh
 	}	
 	fix_strikes(){
 		strike_correction(){
@@ -1535,7 +1570,6 @@ if [ "$SENTINEL" = "$(echo -n "$SENTINEL" | grep -oEi "(yes|1|on|enable(d?))")" 
 		}
 		strike_correction; wait $!
 
-	
 	#Accurate color to counter matching
 	case $STRIKE_MARK_COUNT_GET in
 		0)
@@ -1553,7 +1587,7 @@ if [ "$SENTINEL" = "$(echo -n "$SENTINEL" | grep -oEi "(yes|1|on|enable(d?))")" 
 		*)
 			sed -i -E "s/#(.\[[0-9]{1}\;[0-9]{2}m){0,}(${ip})\b/#$(echo -e "${BG_BLUE}")\2/g" "/tmp/$RANDOMGET"
 		;;
-	esac
+	esac; wait $!
 	}
 	sentinelstrike(){
 		if [ "$STRIKECOUNT" -ge $STRIKEMAX ] || [ "$STRIKE_MARK_COUNT_GET" -ge $STRIKEMAX ]; then # Max strikes. You're OUT!
@@ -1565,12 +1599,10 @@ if [ "$SENTINEL" = "$(echo -n "$SENTINEL" | grep -oEi "(yes|1|on|enable(d?))")" 
 				eval "iptables -A LDBAN -s $ip -d $CONSOLE -j REJECT --reject-with icmp-host-prohibited "${WAITLOCK}"";
 				sed -i -E "s/#(.\[[0-9]{1}\;[0-9]{2}m){1,}(${ip})(.*$)/#$(echo -e "${BG_RED}")\2%${SENTINEL_BAN_MESSAGE}%@%$(date +"%X")%$(echo -e "${NC}")/g" "/tmp/$RANDOMGET"; #sleep 5
 			fi
-
 				
 			# If less than the max number of strikes...
 			else
 				if [ "$STRIKECOUNT" -lt $STRIKEMAX ]; then
-				#GET_LDSENTSTRIKE=$(iptables -nL LDSENTSTRIKE|tail +3)
 									
 					#Counting Strikes, marking in log
 					case "$STRIKECOUNT" in
@@ -1618,23 +1650,21 @@ if [ "$SENTINEL" = "$(echo -n "$SENTINEL" | grep -oEi "(yes|1|on|enable(d?))")" 
 							fi
 						;;
 
-					esac; wait $!
-				fi; wait $!
+					esac
+				fi
 		fi; wait $!
 
 	}
 	sent_action(){
-		(
 		SWITCH_HOLD=1
 		SENTIPFILENAME="$(panama ${ip})"
 		STRIKE_MARK_COUNT_GET="$(( $(grep -E "#(.\[[0-9]{1}\;[0-9]{2}m)(${ip})\b" "/tmp/$RANDOMGET"|sed "/${SENTINEL_BAN_MESSAGE}/d"|grep -Eo "(‡*)$"|wc -c) / 3 ))" #Get strike count from log.
 
-		fix_strikes; wait $! #&
-		cleansentinel &
-		#wait
+		fix_strikes
+		
 		if { iptables -nL LDACCEPT| grep -E "\b${CONSOLE}\b"|grep -Eoq "\b${ip}\b"; }; then
 		{
-		
+		wait $!
 			STRIKECOUNT="$(iptables -nL LDSENTSTRIKE|tail +3|grep -Ec "\b${ip}\b")"
 			LINENUMBERSTRIKEOUTBAN=$(iptables --line-number -nL LDSENTSTRIKE|grep -E "\b${ip}\b"|grep -Eo "^\s?[0-9]{1,}")
 			LINENUMBERSTRIKEOUTACCEPT=$(iptables --line-number -nL LDACCEPT|grep -E "\b${CONSOLE}\b"|grep -E "\b${ip}\b"|grep -Eo "^\s?[0-9]{1,}")
@@ -1642,38 +1672,28 @@ if [ "$SENTINEL" = "$(echo -n "$SENTINEL" | grep -oEi "(yes|1|on|enable(d?))")" 
 			case "$PACKET_OR_BYTE" in
 			*|1)
 			#Packet
-				byte1="$( iptables -xvnL LDACCEPT|tail +3|grep -E "\b${ip}\b"|awk '{printf $1}')"
-				sleep $SENTINELDELAYSMALL; wait $! &
-				byte2="$( iptables -xvnL LDACCEPT|tail +3|grep -E "\b${ip}\b"|awk '{printf $1}')"
+				byte1="$(echo "${GET_LDACCEPT_VALUES1}"|tail +3|grep -E "\b${ip}\b"|awk '{printf $1}')"
+				byte2="$(echo "${GET_LDACCEPT_VALUES2}"|tail +3|grep -E "\b${ip}\b"|awk '{printf $1}')"
 				
 				if [ $TWOPOINT_ON = 1 ]; then
-					sleep $SENTINELDELAYBIG; wait $! &
-					byte3="$( iptables -xvnL LDACCEPT|tail +3|grep -E "\b${ip}\b"|awk '{printf $1}')"
-					sleep $SENTINELDELAYSMALL; wait $! &
-					byte4="$( iptables -xvnL LDACCEPT|tail +3|grep -E "\b${ip}\b"|awk '{printf $1}')"
+					byte3="$(echo "${GET_LDACCEPT_VALUES3}"|tail +3|grep -E "\b${ip}\b"|awk '{printf $1}')"
+					byte4="$(echo "${GET_LDACCEPT_VALUES4}"|tail +3|grep -E "\b${ip}\b"|awk '{printf $1}')"
 				fi
 			;;
 			2)
 			#Bytes
-				byte1="$(( $( iptables -xvnL LDACCEPT|tail +3|grep -E "\b${ip}\b"|awk '{printf $2}') / $BYTE_DIV ))"
-				sleep $SENTINELDELAYSMALL; wait $! &
-				byte2="$(( $( iptables -xvnL LDACCEPT|tail +3|grep -E "\b${ip}\b"|awk '{printf $2}') / $BYTE_DIV ))"
+				byte1="$(( $(echo "${GET_LDACCEPT_VALUES1}"|tail +3|grep -E "\b${ip}\b"|awk '{printf $2}') / $BYTE_DIV ))"
+				byte2="$(( $(echo "${GET_LDACCEPT_VALUES2}"|tail +3|grep -E "\b${ip}\b"|awk '{printf $2}') / $BYTE_DIV ))"
 				
 				if [ $TWOPOINT_ON = 1 ]; then
-					sleep $SENTINELDELAYBIG; wait $! &
-					byte3="$(( $( iptables -xvnL LDACCEPT|tail +3|grep -E "\b${ip}\b"|awk '{printf $2}') / $BYTE_DIV ))"
-					sleep $SENTINELDELAYSMALL; wait $! &
-					byte4="$(( $( iptables -xvnL LDACCEPT|tail +3|grep -E "\b${ip}\b"|awk '{printf $2}') / $BYTE_DIV ))"
+					byte3="$(( $(echo "${GET_LDACCEPT_VALUES3}"|tail +3|grep -E "\b${ip}\b"|awk '{printf $2}') / $BYTE_DIV ))"
+					byte4="$(( $(echo "${GET_LDACCEPT_VALUES4}"|tail +3|grep -E "\b${ip}\b"|awk '{printf $2}') / $BYTE_DIV ))"
 				fi
 			;;
 			esac
 			
 			#Absolute value adjust
 			if [ $ABS_VAL = 1 ]; then
-				#byte1=${byte1#\-}
-				#byte2=${byte2#\-}
-				#byte3=${byte3#\-}
-				#byte4=${byte4#\-}
 				byte1=$(echo -n "$byte1"|sed -E "s/-//g")
 				byte2=$(echo -n "$byte2"|sed -E "s/-//g")
 				byte3=$(echo -n "$byte3"|sed -E "s/-//g")
@@ -1686,18 +1706,12 @@ if [ "$SENTINEL" = "$(echo -n "$SENTINEL" | grep -oEi "(yes|1|on|enable(d?))")" 
 				bytediffA_old="$(( $(( $byte2 - $byte1 )) / $SENTINELDELAYSMALL ))"
 				bytediffA_new="$(( $(( $byte4 - $byte3 )) / $SENTINELDELAYSMALL ))"
 			else
-				#if [ -f "/tmp/${LDTEMPFOLDER}/#${SENTIPFILENAME}#.oldval" ]; then sleep $SENTINELDELAYBIG; fi
 				bytediffA_new="$(( $(( $byte2 - $byte1 )) / $SENTINELDELAYSMALL ))"
 				if ! [ -f "/tmp/${LDTEMPFOLDER}/#${SENTIPFILENAME}#.oldval" ]; then echo $bytediffA_new > "/tmp/${LDTEMPFOLDER}/#${SENTIPFILENAME}#.oldval"; fi
 				continuous_mode
 			fi
 			
-			#BYTEDIFF="$(( $bytediffA_new - $bytediffA_old ))"
-			
 			if [ $ABS_VAL = 1 ]; then
-				#bytediffA_old=${bytediffA_old#\-}
-				#bytediffA_new=${bytediffA_new#\-}
-				#BYTEDIFF=${BYTEDIFF#\-}
 				bytediffA_old=$(echo -n "$bytediffA_old"|sed -E "s/-//g")
 				bytediffA_new=$(echo -n "$bytediffA_new"|sed -E "s/-//g")
 				BYTEDIFF="$(( $bytediffA_new - $bytediffA_old ))"
@@ -1723,7 +1737,10 @@ if [ "$SENTINEL" = "$(echo -n "$SENTINEL" | grep -oEi "(yes|1|on|enable(d?))")" 
 			
 			#Verify Values; mirrors how Sentinel will observe values
 				if [ $VERIFY_VALUES = 1 ]; then
-				{
+				{	#Prep for verify file
+					GET_LOCATION_VV="$(grep -E "^(${SENTIPFILENAME})#" ""$DIR"/42Kmi/${GEOMEMFILE}"|sed -E "s/^.*#//g")"
+					IP_MASK="$(echo ${ip}|sed -E "s/\.[0-9]{1,3}\.[0-9]{1,3}\./.xx.xx./g")"
+					
 					#Make verify folder
 					if ! [ -d ""${DIR}"/42Kmi/verify/" ]; then mkdir ""${DIR}"/42Kmi/verify/"; fi
 					
@@ -1732,10 +1749,10 @@ if [ "$SENTINEL" = "$(echo -n "$SENTINEL" | grep -oEi "(yes|1|on|enable(d?))")" 
 					HEADER_VV="Epoch\tTIME\tbytediffA\tbytediffB\tBYTESUM\tBYTEDIFF\tBYTEAVG\tBYTEDIFFSQ\tBYTEXSQ\tBYTESTD_DEV"
 					if [ -f ""${DIR}"/42Kmi/verify/verifyvalues#${SENTIPFILENAME}#.txt" ]; then
 						if ! { grep -Eq "^(${HEADER_VV})" ""${DIR}"/42Kmi/verify/verifyvalues#${SENTIPFILENAME}#.txt"; }; then
-						echo -e "${HEADER_VV}\t${ip} (date)" >> ""${DIR}"/42Kmi/verify/verifyvalues#${SENTIPFILENAME}#.txt"
+						echo -e "${HEADER_VV}\t${IP_MASK} [${GET_LOCATION_VV}] $(date)" >> ""${DIR}"/42Kmi/verify/verifyvalues#${SENTIPFILENAME}#.txt"
 						fi
 						else
-						echo -e "${HEADER_VV}\t${ip} $(date)" > ""${DIR}"/42Kmi/verify/verifyvalues#${SENTIPFILENAME}#.txt"
+						echo -e "${HEADER_VV}\t${IP_MASK} [${GET_LOCATION_VV}] $(date)" > ""${DIR}"/42Kmi/verify/verifyvalues#${SENTIPFILENAME}#.txt"
 					fi
 					}
 					
@@ -1748,11 +1765,11 @@ if [ "$SENTINEL" = "$(echo -n "$SENTINEL" | grep -oEi "(yes|1|on|enable(d?))")" 
 						WRITE_DATE=$(date -d "@$GET_DATE" +%X)
 						GET_DATE_MINUS_1=$(( $GET_DATE - 1))
 						WRITE_DATE_MINUS_1=$(date -d "@$GET_DATE_MINUS_1" +%X)
-						if [ $(tail +2 ""${DIR}"/42Kmi/verify/verifyvalues#${SENTIPFILENAME}#.txt"|tail -${VV_WRITE_LIMIT}|grep -Eo "0\t0\t0\t0\t1\t0\t0\t0$"|wc -l) = $VV_WRITE_LIMIT ]; then echo -e "${GET_DATE_MINUS_1}\t${WRITE_DATE_MINUS_1}\t0\t0\t0\t0\t1\t0\t0\t0" >> ""${DIR}"/42Kmi/verify/verifyvalues#${SENTIPFILENAME}#.txt"; wait $!; fi #Add a blank after consecutive blanks just before adding real value. For graph accuracy.
+						if [ $(tail +2 ""${DIR}"/42Kmi/verify/verifyvalues#${SENTIPFILENAME}#.txt"|tail -${VV_WRITE_LIMIT}|grep -Eo "0\t0\t0\t0\t1\t0\t0\t0$"|wc -l) = $VV_WRITE_LIMIT ]; then echo -e "${GET_DATE_MINUS_1}\t${WRITE_DATE_MINUS_1}\t0\t0\t0\t0\t1\t0\t0\t0" >> ""${DIR}"/42Kmi/verify/verifyvalues#${SENTIPFILENAME}#.txt"; fi #Add a blank after consecutive blanks just before adding real value. For graph accuracy.
 						echo -e "${GET_DATE}\t${WRITE_DATE}\t${bytediffA_old}\t${bytediffA_new}\t${BYTESUM}\t${BYTEDIFF}\t${BYTEAVG}\t${BYTEDIFFSQ}\t${BYTEXSQ}\t${BYTESTD_DEV}" >> ""${DIR}"/42Kmi/verify/verifyvalues#${SENTIPFILENAME}#.txt"
 					fi
 				}
-				fi #&
+				fi; wait $!
 				
 			##### SENTINELS #####
 
@@ -1774,77 +1791,40 @@ if [ "$SENTINEL" = "$(echo -n "$SENTINEL" | grep -oEi "(yes|1|on|enable(d?))")" 
 							BYTEBLOCK=$({ if { [ "${BYTEAVG}" -gt "${BYTEAVGLIMIT}" ] && [ "${BYTEDIFF}" -gt "${SENTLOSSLIMIT}" ]; } && [ "${BYTEXSQ}" -gt "${CHI_LIMIT}" ] && [ "${BYTESTD_DEV}" -gt "${BYTESTD_DEV_LIMIT}" ] ; then sentinelstrike; fi; } &) 
 							;;
 					esac
-		} #& #Comment if it causes problems
+		} & #Comment if it causes problems
 		fi
 			{
-			if [ $bytediffA_old = 0 ] || [ $bytediffA_new = 0 ] || [ $BYTESUM = 0 ] || [ $BYTEDIFF = 0 ]; then :; #Don't run Sentinel action for zero values.
+			if { [ $bytediffA_old = 0 ] && [ $bytediffA_new = 0 ]; } || { [ $BYTESUM = 0 ] || [ $BYTEDIFF = 0 ]; }; then :; #Don't run Sentinel action for zero values.
 			else
 			if [ $bytediffA_new != $bytediffA_old ]; then
-				if [ $bytediffA_old != 0 ] && [ $bytediffA_new != 0 ]; then
+				#if [ $bytediffA_old != 0 ] && [ $bytediffA_new != 0 ]; then
 				if ! { [ $bytediffA_new = $bytediffA_old ] && [ $BYTEDIFF != 0 ]; }; then
-				if [ $bytediffA_old -gt $DIFF_MIN ] && [ $bytediffA_new -gt $DIFF_MIN ]; then
+				if [ $bytediffA_old -gt $DIFF_MIN ] || [ $bytediffA_new -gt $DIFF_MIN ]; then
 				if [ $bytediffA_new -gt $DIFF_MIN ] && [ $bytediffA_old -gt $DIFF_MIN ]; then
-				if [ $BYTESUM != $BYTEDIFF ]; then
+				#if [ $BYTESUM != $BYTEDIFF ]; then
 					if [ $BYTESUM != 0 ]; then
 						if [ $BYTEDIFF != 0 ]; then
-							if [ $bytediffA_new -gt $(( $DIFF_MIN + $BYTE_OFFSET )) ]; then 
-							if [ $bytediffA_old -gt $(( $DIFF_MIN + $BYTE_OFFSET )) ]; then
-								$BYTEBLOCK
-							fi
+							if [ $bytediffA_new -gt $(( $DIFF_MIN + $BYTE_OFFSET )) ] || [ $bytediffA_old -gt $(( $DIFF_MIN + $BYTE_OFFSET )) ]; then
+								$BYTEBLOCK; wait $!
 							fi
 						fi
 					fi
+				#fi
 				fi
 				fi
 				fi
-				fi
-				fi
+				#fi
 			fi
-			fi
-			} #&
+			fi; wait $!
+			} &
 		SWITCH_HOLD=0
 		wait $!
-		) #&& wait $! &
 		}
 SWITCH_HOLD=0
 	sentinel(){
 	while "$@" &> /dev/null; do
+	#while :; do
 	{
-	#Sentinel: Checks against intrinsic/extrinsic peer lag by comparing difference in transmitted packets or bytes at 2 time points
-	
-	VERIFY_VALUES=0 #Creates verifyvalues.txt in 42Kmi/verify to check Sentinel values.
-	
-	if [ -f "$DIR"/42Kmi/tweak.txt ]; then
-		PACKET_OR_BYTE=$TWEAK_PACKET_OR_BYTE; 
-		SENTINELDELAYBIG=$TWEAK_SENTINELDELAYBIG; 
-		SENTINELDELAYSMALL=$TWEAK_SENTINELDELAYSMALL; 
-		STRIKEMAX=$TWEAK_STRIKEMAX; 
-		ABS_VAL=$TWEAK_ABS_VAL
-		SENTMODE=$TWEAK_SENTMODE
-		SENTLOSSLIMIT=$TWEAK_SENTLOSSLIMIT
-	else
-		PACKET_OR_BYTE=1 #1 for packets, 2 for [kilo]bytes (referred to as delta)
-		SENTINELDELAYBIG=1 #Distinguishes new delta from old delta.
-		SENTINELDELAYSMALL=1 #1 #Establishes deltas
-		STRIKEMAX=7 #5000000 #Max number of strikes before banning
-		TWOPOINT_ON=0 #Set to 1 for Two-Point sequential comparison. Set to 0 for Continuous comparison
-		ABS_VAL=1 #Absolute value (e.g.: 3 - 5 = 2). Set to 0 to disable. Don't Change
-		SENTMODE=5 #4 #3 #0 or 1=Difference, 2=X^2, 3=Difference or X^2, 4=Difference & X^2
-		BYTESTD_DEV_LIMIT=60 #100
-		
-		#If BYTEDIFF -gt SENTLOSSLIMIT, Sentinel will act. These values are constant regardless of game played.
-		if [ $PACKET_OR_BYTE = 2 ]; then
-			BYTE_DIV=1000
-			#Bytes
-			BYTEAVGLIMIT=9 #12
-			SENTLOSSLIMIT=3 #1 #Don't change
-		else
-			#Packets
-			BYTEAVGLIMIT=38 #42 #100 #38 #42 #36 #Don't change
-			SENTLOSSLIMIT=10 #10 #8 #Don't change
-		fi
-	fi
-	
 	#Sentinel will act only if bytediffA_new and bytediffA_old are greater than DIFF_MIN. Varies with game.
 	DIFF_MIN_BYTES=10 #1000
 	DIFF_MIN_PACKETS=1000 #5000 #13000 #200 #0 #Don't change
@@ -1885,27 +1865,31 @@ SWITCH_HOLD=0
 	SENTINELLIST="$(tail +1 "/tmp/$RANDOMGET"|sed -E "s/.\[[0-9]{1}(\;[0-9]{2})?m//g"|sed -E "/\b(${RESPONSE3})\b/d"|sed "/${SENTINEL_BAN_MESSAGE}/d"|grep -Eo "\b(([0-9]{1,3}\.){3})([0-9]{1,3})\b")"
 	
 #====================================================
+	get_the_values
 	
+	#This is where Sentinel Execution happens.
 	for ip in $SENTINELLIST; do
+	#get_the_values
 		if [ $(iptables -nL LDACCEPT|tail +3|wc -l) -gt 1 ]; then
 			
-			#{ sent_action; wait $!; } &
-			#{ if [ $SWITCH_HOLD = 0 ]; then sent_action; else wait $!; fi; } &
-			#{ if [ $SWITCH_HOLD = 0 ]; then sent_action; wait $!; fi; } &
-			{ if [ $SWITCH_HOLD = 0 ]; then sent_action; fi; } &
+			{ sent_action; wait $!; } &
+			#{ sent_action; } &
 
 		elif [ $(iptables -nL LDACCEPT|tail +3|wc -l) = 1 ]; then
-			#sent_action &
-			{ if [ $SWITCH_HOLD = 0 ]; then sent_action; wait $!; else wait $!; fi; } &
+			{ if [ $SWITCH_HOLD = 0 ]; then sent_action; wait $!; fi; } &
 		fi
 	done; wait $!; kill -15 $!
-	sentinel_bans; cleansentinel
+	#sentinel_bans; cleansentinel
 	} ; kill -9 $!
+		sentinel_bans
+		cleansentinel &
 	done 2> /dev/null &
 	}
 	wait $!
 fi 2> /dev/null
 }
+
+
 	( sentinel 2> /dev/null & )
 	#sentinel 2> /dev/null &
 ###### SENTINELS #####
