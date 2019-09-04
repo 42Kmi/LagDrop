@@ -1735,6 +1735,8 @@ if [ "$SENTINEL" = "$(echo -n "$SENTINEL" | grep -oEi "(yes|1|on|enable(d?))")" 
 				echo "$bytediffA_new" > "/tmp/${LDTEMPFOLDER}/#${SENTIPFILENAME}#.oldval"
 			fi
 			
+			wait $!
+			
 			#Verify Values; mirrors how Sentinel will observe values
 				if [ $VERIFY_VALUES = 1 ]; then
 				{	#Prep for verify file
