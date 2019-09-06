@@ -45,6 +45,22 @@ cleanall(){
 	exit
 } &> /dev/null
 trap cleanall 0 1 2 3 6 9 15
+check_dependencies(){
+	for depend_exist in curl openssl; do
+		if ! { which ${depend_exist}|grep -Eq "${depend_exist}$"; }; then
+			case ${depend_exist} in
+				curl)
+					echo "curl not found. Please ensure curl is installed before running LagDrop."
+				;;
+				openssl)
+					echo "openssl not found. Please ensure openssl is installed before running LagDrop."
+				;;
+			esac
+			MISSING_DEPEND=1
+		fi
+	done; wait $!
+	if [ $MISSING_DEPEND = 1 ]; then kill -15 $$; fi
+}
 
 PROCESS="$$"
 ##### LINE OPTIONS #####
@@ -164,6 +180,7 @@ Flags:
 
 42Kmi.com | LagDrop.com"
 )"
+check_dependencies
 ##### Kill if no argument #####
 if [ "$1" = "$(echo -n "$1" | grep -oEi "((\ ?){1,}|)")" ]; then
 echo -e "${MESSAGE}"
@@ -1656,6 +1673,7 @@ if [ "$SENTINEL" = "$(echo -n "$SENTINEL" | grep -oEi "(yes|1|on|enable(d?))")" 
 
 	}
 	sent_action(){
+		wait
 		SWITCH_HOLD=1
 		SENTIPFILENAME="$(panama ${ip})"
 		STRIKE_MARK_COUNT_GET="$(( $(grep -E "#(.\[[0-9]{1}\;[0-9]{2}m)(${ip})\b" "/tmp/$RANDOMGET"|sed "/${SENTINEL_BAN_MESSAGE}/d"|grep -Eo "(‡*)$"|wc -c) / 3 ))" #Get strike count from log.
