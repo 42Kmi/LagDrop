@@ -55,7 +55,7 @@ check_dependencies(){
 				openssl)
 					echo "openssl not found. Please ensure openssl is installed before running LagDrop."
 				;;
-			esac
+			esac; wait $!
 			MISSING_DEPEND=1
 		fi
 	done; wait $!
@@ -340,7 +340,10 @@ case "$1" in
           ;;
 		  
      "$(echo -n "$1" | grep -oEi "(playstation|ps[2-9]|sony|psx)")") #Sony      
-        FILTERIP="^63\.241\.6\.(4[8-9]|5[0-5])|^63\.241\.60\.4[0-4]|^64\.37\.(12[8-9]|1[3-9][0-9])\.|^69\.153\.161\.(1[6-9]|2[0-9]|3[0-1])|^199\.107\.70\.7[2-9]|^199\.108\.([0-9]|1[0-5])\.|^199\.108\.(19[2-9]|20[0-7])\."
+        LIMELIGHTNETWORKS_SERVERS="(208\.111\.1(2[89]|[3-8][0-9]|9[01])\.[0-9]{1,3})" #CDN
+		FREEWHEEL_MEDIA_SERVERS="75\.98\.70\.[0-9]{1,3}" #Media/TV Server, Comcast
+		ADOBE_SERVERS="216.104.2(0[89]|1[0-9]|2[0-3])\.[0-9]{1,3}" #Media/TV Server
+		FILTERIP="^63\.241\.6\.(4[8-9]|5[0-5])|^63\.241\.60\.4[0-4]|^64\.37\.(12[8-9]|1[3-9][0-9])\.|^69\.153\.161\.(1[6-9]|2[0-9]|3[0-1])|^199\.107\.70\.7[2-9]|^199\.108\.([0-9]|1[0-5])\.|^199\.108\.(19[2-9]|20[0-7])\.|${LIMELIGHTNETWORKS_SERVERS}|${FREEWHEEL_MEDIA_SERVERS}|${ADOBE_SERVERS}"
 		LOADEDFILTER="${BLUE}PlayStation${NC}"
           ;;
 		  
@@ -355,7 +358,7 @@ case "$1" in
 
 esac
 }
-ONTHEFLYFILTER="(((([0-9A-Za-z\-]+\.)*google\.(((co|ad|ae)(m)?(\.)?[a-z]{2})|cat)(/|$)))|GOOGLE\-CLOUD|GOGL|goog)|(amazonaws|akamaitechnologies|Akamai|AKAMAI\-[A-Z]{1,}|AKAMAI-TATAC)|(verizondigitalmedia|EDGECAST-NETBLK-[0-9]{1,})|(TWITT|twitter)|EDGECAST(.*)?|edgecast|cdn|nintendowifi\.net|(nintendo|xboxlive|sony|playstation)\.net|ps[2-9]|(nflxvideo|netflix)|(easo\.ea\.com|\.ea\.com)|\.1e100\.net|Sony Online Entertainment|cloudfront\.net|(facebook|fb-net)|(IANA|IANA-RESERVED)|(CLOUDFLARENET|Cloudflare)|BAD REQUEST|blizzard|(NC Interactive|ncsoft|NCINT)|(RIOT(\s)?GAMES|RIOT)|SQUARE ENIX|Valve Corporation|Ubisoft|(LVLT-ORG-[0-9]{1,}-[0-9]{1,})|not found|\b(dns|ns|NS|DNS)([0-9]{1,}?(\.|\-))\b|LINODE|oath(\s)holdings|thePlatform|(MoPub\,\sInc|mopub)|((([0-9A-Za-z\-]+\.)*nintendo\.(((co(m)?)((\.)?[a-z]{2})?))(/|$))|(([0-9A-Za-z\-]+\.)*nintendo-europe\.com(/|$))|(([0-9A-Za-z\-]+\.)*nintendoservicecentre\.co\.uk(/|$)))" # Ignores if these words are found in whois requests
+ONTHEFLYFILTER="(((([0-9A-Za-z\-]+\.)*google\.(((co|ad|ae)(m)?(\.)?[a-z]{2})|cat)(/|$)))|GOOGLE\-CLOUD|GOGL|goog)|(amazonaws|akamaitechnologies|Akamai|AKAMAI\-[A-Z]{1,}|AKAMAI-TATAC)|(verizondigitalmedia|EDGECAST-NETBLK-[0-9]{1,})|(TWITT|twitter)|EDGECAST(.*)?|edgecast|cdn|nintendowifi\.net|(nintendo|xboxlive|sony|playstation)\.net|ps[2-9]|(nflxvideo|netflix)|(easo\.ea\.com|\.ea\.com)|\.1e100\.net|Sony Online Entertainment|cloudfront\.net|(facebook|fb-net)|(IANA|IANA-RESERVED)|(CLOUDFLARENET|Cloudflare)|BAD REQUEST|blizzard|(NC Interactive|ncsoft|NCINT)|(RIOT(\s)?GAMES|RIOT)|SQUARE ENIX|Valve Corporation|Ubisoft|(LVLT-ORG-[0-9]{1,}-[0-9]{1,})|not found|\b(dns|ns|NS|DNS)([0-9]{1,}?(\.|\-))\b|LINODE|oath(\s)holdings|thePlatform|(MoPub\,\sInc|mopub)|((([0-9A-Za-z\-]+\.)*nintendo\.(((co(m)?)((\.)?[a-z]{2})?))(/|$))|(([0-9A-Za-z\-]+\.)*nintendo-europe\.com(/|$))|(([0-9A-Za-z\-]+\.)*nintendoservicecentre\.co\.uk(/|$)))|(limelightnetworks\.com|limelightnetworks|LLNW)" # Ignores if these words are found in whois requests
 #ONTHEFLYFILTER="klhjgdfshjvckxrsjrfkctyjztyflkutyjsrehxcvhjyutresdxfcgh"
 AMAZON_SERVERS="(13\.(2(4[89]|5[01]))\.)"
 GOOGLE_SERVERS="(173.194)"
@@ -1329,6 +1332,9 @@ txqueuelen_restore(){
 		}
 		store_original_values
 	fi
+#Get Public IP
+PUBLIC_IP="$(curl -sk "https://www.google.com/search?as_q=what%20is%20my%20ip%20address&hl=en&num=100&btnG=Google+Search&as_epq=&as_oq=&as_eq=&lr=&as_ft=i&as_filetype=&as_qdr=all&as_nlo=&as_nhi=&as_occt=any&as_dt=i&as_sitesearch=&as_rights=&safe=images"|grep -Eo "\b(Client IP address: ([0-9]{1,3}\.){3})([0-9]{1,3})\b"|grep -Eo "\b(([0-9]{1,3}\.){3})([0-9]{1,3})\b$")"
+	
 lagdrop(){
 
 while "$@" &> /dev/null; do
@@ -1423,7 +1429,7 @@ if ! [ "$SWITCH" = "$(echo -n "$SWITCH" | grep -oEi "(off|0|disable(d?))")" ]; t
 		ADDWHITELIST=""
 	fi
 	
-	PEERIP=$(echo "$IPCONNECT"|grep -Eo "\b(([0-9]{1,3}\.){3})([0-9]{1,3})\b"|grep -Ev "^\b(${CONSOLE}|${ROUTER}|${IGNORE}$(if [ $EXIST_LIST != 0 ] || [ $EXIST_LIST != "" ]; then echo "|${EXIST_LIST}"; fi)|${ROUTERSHORT}|${FILTERIP}|${ONTHEFLYFILTER_IPs})\b""${ADDWHITELIST}"|awk '!a[$0]++'|sed -E "s/(\s)*//g") ### Get console Peer's IP DON'T TOUCH!
+	PEERIP=$(echo "$IPCONNECT"|grep -Eo "\b(([0-9]{1,3}\.){3})([0-9]{1,3})\b"|grep -Ev "^\b(${CONSOLE}|${ROUTER}|${IGNORE}$(if [ $EXIST_LIST != 0 ] || [ $EXIST_LIST != "" ]; then echo "|${EXIST_LIST}"; fi)|${ROUTERSHORT}|${FILTERIP}|${ONTHEFLYFILTER_IPs}|${PUBLIC_IP})\b""${ADDWHITELIST}"|awk '!a[$0]++'|sed -E "s/(\s)*//g") ### Get console Peer's IP DON'T TOUCH!
 		##### BLACKLIST #####
 		if [ -f "$DIR"/42Kmi/blacklist.txt ]; then
 		BLACKLIST=$(echo $(echo "$(tail +1 "${DIR}"/42Kmi/blacklist.txt|sed -E -e "/(#.*$|^$|\;|#^[ \t]*$)|#/d" -e "s/^/\^/g" -e "s/\^#|\^$//g" -e "s/\^\^/^/g" -e "s/$/|/g")")| sed -E 's/\|$//g') ### Permananent ban. If encountered, automatically blocked.
@@ -1477,7 +1483,7 @@ decongest(){
 		fi
 		
 		DECONGEST_FILTER=$(echo $(grep -E "\b${CONSOLE}\b" "${IPCONNECT_SOURCE}"|grep -Eo "\b(([0-9]{1,3}\.){3})([0-9]{1,3})\b"|awk '!a[$0]++')|sed -E "s/\s/|/g")
-		DECONGESTLIST=$(tail +1 "${IPCONNECT_SOURCE}"|grep -Ev "\b${CONSOLE}\b"|grep -Eo "\b(([0-9]{1,3}\.){3})([0-9]{1,3})\b"|grep -Ev "\b(${DECONGEST_FILTER}|${FILTERIP}|${DECONGEST_EXIST}|(198\.11\.209\.(22[4-9]|23[0-1])))\b"|grep -Ev "^${ROUTERSHORT}"|awk '!a[$0]++')
+		DECONGESTLIST=$(tail +1 "${IPCONNECT_SOURCE}"|grep -Ev "\b${CONSOLE}\b"|grep -Eo "\b(([0-9]{1,3}\.){3})([0-9]{1,3})\b"|grep -Ev "\b(${DECONGEST_FILTER}|${FILTERIP}|${DECONGEST_EXIST}|${PUBLIC_IP}|(198\.11\.209\.(22[4-9]|23[0-1])))\b"|grep -Ev "^${ROUTERSHORT}"|awk '!a[$0]++')
 		for kta in $DECONGESTLIST; do
 			if ! { iptables -nL LDKTA|grep -Eo "\b${kta}\b"; }; then
 				eval "iptables -A LDKTA -s $kta -j DROP "${WAITLOCK}""
@@ -1556,7 +1562,6 @@ if [ "$SENTINEL" = "$(echo -n "$SENTINEL" | grep -oEi "(yes|1|on|enable(d?))")" 
 			GET_LDACCEPT_VALUES4="$(iptables -xvnL LDACCEPT)"
 		fi
 	}
-
 	continuous_mode(){
 		bytediffA_old=$(tail +1 "/tmp/${LDTEMPFOLDER}/#${SENTIPFILENAME}#.oldval");
 	}
