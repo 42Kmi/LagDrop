@@ -33,7 +33,7 @@ What to expect in 3.0.0
 
 [@42Kmi on Twitter](http://twitter/42Kmi) [@LagDrop on Twitter](http://twitter/LagDrop)
 
-[Join our Discord Server](https://discord.gg/SgH2HMa), [Help Channel](https://discord.gg/2jsz4XS)
+[Join our Discord Server](https://discord.gg/2jsz4XS), [Help Channel](https://discord.gg/2jsz4XS)
 
 
 ![FriendCode](https://i.imgur.com/FDSfaK0.jpg)
