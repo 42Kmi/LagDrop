@@ -17,7 +17,7 @@ LagDrop is a dynamic firewall script that helps you avoid laggy matches in any p
 
 Contact us if you're interested in testing Version 3.0.0!
 
-## We need help with testing. If you have a lag switch or are capable of triggering lag while gaming and have Smash Bros. Ultimate, DragonBall FighterZ, or BlazBlue Cross Tag Battle on Nintendo Switch, please [Join our Discord Server](https://discord.gg/SgH2HMa) and DM me. No judgments!
+## We need help with testing. If you have a lag switch or are capable of triggering lag while gaming and have Smash Bros. Ultimate, DragonBall FighterZ, or BlazBlue Cross Tag Battle on Nintendo Switch, please [Join our Discord Server](https://discord.gg/57jVKpU) and DM me. No judgments!
 
 What to expect in 3.0.0
 
@@ -33,7 +33,7 @@ What to expect in 3.0.0
 
 [@42Kmi on Twitter](http://twitter/42Kmi) [@LagDrop on Twitter](http://twitter/LagDrop)
 
-[Join our Discord Server](https://discord.gg/2jsz4XS), [Help Channel](https://discord.gg/2jsz4XS)
+[Join our Discord Server](https://discord.gg/57jVKpU)
 
 
 ![FriendCode](https://i.imgur.com/FDSfaK0.jpg)
