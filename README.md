@@ -15,11 +15,11 @@ LagDrop is a dynamic firewall script that helps you avoid laggy matches in any p
 - Sentinel: Checks for connection instability, suspected lag switch users (Cheaters!)
 - More!
 
+See readme_beta.txt for help specifically for v3.0.0.
 Contact us if you're interested in testing Version 3.0.0!
 
 ## We need help with testing. If you have a lag switch or are capable of triggering lag while gaming and have Smash Bros. Ultimate, DragonBall FighterZ, or BlazBlue Cross Tag Battle on Nintendo Switch, please [Join our Discord Server](https://discord.gg/57jVKpU) and DM me. No judgments!
 
-What to expect in 3.0.0
 
 ![LagDrop Monitor](https://i.imgur.com/l4ODvaZ.png)
 
@@ -65,8 +65,7 @@ Starting with version 3.0.0, LagDrop runs differently from previous versions.
 
 *This guide uses DD-WRT as reference and assumes that you are familiar with DD-WRT or similar firmware. Do the equivalent of whatever firmware is on your compatible router.*
 
->***LagDrop is not intended or expected to harm your router, however, 42Kmi bears no responsibility for any damages that may occur.***
->***LagDrop is only intended to be used for automated lag-based peer blocking/filtering. Any use of, or modification to, LagDrop outside of its original intended scope is prohibited; 42Kmi will NOT have your back.***
+>***This software is provided "as is", without warranty of any kind, express or implied, including but not limited to the warranties of merchantability, fitness for a particular purpose and noninfringement. In no event shall the authors or copyright holders be liable for any claim, damages or other liability, whether in an action of contract, tort or otherwise, arising from, out of or in connection with the software or the use or other dealings in the software.***
 
 * *Please read the changelog for version update details.*
 
@@ -94,7 +93,7 @@ The following flags can be enabled to run certain features of LagDrop.
 ```
 -s : Smart mode. Averages ping and traceroute times as new ceilings.
 
--l : Locate. Where your opponents are.
+-l : Locate. Tell you where your opponents are.
 
 -p : Populate. LagDrop will run to populate cache for more efficient operation but will not perform any filtering. Completely optional, and only needs to be run once if the you should choose.
 
